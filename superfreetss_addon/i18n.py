@@ -16,6 +16,9 @@ STRINGS: Dict[str, Dict[str, str]] = {
         "dialog_collection_title": "Super Free TTS: Add Audio (Collection)",
         "dialog_realtime_title": "Super Free TTS: Add Audio (Realtime)",
         "dialog_preset_rules_title": "Super Free TTS: Preset Rules",
+        "dialog_main_title": "Super Free TTS",
+        "tab_services": "Services",
+        "tab_preferences": "Preferences",
 
         # Generic buttons
         "button_save": "Save",
@@ -168,6 +171,9 @@ STRINGS: Dict[str, Dict[str, str]] = {
         "dialog_collection_title": "Super Free TTS: Thêm âm thanh (Nhiều thẻ)",
         "dialog_realtime_title": "Super Free TTS: Âm thanh tự phát (Realtime)",
         "dialog_preset_rules_title": "Super Free TTS: Quy tắc preset",
+        "dialog_main_title": "Super Free TTS",
+        "tab_services": "Nguồn âm thanh",
+        "tab_preferences": "Cấu hình",
 
         # Generic buttons
         "button_save": "Lưu",

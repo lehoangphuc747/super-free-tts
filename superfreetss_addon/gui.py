@@ -82,6 +82,51 @@ class PreferencesDialog(aqt.qt.QDialog):
     def close(self):
         self.accept()
 
+
+class SuperFreeTTSMainDialog(aqt.qt.QDialog):
+    """Một cửa sổ duy nhất Super Free TTS với 2 tab: Nguồn âm thanh (Services), Cấu hình (Preferences)."""
+    def __init__(self, hypertts, initial_tab=0):
+        super(aqt.qt.QDialog, self).__init__()
+        self.hypertts = hypertts
+        self.initial_tab = initial_tab
+        self.setWindowFlag(aqt.qt.Qt.WindowType.WindowMinMaxButtonsHint, True)
+        self.setStyleSheet(constants.STYLESHEET_DIALOG)
+
+    def setupUi(self):
+        lang = self.hypertts.get_ui_language()
+        self.setWindowTitle(i18n.get_text("dialog_main_title", lang))
+        self.setMinimumSize(500, 400)
+        self.main_layout = aqt.qt.QVBoxLayout(self)
+        self.tabs = aqt.qt.QTabWidget()
+
+        # Tab 1: Services (Nguồn âm thanh)
+        tab_services_widget = aqt.qt.QWidget()
+        tab_services_layout = aqt.qt.QVBoxLayout(tab_services_widget)
+        self.configuration = component_configuration.Configuration(self.hypertts, self)
+        self.configuration.load_model(self.hypertts.get_configuration())
+        self.configuration.draw(tab_services_layout)
+        self.tabs.addTab(tab_services_widget, i18n.get_text("tab_services", lang))
+
+        # Tab 2: Preferences (Cấu hình)
+        tab_preferences_widget = aqt.qt.QWidget()
+        tab_preferences_layout = aqt.qt.QVBoxLayout(tab_preferences_widget)
+        self.preferences = component_preferences.ComponentPreferences(self.hypertts, self)
+        self.preferences.load_model(self.hypertts.get_preferences())
+        self.preferences.draw(tab_preferences_layout)
+        self.tabs.addTab(tab_preferences_widget, i18n.get_text("tab_preferences", lang))
+
+        self.tabs.setCurrentIndex(self.initial_tab)
+        self.main_layout.addWidget(self.tabs)
+        self.resize(600, 700)
+
+    def close(self):
+        self.accept()
+
+
+# Alias: tài liệu / CHANGES gọi là SuperFreeTTSDialog
+SuperFreeTTSDialog = SuperFreeTTSMainDialog
+
+
 class DialogBase(aqt.qt.QDialog):
     def __init__(self):
         super(aqt.qt.QDialog, self).__init__()
@@ -110,23 +155,24 @@ class RealtimeDialog(DialogBase):
     def close(self):
         self.accept()        
 
-def launch_configuration_dialog(hypertts):
-    with hypertts.error_manager.get_single_action_context('Launching Configuration Dialog'):
-        logger.info('launch_configuration_dialog')
-        dialog = ConfigurationDialog(hypertts)
+def launch_superfreetss_dialog(hypertts, initial_tab=0):
+    """Mở cửa sổ Super Free TTS (2 tab: Nguồn âm thanh, Cấu hình). Mặc định mở maximized. initial_tab: 0 = Services, 1 = Preferences."""
+    with hypertts.error_manager.get_single_action_context('Launching Super Free TTS Dialog'):
+        logger.info('launch_superfreetss_dialog initial_tab=%s', initial_tab)
+        dialog = SuperFreeTTSMainDialog(hypertts, initial_tab=initial_tab)
         dialog.setupUi()
+        dialog.showMaximized()
         dialog.exec()
+
+def launch_configuration_dialog(hypertts):
+    launch_superfreetss_dialog(hypertts, initial_tab=0)
 
 def launch_services_configuration(hypertts):
     # Super Free TTS Lite: Skip trial signup, go straight to configuration
-    launch_configuration_dialog(hypertts)
+    launch_superfreetss_dialog(hypertts, initial_tab=0)
 
 def launch_preferences_dialog(hypertts):
-    with hypertts.error_manager.get_single_action_context('Launching Preferences Dialog'):
-        logger.info('launch_preferences_dialog')
-        dialog = PreferencesDialog(hypertts)
-        dialog.setupUi()
-        dialog.exec()        
+    launch_superfreetss_dialog(hypertts, initial_tab=1)        
 
 def launch_realtime_dialog_browser(hypertts, note_id_list):
     with hypertts.error_manager.get_single_action_context('Launching Super Free TTS Realtime Dialog from Browser'):
@@ -176,13 +222,13 @@ action_services = None
 action_preferences = None
 
 def update_menu_language(hypertts):
-    """Update the text of the menu items based on current UI language."""
+    """Update the text of the menu items based on current UI language (tab names: Services/Nguồn âm thanh, Preferences/Cấu hình)."""
     global action_services, action_preferences
     lang = hypertts.get_ui_language()
     if action_services:
-        action_services.setText(i18n.get_text("menu_services_configuration", lang))
+        action_services.setText(i18n.get_text("tab_services", lang))
     if action_preferences:
-        action_preferences.setText(i18n.get_text("menu_preferences", lang))
+        action_preferences.setText(i18n.get_text("tab_preferences", lang))
 
 def init(hypertts):
 
@@ -310,32 +356,59 @@ def init(hypertts):
 
             return buttons
 
-    # anki tools menu
+    # Tools menu: chỉ còn một mục "Super Free TTS" với submenu (Cấu hình dịch vụ, Tùy chọn)
     global action_services, action_preferences
-    
-    # Robust Check for existing actions using objectName
-    # This survives addon reloads where globals are reset but menu items stay
-    existing_actions = aqt.mw.form.menuTools.actions()
-    
-    # Try to find existing actions in the actual menu
-    for action in existing_actions:
-        if action.objectName() == "sf_action_services":
-            action_services = action
-        if action.objectName() == "sf_action_preferences":
-            action_preferences = action
+    menu_tools = aqt.mw.form.menuTools
+    submenu = None
+    submenu_already_in_tools = False
 
-    # Create and add if not found
+    # Tìm submenu "Super Free TTS" đã tồn tại (sau khi reload addon)
+    for action in menu_tools.actions():
+        if action.menu() and action.menu().objectName() == "sf_tools_menu":
+            submenu = action.menu()
+            submenu_already_in_tools = True
+            for sub_action in submenu.actions():
+                if sub_action.objectName() == "sf_action_services":
+                    action_services = sub_action
+                if sub_action.objectName() == "sf_action_preferences":
+                    action_preferences = sub_action
+            break
+
+    # Layout cũ: từng add trực tiếp vào Tools → gỡ ra để chuyển vào submenu
+    if submenu is None:
+        for action in list(menu_tools.actions()):
+            if action.objectName() in ("sf_action_services", "sf_action_preferences"):
+                menu_tools.removeAction(action)
+                if action.objectName() == "sf_action_services":
+                    action_services = action
+                if action.objectName() == "sf_action_preferences":
+                    action_preferences = action
+
+    # Tạo submenu nếu chưa có
+    if submenu is None:
+        submenu = aqt.qt.QMenu(constants.ADDON_NAME, aqt.mw)
+        submenu.setObjectName("sf_tools_menu")
+
+    # Tạo actions nếu chưa có và thêm vào submenu
     if action_services is None:
         action_services = aqt.qt.QAction("", aqt.mw)
         action_services.setObjectName("sf_action_services")
         action_services.triggered.connect(lambda: launch_configuration_dialog(hypertts))
-        aqt.mw.form.menuTools.addAction(action_services)
-    
+        submenu.addAction(action_services)
+    elif action_services.parent() != submenu:
+        submenu.addAction(action_services)
+
     if action_preferences is None:
         action_preferences = aqt.qt.QAction("", aqt.mw)
         action_preferences.setObjectName("sf_action_preferences")
         action_preferences.triggered.connect(lambda: launch_preferences_dialog(hypertts))
-        aqt.mw.form.menuTools.addAction(action_preferences)
+        submenu.addAction(action_preferences)
+    elif action_preferences.parent() != submenu:
+        submenu.addAction(action_preferences)
+
+    # Chỉ thêm submenu vào Tools khi vừa tạo mới (chưa có sẵn)
+    if not submenu_already_in_tools:
+        menu_tools.addMenu(submenu)
 
     # Initial update
     update_menu_language(hypertts)

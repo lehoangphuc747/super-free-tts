@@ -502,8 +502,11 @@ def init(hypertts):
                 }})();
             </script>
             """
-            content.stats += welcome_html
-            logger.debug('deck browser will render content, added welcome message')
+            # Tránh hiện 2 cái: Anki có thể gọi hook deck_browser_will_render_content nhiều lần,
+            # mỗi lần đều append vào content.stats → chỉ thêm khi chưa có block welcome.
+            if "superfreetss-welcome-message" not in (content.stats or ""):
+                content.stats += welcome_html
+                logger.debug('deck browser will render content, added welcome message')
     
     aqt.gui_hooks.deck_browser_will_render_content.append(on_deck_browser_will_render_content)
     

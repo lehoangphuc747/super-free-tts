@@ -5,6 +5,7 @@ from . import component_common
 from . import config_models
 from . import constants
 from . import logging_utils
+from . import i18n
 logger = logging_utils.get_child_logger(__name__)
 
 
@@ -19,15 +20,16 @@ class BatchTarget(component_common.ConfigComponentBase):
         # initialize widgets
         self.target_field_combobox = aqt.qt.QComboBox()
         # text and sound
+        lang = self.hypertts.get_ui_language()
         self.text_sound_group = aqt.qt.QButtonGroup()
-        self.radio_button_sound_only = aqt.qt.QRadioButton('Sound Tag only')
-        self.radio_button_text_sound = aqt.qt.QRadioButton('Text and Sound Tag')
+        self.radio_button_sound_only = aqt.qt.QRadioButton(i18n.get_text('target_radio_sound_only', lang))
+        self.radio_button_text_sound = aqt.qt.QRadioButton(i18n.get_text('target_radio_text_and_sound', lang))
         self.text_sound_group.addButton(self.radio_button_sound_only)
         self.text_sound_group.addButton(self.radio_button_text_sound)
         # remove sound
         self.remove_sound_group = aqt.qt.QButtonGroup()
-        self.radio_button_remove_sound = aqt.qt.QRadioButton('Remove other sound tags')
-        self.radio_button_keep_sound = aqt.qt.QRadioButton('Keep other sound tags (append)')
+        self.radio_button_remove_sound = aqt.qt.QRadioButton(i18n.get_text('target_radio_remove_sound', lang))
+        self.radio_button_keep_sound = aqt.qt.QRadioButton(i18n.get_text('target_radio_keep_sound', lang))
         self.remove_sound_group.addButton(self.radio_button_remove_sound)
         self.remove_sound_group.addButton(self.radio_button_keep_sound)
 
@@ -61,7 +63,7 @@ class BatchTarget(component_common.ConfigComponentBase):
         
         # target field
         # ============
-        groupbox = aqt.qt.QGroupBox('Target Field')
+        groupbox = aqt.qt.QGroupBox(i18n.get_text('target_group_field', self.hypertts.get_ui_language()))
         vlayout = aqt.qt.QVBoxLayout()
         vlayout.addWidget(aqt.qt.QLabel(constants.GUI_TEXT_TARGET_FIELD))
         self.target_field_combobox.addItems(self.field_list)
@@ -72,7 +74,7 @@ class BatchTarget(component_common.ConfigComponentBase):
 
         # text and sound tag
         # ==================
-        groupbox = aqt.qt.QGroupBox('Text and Sound Tag Handling')
+        groupbox = aqt.qt.QGroupBox(i18n.get_text('target_group_text_sound_handling', self.hypertts.get_ui_language()))
         vlayout = aqt.qt.QVBoxLayout()
         label = aqt.qt.QLabel(constants.GUI_TEXT_TARGET_TEXT_AND_SOUND)
         label.setWordWrap(True)
@@ -85,7 +87,7 @@ class BatchTarget(component_common.ConfigComponentBase):
 
         # remove sound tag
         # ================
-        groupbox = aqt.qt.QGroupBox('Existing Sound Tag Handling')
+        groupbox = aqt.qt.QGroupBox(i18n.get_text('target_group_existing_sound_handling', self.hypertts.get_ui_language()))
         vlayout = aqt.qt.QVBoxLayout()        
         label = aqt.qt.QLabel(constants.GUI_TEXT_TARGET_REMOVE_SOUND_TAG)
         label.setWordWrap(True)

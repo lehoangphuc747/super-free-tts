@@ -7,6 +7,7 @@ from . import constants
 from . import config_models
 from . import gui_utils
 from . import logging_utils
+from . import i18n
 logger = logging_utils.get_child_logger(__name__)
 
 class BatchSource(component_common.ConfigComponentBase):
@@ -93,7 +94,8 @@ class BatchSource(component_common.ConfigComponentBase):
 
     def draw_source_mode(self, overall_layout):
         # batch mode
-        groupbox = aqt.qt.QGroupBox('Source Mode')
+        lang = self.hypertts.get_ui_language()
+        groupbox = aqt.qt.QGroupBox(i18n.get_text('source_group_mode', lang))
         vlayout = aqt.qt.QVBoxLayout()
         label = aqt.qt.QLabel(gui_utils.process_label_text(constants.GUI_TEXT_SOURCE_MODE))
         label.setWordWrap(True)
@@ -105,7 +107,8 @@ class BatchSource(component_common.ConfigComponentBase):
         overall_layout.addWidget(groupbox)
 
     def draw_source_config(self, overall_layout):
-        groupbox = aqt.qt.QGroupBox('Source Configuration')
+        lang = self.hypertts.get_ui_language()
+        groupbox = aqt.qt.QGroupBox(i18n.get_text('source_group_configuration', lang))
         self.source_config_stack = aqt.qt.QStackedWidget()
 
         simple_stack = aqt.qt.QWidget()
@@ -121,7 +124,7 @@ class BatchSource(component_common.ConfigComponentBase):
         stack_vlayout.addWidget(self.source_field_label)
         stack_vlayout.addWidget(self.source_field_combobox)
         self.use_selection_checkbox = aqt.qt.QCheckBox(constants.GUI_TEXT_SOURCE_USE_SELECTION)
-        stack_vlayout.addWidget(aqt.qt.QLabel('Additional Settings:'))
+        stack_vlayout.addWidget(aqt.qt.QLabel(i18n.get_text('source_label_additional_settings', lang)))
         stack_vlayout.addWidget(self.use_selection_checkbox)
         stack_vlayout.addStretch()
         simple_stack.setLayout(stack_vlayout)

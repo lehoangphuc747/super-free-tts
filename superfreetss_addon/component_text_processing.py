@@ -8,25 +8,24 @@ from . import config_models
 from . import gui_utils
 from . import text_utils
 from . import logging_utils
+from . import i18n
 logger = logging_utils.get_child_logger(__name__)
 
 COL_INDEX_TYPE = 0
 COL_INDEX_PATTERN = 1
 COL_INDEX_REPLACEMENT = 2
 
-BLANK_TEXT = '<i>Enter sample text to verify text processing settings.</i>'
-
 class TextReplacementsTableModel(aqt.qt.QAbstractTableModel):
-    def __init__(self, model, model_change_callback):
+    def __init__(self, model, model_change_callback, lang="en"):
         aqt.qt.QAbstractTableModel.__init__(self, None)
 
         self.model = model
         self.model_change_callback = model_change_callback
 
         self.header_text = [
-            'Type',
-            'Pattern',
-            'Replacement'
+            i18n.get_text('textproc_header_type', lang),
+            i18n.get_text('textproc_header_pattern', lang),
+            i18n.get_text('textproc_header_replacement', lang)
         ]
 
     def load_model(self, model):
@@ -147,7 +146,8 @@ class TextProcessing(component_common.ConfigComponentBase):
         self.hypertts = hypertts
         self.model_change_callback = model_change_callback
         self.model = config_models.TextProcessing()
-        self.textReplacementTableModel = TextReplacementsTableModel(self.model, self.model_change)
+        lang = self.hypertts.get_ui_language()
+        self.textReplacementTableModel = TextReplacementsTableModel(self.model, self.model_change, lang)
 
     def get_model(self):
         return self.model
@@ -159,6 +159,7 @@ class TextProcessing(component_common.ConfigComponentBase):
         self.set_text_processing_rules_widget_state()
 
     def draw(self): # return scrollarea
+        lang = self.hypertts.get_ui_language()
         self.scroll_area = aqt.qt.QScrollArea()
         self.scroll_area.setWidgetResizable(True)
         self.layout_widget = aqt.qt.QWidget()        
@@ -169,14 +170,14 @@ class TextProcessing(component_common.ConfigComponentBase):
         # setup test input box
         # ====================
 
-        groupbox = aqt.qt.QGroupBox('Preview Text Processing Settings')
+        groupbox = aqt.qt.QGroupBox(i18n.get_text('textproc_group_preview', lang))
         vlayout = aqt.qt.QVBoxLayout()
 
-        vlayout.addWidget(aqt.qt.QLabel('You may verify your settings by entering sample text below:'))
+        vlayout.addWidget(aqt.qt.QLabel(i18n.get_text('textproc_label_verify_settings', lang)))
 
         # first line
         hlayout = aqt.qt.QHBoxLayout()
-        label = aqt.qt.QLabel('Enter sample text:')
+        label = aqt.qt.QLabel(i18n.get_text('textproc_label_enter_sample', lang))
         hlayout.addWidget(label)
         self.sample_text_input = aqt.qt.QLineEdit()
         hlayout.addWidget(self.sample_text_input)
@@ -185,8 +186,8 @@ class TextProcessing(component_common.ConfigComponentBase):
 
         # second line
         hlayout = aqt.qt.QHBoxLayout()
-        hlayout.addWidget(aqt.qt.QLabel('Transformed Text:'))
-        self.sample_text_transformed_label = aqt.qt.QLabel(BLANK_TEXT)
+        hlayout.addWidget(aqt.qt.QLabel(i18n.get_text('textproc_label_transformed', lang)))
+        self.sample_text_transformed_label = aqt.qt.QLabel(i18n.get_text('textproc_label_blank_text', lang))
         hlayout.addWidget(self.sample_text_transformed_label)
         hlayout.addStretch()
         vlayout.addLayout(hlayout)
@@ -196,20 +197,20 @@ class TextProcessing(component_common.ConfigComponentBase):
 
         # text processing rules
         # =====================
-        groupbox = aqt.qt.QGroupBox('Text Processing Rules')
+        groupbox = aqt.qt.QGroupBox(i18n.get_text('textproc_group_rules', lang))
         vlayout = aqt.qt.QVBoxLayout()
 
-        self.html_to_text_line_checkbox = aqt.qt.QCheckBox('Process HTML tags, convert into single line')
+        self.html_to_text_line_checkbox = aqt.qt.QCheckBox(i18n.get_text('textproc_checkbox_html_to_text', lang))
         vlayout.addWidget(self.html_to_text_line_checkbox)
-        self.strip_brackets_checkbox = aqt.qt.QCheckBox('Remove text in brackets (), [], {}, <>')
+        self.strip_brackets_checkbox = aqt.qt.QCheckBox(i18n.get_text('textproc_checkbox_strip_brackets', lang))
         vlayout.addWidget(self.strip_brackets_checkbox)
-        self.strip_cloze_checkbox = aqt.qt.QCheckBox('Remove Cloze brackets {{c1::text}}')
+        self.strip_cloze_checkbox = aqt.qt.QCheckBox(i18n.get_text('textproc_checkbox_strip_cloze', lang))
         vlayout.addWidget(self.strip_cloze_checkbox)
-        self.ssml_convert_characters_checkbox = aqt.qt.QCheckBox('Convert SSML characters (like <, &&, etc)')
+        self.ssml_convert_characters_checkbox = aqt.qt.QCheckBox(i18n.get_text('textproc_checkbox_ssml_convert', lang))
         vlayout.addWidget(self.ssml_convert_characters_checkbox)
-        self.run_replace_rules_after_checkbox = aqt.qt.QCheckBox('Run text replacement rules last (uncheck to run first)')
+        self.run_replace_rules_after_checkbox = aqt.qt.QCheckBox(i18n.get_text('textproc_checkbox_run_replace_last', lang))
         vlayout.addWidget(self.run_replace_rules_after_checkbox)
-        self.ignore_case_checkbox = aqt.qt.QCheckBox('Ignore case (Regex rules only)')
+        self.ignore_case_checkbox = aqt.qt.QCheckBox(i18n.get_text('textproc_checkbox_ignore_case', lang))
         vlayout.addWidget(self.ignore_case_checkbox)
 
         groupbox.setLayout(vlayout)
@@ -218,10 +219,10 @@ class TextProcessing(component_common.ConfigComponentBase):
         # setup preview table
         # ===================
 
-        groupbox = aqt.qt.QGroupBox('Text Replacement Rules')
+        groupbox = aqt.qt.QGroupBox(i18n.get_text('textproc_group_replacement_rules', lang))
         vlayout = aqt.qt.QVBoxLayout()        
 
-        vlayout.addWidget(aqt.qt.QLabel('Add replacement rules and double click to edit pattern / replacements'))
+        vlayout.addWidget(aqt.qt.QLabel(i18n.get_text('textproc_label_add_rules', lang)))
 
         self.table_view = aqt.qt.QTableView()
         self.table_view.setModel(self.textReplacementTableModel)
@@ -231,11 +232,11 @@ class TextProcessing(component_common.ConfigComponentBase):
         
         # setup buttons below table
         hlayout = aqt.qt.QHBoxLayout()
-        self.add_replace_simple_button = aqt.qt.QPushButton('Add Simple Rule')
+        self.add_replace_simple_button = aqt.qt.QPushButton(i18n.get_text('textproc_button_add_simple', lang))
         hlayout.addWidget(self.add_replace_simple_button)
-        self.add_replace_regex_button = aqt.qt.QPushButton('Add Regex Rule')
+        self.add_replace_regex_button = aqt.qt.QPushButton(i18n.get_text('textproc_button_add_regex', lang))
         hlayout.addWidget(self.add_replace_regex_button)
-        self.remove_replace_button = aqt.qt.QPushButton('Remove Selected Rule')
+        self.remove_replace_button = aqt.qt.QPushButton(i18n.get_text('textproc_button_remove_rule', lang))
         hlayout.addWidget(self.remove_replace_button)
         vlayout.addLayout(hlayout)
 
@@ -314,7 +315,7 @@ class TextProcessing(component_common.ConfigComponentBase):
         # get the sample text
         sample_text = self.sample_text_input.text()
         if len(sample_text) == 0:
-            label_text = BLANK_TEXT
+            label_text = i18n.get_text('textproc_label_blank_text', self.hypertts.get_ui_language())
         else:
             try:
                 # get the text replacements

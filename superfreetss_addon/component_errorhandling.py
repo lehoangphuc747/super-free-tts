@@ -6,6 +6,7 @@ from . import config_models
 from . import constants
 from . import gui_utils
 from . import logging_utils
+from . import i18n
 logger = logging_utils.get_child_logger(__name__)
 
 
@@ -23,9 +24,10 @@ class ErrorHandling(component_common.ConfigComponentBase):
         for error_dialog_type in constants.ErrorDialogType:
             self.realtime_tts_errors_dialog_type.addItem(error_dialog_type.name, error_dialog_type)
 
-        self.error_stats_reporting = aqt.qt.QCheckBox('Send anonymous usage statistics and error reports to help improve HyperTTS')
+        lang = self.hypertts.get_ui_language()
+        self.error_stats_reporting = aqt.qt.QCheckBox(i18n.get_text('errorhandling_checkbox_usage_stats', lang))
 
-        self.disable_ssl_verification = aqt.qt.QCheckBox('Disable SSL certificate verification (not recommended)')
+        self.disable_ssl_verification = aqt.qt.QCheckBox(i18n.get_text('errorhandling_checkbox_disable_ssl', lang))
 
     def get_model(self):
         return self.model
@@ -43,6 +45,7 @@ class ErrorHandling(component_common.ConfigComponentBase):
             self.model_change_callback(self.model)
 
     def draw(self):
+        lang = self.hypertts.get_ui_language()
         layout_widget = aqt.qt.QWidget()
         layout = aqt.qt.QVBoxLayout(layout_widget)
 
@@ -50,7 +53,7 @@ class ErrorHandling(component_common.ConfigComponentBase):
         # ================
 
         # Realtime TTS Errors group
-        realtime_groupbox = aqt.qt.QGroupBox('Realtime TTS Errors')
+        realtime_groupbox = aqt.qt.QGroupBox(i18n.get_text('errorhandling_group_realtime_errors', lang))
         realtime_vlayout = aqt.qt.QVBoxLayout()
 
         realtime_tts_error_dialog = aqt.qt.QLabel(constants.GUI_TEXT_ERROR_HANDLING_REALTIME_TTS)
@@ -62,16 +65,16 @@ class ErrorHandling(component_common.ConfigComponentBase):
         layout.addWidget(realtime_groupbox)
 
         # Error Reporting group
-        reporting_groupbox = aqt.qt.QGroupBox('Error Reporting')
+        reporting_groupbox = aqt.qt.QGroupBox(i18n.get_text('errorhandling_group_reporting', lang))
         reporting_vlayout = aqt.qt.QVBoxLayout()
         reporting_vlayout.addWidget(self.error_stats_reporting)
         reporting_groupbox.setLayout(reporting_vlayout)
         layout.addWidget(reporting_groupbox)
 
         # Network Connection group
-        network_groupbox = aqt.qt.QGroupBox('Network Connection')
+        network_groupbox = aqt.qt.QGroupBox(i18n.get_text('errorhandling_group_network', lang))
         network_vlayout = aqt.qt.QVBoxLayout()
-        ssl_description = aqt.qt.QLabel('Only disable SSL verification if you are behind a corporate proxy or firewall that intercepts HTTPS connections.')
+        ssl_description = aqt.qt.QLabel(i18n.get_text('errorhandling_label_ssl_description', lang))
         ssl_description.setWordWrap(True)
         network_vlayout.addWidget(ssl_description)
         network_vlayout.addWidget(self.disable_ssl_verification)

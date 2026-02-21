@@ -8,6 +8,7 @@ from . import constants
 from . import errors
 from . import gui_utils
 from . import logging_utils
+from . import i18n
 logger = logging_utils.get_child_logger(__name__)
 
 
@@ -47,12 +48,13 @@ class ComponentMappingRule(component_common.ConfigComponentBase):
 
     def draw(self, gridlayout, gridlayout_index):
         logger.debug('draw')
+        lang = self.hypertts.get_ui_language()
 
-        self.preview_button = aqt.qt.QPushButton('Preview')
-        self.preview_button.setToolTip('Hear audio for this preset')
+        self.preview_button = aqt.qt.QPushButton(i18n.get_text('mappingrule_button_preview', lang))
+        self.preview_button.setToolTip(i18n.get_text('mappingrule_tooltip_preview', lang))
         self.preview_button.setObjectName(f'preview_button_{gridlayout_index}')
-        self.run_button = aqt.qt.QPushButton('Run')
-        self.run_button.setToolTip('Add audio to the note for this preset')
+        self.run_button = aqt.qt.QPushButton(i18n.get_text('mappingrule_button_run', lang))
+        self.run_button.setToolTip(i18n.get_text('mappingrule_tooltip_run', lang))
         self.run_button.setObjectName(f'run_button_{gridlayout_index}')
         
         column_index = 0
@@ -61,7 +63,7 @@ class ComponentMappingRule(component_common.ConfigComponentBase):
         gridlayout.addWidget(self.run_button, gridlayout_index, column_index)
         column_index += 1
 
-        preset_description_label = aqt.qt.QLabel('Preset:')
+        preset_description_label = aqt.qt.QLabel(i18n.get_text('mappingrule_label_preset', lang))
         gridlayout.addWidget(preset_description_label, gridlayout_index, column_index)
         column_index += 1
 
@@ -71,15 +73,15 @@ class ComponentMappingRule(component_common.ConfigComponentBase):
         gridlayout.setColumnStretch(column_index, 1)
         column_index += 1
 
-        self.edit_button = aqt.qt.QPushButton('Edit')
-        self.edit_button.setToolTip('Edit this preset (to change voice or other settings)')
+        self.edit_button = aqt.qt.QPushButton(i18n.get_text('mappingrule_button_edit', lang))
+        self.edit_button.setToolTip(i18n.get_text('mappingrule_tooltip_edit', lang))
         self.edit_button.setObjectName(f'edit_button_{gridlayout_index}')
         gridlayout.addWidget(self.edit_button, gridlayout_index, column_index)
         column_index += 1        
 
         self.rule_type_group = aqt.qt.QButtonGroup()
-        self.rule_type_note_type = aqt.qt.QRadioButton('Note Type')
-        self.rule_type_deck_note_type = aqt.qt.QRadioButton('Deck and Note Type')
+        self.rule_type_note_type = aqt.qt.QRadioButton(i18n.get_text('mappingrule_radio_note_type', lang))
+        self.rule_type_deck_note_type = aqt.qt.QRadioButton(i18n.get_text('mappingrule_radio_deck_note_type', lang))
         self.rule_type_group.addButton(self.rule_type_note_type)
         self.rule_type_group.addButton(self.rule_type_deck_note_type)
 
@@ -89,12 +91,12 @@ class ComponentMappingRule(component_common.ConfigComponentBase):
         column_index += 1
         # hlayout.addWidget(self.rule_type_group)
 
-        self.enabled_checkbox = aqt.qt.QCheckBox(f'Enabled')
+        self.enabled_checkbox = aqt.qt.QCheckBox(i18n.get_text('mappingrule_checkbox_enabled', lang))
         self.enabled_checkbox.setObjectName(f'enabled_checkbox_{gridlayout_index}')
         gridlayout.addWidget(self.enabled_checkbox, gridlayout_index, column_index)
         column_index += 1
 
-        self.delete_rule_button = aqt.qt.QPushButton('Delete')
+        self.delete_rule_button = aqt.qt.QPushButton(i18n.get_text('mappingrule_button_delete', lang))
         self.delete_rule_button.setObjectName(f'delete_rule_button_{gridlayout_index}')
         gridlayout.addWidget(self.delete_rule_button, gridlayout_index, column_index)
         column_index += 1

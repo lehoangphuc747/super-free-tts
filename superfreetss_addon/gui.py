@@ -280,23 +280,23 @@ def init(hypertts):
         menu.setObjectName("sf_browser_menu")
         browser.form.menubar.addMenu(menu)
 
-        action = aqt.qt.QAction(f'Add Audio (Collection)...', browser)
+        action = aqt.qt.QAction(i18n.get_text('menu_add_audio_collection', hypertts.get_ui_language()), browser)
         action.triggered.connect(get_launch_dialog_browser_new_fn(hypertts, browser))
         menu.addAction(action)
 
         # add a menu entry for each preset
         for preset_info in hypertts.get_preset_list():
-            action = aqt.qt.QAction(f'Add Audio (Collection): {preset_info.name}...', browser)
+            action = aqt.qt.QAction(i18n.get_text('menu_add_audio_collection_preset', hypertts.get_ui_language()).format(preset_info.name), browser)
             action.triggered.connect(get_launch_dialog_browser_existing_fn(hypertts, browser, preset_info.id))
             menu.addAction(action)
 
         menu.addSeparator()
 
-        action = aqt.qt.QAction(f'Add Audio (Realtime)...', browser)
+        action = aqt.qt.QAction(i18n.get_text('menu_add_audio_realtime', hypertts.get_ui_language()), browser)
         action.triggered.connect(get_launch_realtime_dialog_browser_fn(hypertts, browser))
         menu.addAction(action)
 
-        action = aqt.qt.QAction(f'Remove Audio (Realtime) / TTS Tag...', browser)
+        action = aqt.qt.QAction(i18n.get_text('menu_remove_audio_realtime', hypertts.get_ui_language()), browser)
         action.triggered.connect(get_remove_realtime_tts_tag_fn(hypertts, browser))
         menu.addAction(action)
 
@@ -343,7 +343,7 @@ def init(hypertts):
             new_button = editor.addButton(gui_utils.get_graphics_path(constants.GRAPHICS_ICON_SPEAKER),
                 'superfreetss_add_audio',
                 run_superfreetss_apply,
-                tip = f'Super Free TTS: Add Audio to your note (based on your preset rules) {add_audio_shortcut}',
+                tip = i18n.get_text('editor_tooltip_add_audio', hypertts.get_ui_language()) + f' {add_audio_shortcut}',
                 keys = preferences.keyboard_shortcuts.shortcut_editor_add_audio,
                 disables=False)
             buttons.append(new_button)
@@ -351,7 +351,7 @@ def init(hypertts):
             new_button = editor.addButton(gui_utils.get_graphics_path(constants.GRAPHICS_ICON_PLAY),
                 'superfreetss_preview_audio',
                 run_superfreetss_preview,
-                tip = f'Super Free TTS: Preview Audio (Hear the audio before adding it) {preview_audio_shortcut}',
+                tip = i18n.get_text('editor_tooltip_preview_audio', hypertts.get_ui_language()) + f' {preview_audio_shortcut}',
                 keys = preferences.keyboard_shortcuts.shortcut_editor_preview_audio,
                 disables=False)
             buttons.append(new_button)
@@ -359,7 +359,7 @@ def init(hypertts):
             new_button = editor.addButton(gui_utils.get_graphics_path(constants.GRAPHICS_ICON_SETTINGS),
                 'superfreetss_settings',
                 run_superfreetss_settings,
-                tip = 'Super Free TTS: Configure Preset Rules for this Note (do this before being able to add audio)',
+                tip = i18n.get_text('editor_tooltip_configure_presets', hypertts.get_ui_language()),
                 disables=False)
             buttons.append(new_button)        
 

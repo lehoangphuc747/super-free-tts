@@ -160,6 +160,130 @@ STRINGS: Dict[str, Dict[str, str]] = {
         "about_website": "Website",
         "about_facebook": "Facebook",
         "about_description": "SuperFreeTTS is a 100% free text-to-speech addon for Anki, designed to make language learning more accessible and effective.",
+        "about_footer": "SuperFreeTTS is documentation-driven and built for the community.",
+
+        # Source component
+        "source_group_mode": "Source Mode",
+        "source_group_configuration": "Source Configuration",
+        "source_label_additional_settings": "Additional Settings:",
+
+        # Target component
+        "target_radio_sound_only": "Sound Tag only",
+        "target_radio_text_and_sound": "Text and Sound Tag",
+        "target_radio_remove_sound": "Remove other sound tags",
+        "target_radio_keep_sound": "Keep other sound tags (append)",
+        "target_group_field": "Target Field",
+        "target_group_text_sound_handling": "Text and Sound Tag Handling",
+        "target_group_existing_sound_handling": "Existing Sound Tag Handling",
+
+        # Target easy component
+        "target_easy_radio_same_field": "Into same field",
+        "target_easy_radio_different_field": "Into different field (choose which)",
+        "target_easy_radio_at_end": "At the end",
+        "target_easy_radio_after_cursor": "After cursor (not supported)",
+        "target_easy_label_which_field": "<i>Which field to insert the audio into?</i>",
+        "target_easy_label_where_insert": "<i>Where inside the field to insert the audio?</i>",
+
+        # Shortcuts component
+        "shortcuts_group_editor_add_audio": "Editor Add Audio",
+        "shortcuts_group_editor_preview_audio": "Editor Preview Audio",
+        "button_clear": "Clear",
+
+        # Error handling component
+        "errorhandling_checkbox_usage_stats": "Send anonymous usage statistics and error reports to help improve Super Free TTS",
+        "errorhandling_checkbox_disable_ssl": "Disable SSL certificate verification (not recommended)",
+        "errorhandling_group_realtime_errors": "Realtime TTS Errors",
+        "errorhandling_group_reporting": "Error Reporting",
+        "errorhandling_group_network": "Network Connection",
+        "errorhandling_label_ssl_description": "Only disable SSL verification if you are behind a corporate proxy or firewall that intercepts HTTPS connections.",
+
+        # Mapping rule component
+        "mappingrule_button_preview": "Preview",
+        "mappingrule_tooltip_preview": "Hear audio for this preset",
+        "mappingrule_button_run": "Run",
+        "mappingrule_tooltip_run": "Add audio to the note for this preset",
+        "mappingrule_label_preset": "Preset:",
+        "mappingrule_button_edit": "Edit",
+        "mappingrule_tooltip_edit": "Edit this preset (to change voice or other settings)",
+        "mappingrule_radio_note_type": "Note Type",
+        "mappingrule_radio_deck_note_type": "Deck and Note Type",
+        "mappingrule_checkbox_enabled": "Enabled",
+        "mappingrule_button_delete": "Delete",
+
+        # Choose preset component
+        "choosepreset_radio_new": "New Preset",
+        "choosepreset_radio_existing": "Existing Preset",
+        "button_ok": "Ok",
+
+        # Text processing component
+        "textproc_label_blank_text": "<i>Enter sample text to verify text processing settings.</i>",
+        "textproc_header_type": "Type",
+        "textproc_header_pattern": "Pattern",
+        "textproc_header_replacement": "Replacement",
+        "textproc_group_preview": "Preview Text Processing Settings",
+        "textproc_label_verify_settings": "You may verify your settings by entering sample text below:",
+        "textproc_label_enter_sample": "Enter sample text:",
+        "textproc_label_transformed": "Transformed Text:",
+        "textproc_group_rules": "Text Processing Rules",
+        "textproc_checkbox_html_to_text": "Process HTML tags, convert into single line",
+        "textproc_checkbox_strip_brackets": "Remove text in brackets (), [], {}, <>",
+        "textproc_checkbox_strip_cloze": "Remove Cloze brackets {{c1::text}}",
+        "textproc_checkbox_ssml_convert": "Convert SSML characters (like <, &&, etc)",
+        "textproc_checkbox_run_replace_last": "Run text replacement rules last (uncheck to run first)",
+        "textproc_checkbox_ignore_case": "Ignore case (Regex rules only)",
+        "textproc_group_replacement_rules": "Text Replacement Rules",
+        "textproc_label_add_rules": "Add replacement rules and double click to edit pattern / replacements",
+        "textproc_button_add_simple": "Add Simple Rule",
+        "textproc_button_add_regex": "Add Regex Rule",
+        "textproc_button_remove_rule": "Remove Selected Rule",
+
+        # Batch tooltips (remaining hardcoded)
+        "batch_tooltip_open": "Open a different preset",
+        "batch_tooltip_duplicate": "Duplicate an existing preset",
+        "batch_tooltip_save": "Save current preset",
+        "batch_tooltip_rename": "Rename the current preset",
+        "batch_tooltip_delete": "Delete the current preset",
+        "batch_tooltip_save_and_close": "Save current preset and close dialog",
+        "batch_tooltip_show_advanced": "Show advanced text processing options",
+        "batch_tooltip_hide_advanced": "Hide advanced text processing options",
+        "batch_button_preview": "Preview",
+        "batch_button_apply": "Apply",
+        "batch_button_save_close": "Save & Close",
+        "button_apply": "Apply",
+
+        # Easy component
+        "easy_group_source_text": "\u2460 Source Text",
+        "easy_group_voice_selection": "\u2461 Voice Selection",
+        "easy_group_target_field": "\u2462 Target Field",
+        "easy_tooltip_preview_with_shortcut": "Preview the audio that will be generated ({0})",
+        "easy_tooltip_preview": "Preview the audio that will be generated",
+        "easy_tooltip_add_with_shortcut": "Add the audio to your note ({0})",
+        "easy_tooltip_add": "Add the audio to your note",
+
+        # Voice selection easy
+        "voiceselection_easy_label_language": "Language:",
+        "voiceselection_easy_label_service": "Service:",
+        "voiceselection_easy_label_voice": "Voice:",
+
+        # Realtime side component
+        "realtime_checkbox_enable_side": "Enable Realtime TTS for {0} side",
+        "realtime_button_preview_sound": "Preview Sound",
+        "realtime_group_preview": "Preview",
+        "realtime_label_text_pronounced": "Text to be pronounced:",
+        "realtime_button_playing_preview": "Playing Preview...",
+
+        # Preferences component
+        "preferences_tab_keyboard_shortcuts": "Keyboard Shortcuts",
+        "preferences_tab_error_handling": "Error Handling",
+
+        # GUI menus and tooltips
+        "menu_add_audio_collection": "Add Audio (Collection)...",
+        "menu_add_audio_collection_preset": "Add Audio (Collection): {0}...",
+        "menu_add_audio_realtime": "Add Audio (Realtime)...",
+        "menu_remove_audio_realtime": "Remove Audio (Realtime) / TTS Tag...",
+        "editor_tooltip_add_audio": "Super Free TTS: Add Audio to your note (based on your preset rules)",
+        "editor_tooltip_preview_audio": "Super Free TTS: Preview Audio (Hear the audio before adding it)",
+        "editor_tooltip_configure_presets": "Super Free TTS: Configure Preset Rules for this Note (do this before being able to add audio)",
     },
     "vi": {
         # Menus / dialog titles
@@ -309,6 +433,130 @@ STRINGS: Dict[str, Dict[str, str]] = {
         "about_website": "Trang web",
         "about_facebook": "Facebook",
         "about_description": "SuperFreeTTS là một addon chuyển văn bản thành giọng nói hoàn toàn miễn phí cho Anki, được thiết kế để giúp việc học ngôn ngữ trở nên dễ dàng và hiệu quả hơn.",
+        "about_footer": "SuperFreeTTS được phát triển theo hướng tài liệu và xây dựng cho cộng đồng.",
+
+        # Source component
+        "source_group_mode": "Chế độ nguồn",
+        "source_group_configuration": "Cấu hình nguồn",
+        "source_label_additional_settings": "Cài đặt thêm:",
+
+        # Target component
+        "target_radio_sound_only": "Chỉ thẻ âm thanh",
+        "target_radio_text_and_sound": "Văn bản và thẻ âm thanh",
+        "target_radio_remove_sound": "Xóa các thẻ âm thanh khác",
+        "target_radio_keep_sound": "Giữ các thẻ âm thanh khác (nối thêm)",
+        "target_group_field": "Trường đích",
+        "target_group_text_sound_handling": "Xử lý văn bản và thẻ âm thanh",
+        "target_group_existing_sound_handling": "Xử lý thẻ âm thanh hiện có",
+
+        # Target easy component
+        "target_easy_radio_same_field": "Vào cùng trường",
+        "target_easy_radio_different_field": "Vào trường khác (chọn trường)",
+        "target_easy_radio_at_end": "Ở cuối",
+        "target_easy_radio_after_cursor": "Sau vị trí con trỏ (chưa hỗ trợ)",
+        "target_easy_label_which_field": "<i>Chèn âm thanh vào trường nào?</i>",
+        "target_easy_label_where_insert": "<i>Chèn âm thanh vào vị trí nào trong trường?</i>",
+
+        # Shortcuts component
+        "shortcuts_group_editor_add_audio": "Phím tắt Thêm âm thanh",
+        "shortcuts_group_editor_preview_audio": "Phím tắt Nghe thử",
+        "button_clear": "Xóa",
+
+        # Error handling component
+        "errorhandling_checkbox_usage_stats": "Gửi thống kê sử dụng ẩn danh và báo cáo lỗi để cải thiện Super Free TTS",
+        "errorhandling_checkbox_disable_ssl": "Tắt xác minh chứng chỉ SSL (không khuyến nghị)",
+        "errorhandling_group_realtime_errors": "Lỗi TTS thời gian thực",
+        "errorhandling_group_reporting": "Báo cáo lỗi",
+        "errorhandling_group_network": "Kết nối mạng",
+        "errorhandling_label_ssl_description": "Chỉ tắt xác minh SSL nếu bạn đang dùng proxy hoặc tường lửa chặn kết nối HTTPS.",
+
+        # Mapping rule component
+        "mappingrule_button_preview": "Xem trước",
+        "mappingrule_tooltip_preview": "Nghe thử âm thanh cho preset này",
+        "mappingrule_button_run": "Chạy",
+        "mappingrule_tooltip_run": "Thêm âm thanh vào thẻ cho preset này",
+        "mappingrule_label_preset": "Preset:",
+        "mappingrule_button_edit": "Sửa",
+        "mappingrule_tooltip_edit": "Sửa preset này (đổi giọng hoặc cài đặt khác)",
+        "mappingrule_radio_note_type": "Loại thẻ",
+        "mappingrule_radio_deck_note_type": "Bộ thẻ và Loại thẻ",
+        "mappingrule_checkbox_enabled": "Đã bật",
+        "mappingrule_button_delete": "Xóa",
+
+        # Choose preset component
+        "choosepreset_radio_new": "Preset mới",
+        "choosepreset_radio_existing": "Preset có sẵn",
+        "button_ok": "Ok",
+
+        # Text processing component
+        "textproc_label_blank_text": "<i>Nhập văn bản mẫu để kiểm tra cài đặt xử lý text.</i>",
+        "textproc_header_type": "Loại",
+        "textproc_header_pattern": "Mẫu",
+        "textproc_header_replacement": "Thay thế",
+        "textproc_group_preview": "Xem trước cài đặt xử lý text",
+        "textproc_label_verify_settings": "Bạn có thể kiểm tra cài đặt bằng cách nhập văn bản mẫu bên dưới:",
+        "textproc_label_enter_sample": "Nhập văn bản mẫu:",
+        "textproc_label_transformed": "Văn bản đã xử lý:",
+        "textproc_group_rules": "Quy tắc xử lý text",
+        "textproc_checkbox_html_to_text": "Xử lý thẻ HTML, chuyển thành một dòng",
+        "textproc_checkbox_strip_brackets": "Xóa text trong ngoặc (), [], {}, <>",
+        "textproc_checkbox_strip_cloze": "Xóa ngoặc Cloze {{c1::text}}",
+        "textproc_checkbox_ssml_convert": "Chuyển đổi ký tự SSML (như <, &&, v.v.)",
+        "textproc_checkbox_run_replace_last": "Chạy quy tắc thay thế cuối cùng (bỏ chọn để chạy trước)",
+        "textproc_checkbox_ignore_case": "Bỏ qua hoa thường (chỉ dành cho Regex)",
+        "textproc_group_replacement_rules": "Quy tắc thay thế text",
+        "textproc_label_add_rules": "Thêm quy tắc thay thế và nhấp đúp để sửa mẫu / thay thế",
+        "textproc_button_add_simple": "Thêm quy tắc đơn giản",
+        "textproc_button_add_regex": "Thêm quy tắc Regex",
+        "textproc_button_remove_rule": "Xóa quy tắc đã chọn",
+
+        # Batch tooltips
+        "batch_tooltip_open": "Mở preset khác",
+        "batch_tooltip_duplicate": "Nhân bản preset có sẵn",
+        "batch_tooltip_save": "Lưu preset hiện tại",
+        "batch_tooltip_rename": "Đổi tên preset hiện tại",
+        "batch_tooltip_delete": "Xóa preset hiện tại",
+        "batch_tooltip_save_and_close": "Lưu preset và đóng hộp thoại",
+        "batch_tooltip_show_advanced": "Hiện tùy chọn xử lý text nâng cao",
+        "batch_tooltip_hide_advanced": "Ẩn tùy chọn xử lý text nâng cao",
+        "batch_button_preview": "Xem trước",
+        "batch_button_apply": "Áp dụng",
+        "batch_button_save_close": "Lưu & Đóng",
+        "button_apply": "Áp dụng",
+
+        # Easy component
+        "easy_group_source_text": "\u2460 Văn bản nguồn",
+        "easy_group_voice_selection": "\u2461 Chọn giọng đọc",
+        "easy_group_target_field": "\u2462 Trường đích",
+        "easy_tooltip_preview_with_shortcut": "Nghe thử âm thanh sẽ được tạo ({0})",
+        "easy_tooltip_preview": "Nghe thử âm thanh sẽ được tạo",
+        "easy_tooltip_add_with_shortcut": "Thêm âm thanh vào thẻ của bạn ({0})",
+        "easy_tooltip_add": "Thêm âm thanh vào thẻ của bạn",
+
+        # Voice selection easy
+        "voiceselection_easy_label_language": "Ngôn ngữ:",
+        "voiceselection_easy_label_service": "Dịch vụ:",
+        "voiceselection_easy_label_voice": "Giọng đọc:",
+
+        # Realtime side component
+        "realtime_checkbox_enable_side": "Bật TTS thời gian thực cho mặt {0}",
+        "realtime_button_preview_sound": "Nghe thử",
+        "realtime_group_preview": "Xem trước",
+        "realtime_label_text_pronounced": "Văn bản sẽ được đọc:",
+        "realtime_button_playing_preview": "Đang phát thử...",
+
+        # Preferences component
+        "preferences_tab_keyboard_shortcuts": "Phím tắt",
+        "preferences_tab_error_handling": "Xử lý lỗi",
+
+        # GUI menus and tooltips
+        "menu_add_audio_collection": "Thêm âm thanh (Nhiều thẻ)...",
+        "menu_add_audio_collection_preset": "Thêm âm thanh (Nhiều thẻ): {0}...",
+        "menu_add_audio_realtime": "Thêm âm thanh (Realtime)...",
+        "menu_remove_audio_realtime": "Xóa âm thanh (Realtime) / TTS Tag...",
+        "editor_tooltip_add_audio": "Super Free TTS: Thêm âm thanh vào thẻ (dựa trên quy tắc preset)",
+        "editor_tooltip_preview_audio": "Super Free TTS: Nghe thử (Nghe âm thanh trước khi thêm)",
+        "editor_tooltip_configure_presets": "Super Free TTS: Cấu hình quy tắc Preset cho thẻ này (cần làm trước khi thêm âm thanh)",
     },
 }
 

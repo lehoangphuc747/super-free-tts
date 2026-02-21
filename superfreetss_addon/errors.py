@@ -112,7 +112,7 @@ class NoVoiceSelected(HyperTTSError):
 class NoVoicesAvailable(HyperTTSError):
     def __init__(self):
         message = f'No voices available. You may need to configure some services in the SuperFreeTTS Configuration. ' \
-            '<a href="https://www.vocab.ai/tutorials/hypertts-getting-started">Please follow this tutorial: getting started with SuperFreeTTS</a>.'
+            'Please go to the Services tab in Super Free TTS settings to enable TTS services.'
         super().__init__(message)
 
 

@@ -6,6 +6,7 @@ from . import config_models
 from . import constants
 from . import gui_utils
 from . import logging_utils
+from . import i18n
 logger = logging_utils.get_child_logger(__name__)
 
 
@@ -37,13 +38,14 @@ class Shortcuts(component_common.ConfigComponentBase):
             self.model_change_callback(self.model)
 
     def draw(self):
+        lang = self.hypertts.get_ui_language()
         layout_widget = aqt.qt.QWidget()
         layout = aqt.qt.QVBoxLayout(layout_widget)
 
         # editor add audio
         # ================
 
-        groupbox = aqt.qt.QGroupBox('Editor Add Audio')
+        groupbox = aqt.qt.QGroupBox(i18n.get_text('shortcuts_group_editor_add_audio', lang))
         vlayout = aqt.qt.QVBoxLayout()
 
         editor_add_audio_label = aqt.qt.QLabel(constants.GUI_TEXT_SHORTCUTS_EDITOR_ADD_AUDIO)
@@ -54,7 +56,7 @@ class Shortcuts(component_common.ConfigComponentBase):
 
         hlayout.addWidget(self.editor_add_audio_key_sequence)
 
-        self.editor_add_audio_clear_button = aqt.qt.QPushButton('Clear')
+        self.editor_add_audio_clear_button = aqt.qt.QPushButton(i18n.get_text('button_clear', lang))
         hlayout.addWidget(self.editor_add_audio_clear_button)
         
         vlayout.addLayout(hlayout)
@@ -65,7 +67,7 @@ class Shortcuts(component_common.ConfigComponentBase):
         # editor preview audio
         # ====================
 
-        groupbox = aqt.qt.QGroupBox('Editor Preview Audio')
+        groupbox = aqt.qt.QGroupBox(i18n.get_text('shortcuts_group_editor_preview_audio', lang))
         vlayout = aqt.qt.QVBoxLayout()
 
         editor_preview_audio_label = aqt.qt.QLabel(constants.GUI_TEXT_SHORTCUTS_EDITOR_PREVIEW_AUDIO)
@@ -76,7 +78,7 @@ class Shortcuts(component_common.ConfigComponentBase):
 
         hlayout.addWidget(self.editor_preview_audio_key_sequence)
 
-        self.editor_preview_audio_clear_button = aqt.qt.QPushButton('Clear')
+        self.editor_preview_audio_clear_button = aqt.qt.QPushButton(i18n.get_text('button_clear', lang))
         hlayout.addWidget(self.editor_preview_audio_clear_button)
 
         vlayout.addLayout(hlayout)

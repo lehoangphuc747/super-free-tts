@@ -20,9 +20,10 @@ class ComponentPreferences(component_common.ConfigComponentBase):
         self.shortcuts = component_shortcuts.Shortcuts(self.hypertts, self.dialog, self.shortcuts_updated)
         self.error_handling = component_errorhandling.ErrorHandling(self.hypertts, self.dialog, self.error_handling_updated)
 
+        lang = self.hypertts.get_ui_language()
         # Nút lưu / hủy
-        self.save_button = aqt.qt.QPushButton('Apply')
-        self.cancel_button = aqt.qt.QPushButton('Cancel')
+        self.save_button = aqt.qt.QPushButton(i18n.get_text('button_apply', lang))
+        self.cancel_button = aqt.qt.QPushButton(i18n.get_text('button_cancel', lang))
 
         # Chọn ngôn ngữ giao diện
         self.language_combobox = aqt.qt.QComboBox()
@@ -90,8 +91,8 @@ class ComponentPreferences(component_common.ConfigComponentBase):
         # ====================
 
         self.tabs = aqt.qt.QTabWidget()
-        self.tabs.addTab(self.shortcuts.draw(), 'Keyboard Shortcuts')
-        self.tabs.addTab(self.error_handling.draw(), 'Error Handling')
+        self.tabs.addTab(self.shortcuts.draw(), i18n.get_text('preferences_tab_keyboard_shortcuts', lang))
+        self.tabs.addTab(self.error_handling.draw(), i18n.get_text('preferences_tab_error_handling', lang))
         layout.addWidget(self.tabs)
 
         # setup bottom buttons

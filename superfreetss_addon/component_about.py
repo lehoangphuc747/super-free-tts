@@ -86,7 +86,7 @@ class AboutComponent(component_common.ConfigComponentBase):
         vlayout.addWidget(info_card)
 
         # 3. Footer / Support
-        footer_label = aqt.qt.QLabel("SuperFreeTTS is documentation-driven and build for the community.")
+        footer_label = aqt.qt.QLabel(i18n.get_text("about_footer", lang))
         footer_label.setAlignment(aqt.qt.Qt.AlignmentFlag.AlignCenter)
         footer_label.setStyleSheet("color: palette(disabled); font-size: 10px; font-style: italic;")
         vlayout.addWidget(footer_label)

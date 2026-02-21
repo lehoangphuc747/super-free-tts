@@ -137,14 +137,14 @@ class ComponentEasy(component_common.ComponentBase):
         self.main_content_layout = aqt.qt.QVBoxLayout()
         
         # ① Source Text
-        source_group = aqt.qt.QGroupBox("① Source Text")
+        source_group = aqt.qt.QGroupBox(i18n.get_text('easy_group_source_text', lang))
         source_layout = aqt.qt.QVBoxLayout()
         source_layout.addWidget(self.source.draw())
         source_group.setLayout(source_layout)
         self.main_content_layout.addWidget(source_group)
         
         # ② Voice Selection
-        voice_group = aqt.qt.QGroupBox("② Voice Selection")
+        voice_group = aqt.qt.QGroupBox(i18n.get_text('easy_group_voice_selection', lang))
         voice_layout = aqt.qt.QVBoxLayout()
         # voice_description_label = aqt.qt.QLabel(constants.GUI_TEXT_EASY_VOICE_SELECTION)
         # voice_layout.addWidget(voice_description_label) 
@@ -158,7 +158,7 @@ class ComponentEasy(component_common.ComponentBase):
         target_layout = aqt.qt.QVBoxLayout(self.target_widget)
         target_layout.setContentsMargins(0, 0, 0, 0)
         
-        target_group = aqt.qt.QGroupBox("③ Target Field")
+        target_group = aqt.qt.QGroupBox(i18n.get_text('easy_group_target_field', lang))
         target_group_layout = aqt.qt.QVBoxLayout()
         target_description_label = aqt.qt.QLabel(constants.GUI_TEXT_EASY_TARGET)
         target_group_layout.addWidget(target_description_label)
@@ -184,16 +184,16 @@ class ComponentEasy(component_common.ComponentBase):
         self.preview_sound_button = aqt.qt.QPushButton(self.BUTTON_TEXT_PREVIEW_AUDIO)
         if preview_shortcut is not None:
             self.preview_sound_button.setShortcut(preview_shortcut)
-            self.preview_sound_button.setToolTip(f'Preview the audio that will be generated ({preview_shortcut})')
+            self.preview_sound_button.setToolTip(i18n.get_text('easy_tooltip_preview_with_shortcut', lang).format(preview_shortcut))
         else:
-            self.preview_sound_button.setToolTip('Preview the audio that will be generated')
+            self.preview_sound_button.setToolTip(i18n.get_text('easy_tooltip_preview', lang))
             
         self.add_audio_button = aqt.qt.QPushButton(self.BUTTON_TEXT_ADD_AUDIO)
         if add_shortcut is not None:
             self.add_audio_button.setShortcut(add_shortcut)
-            self.add_audio_button.setToolTip(f'Add the audio to your note ({add_shortcut})')
+            self.add_audio_button.setToolTip(i18n.get_text('easy_tooltip_add_with_shortcut', lang).format(add_shortcut))
         else:
-            self.add_audio_button.setToolTip('Add the audio to your note')
+            self.add_audio_button.setToolTip(i18n.get_text('easy_tooltip_add', lang))
             
         gui_utils.configure_primary_button(self.add_audio_button)
         self.cancel_button = aqt.qt.QPushButton(i18n.get_text("button_cancel", lang))

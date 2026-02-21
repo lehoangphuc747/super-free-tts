@@ -8,6 +8,7 @@ from .constants_events import Event, EventMode
 from . import stats
 from . import logging_utils
 from . import voice as voice_module
+from . import i18n
 
 logger = logging_utils.get_child_logger(__name__)
 
@@ -20,21 +21,22 @@ class VoiceSelectionEasy(component_voiceselection.VoiceSelection):
         self.enable_model_change_callback = True
 
     def draw(self):
+        lang = self.hypertts.get_ui_language()
         grid_layout = aqt.qt.QGridLayout()
         
         # Get voice list and populate combo boxes
         self.get_voices()
         
         # Language filter
-        grid_layout.addWidget(aqt.qt.QLabel('Language:'), 0, 0)
+        grid_layout.addWidget(aqt.qt.QLabel(i18n.get_text('voiceselection_easy_label_language', lang)), 0, 0)
         grid_layout.addWidget(self.languages_combobox, 0, 1)
 
         # Service filter
-        grid_layout.addWidget(aqt.qt.QLabel('Service:'), 1, 0)
+        grid_layout.addWidget(aqt.qt.QLabel(i18n.get_text('voiceselection_easy_label_service', lang)), 1, 0)
         grid_layout.addWidget(self.services_combobox, 1, 1)
 
         # Voice selection combo box
-        grid_layout.addWidget(aqt.qt.QLabel('Voice:'), 2, 0)
+        grid_layout.addWidget(aqt.qt.QLabel(i18n.get_text('voiceselection_easy_label_voice', lang)), 2, 0)
         grid_layout.addWidget(self.voices_combobox, 2, 1)
 
         self.populate_combobox(self.audio_languages_combobox, [audio_lang.audio_lang_name for audio_lang in self.audio_languages])

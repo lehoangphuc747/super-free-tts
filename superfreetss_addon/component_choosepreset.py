@@ -7,6 +7,7 @@ from . import component_common
 from . import config_models
 from . import constants
 from . import component_batch
+from . import i18n
 
 
 class ComponentChoosePreset(component_common.ComponentBase):
@@ -18,11 +19,12 @@ class ComponentChoosePreset(component_common.ComponentBase):
         self.selected_ok = False
 
     def draw(self, layout):
+        lang = self.hypertts.get_ui_language()
         self.vlayout = aqt.qt.QVBoxLayout()
 
         self.existing_or_new = aqt.qt.QButtonGroup()
-        self.new_preset_radio_button = aqt.qt.QRadioButton('New Preset')
-        self.existing_preset_radio_button = aqt.qt.QRadioButton('Existing Preset')
+        self.new_preset_radio_button = aqt.qt.QRadioButton(i18n.get_text('choosepreset_radio_new', lang))
+        self.existing_preset_radio_button = aqt.qt.QRadioButton(i18n.get_text('choosepreset_radio_existing', lang))
         self.existing_or_new.addButton(self.new_preset_radio_button)
         self.existing_or_new.addButton(self.existing_preset_radio_button)
         self.new_preset_radio_button.setChecked(True)
@@ -51,8 +53,8 @@ class ComponentChoosePreset(component_common.ComponentBase):
         # add buttons at the bottom
         hlayout = aqt.qt.QHBoxLayout()
         hlayout.addStretch()
-        self.ok_button = aqt.qt.QPushButton('Ok')
-        self.cancel_button = aqt.qt.QPushButton('Cancel')
+        self.ok_button = aqt.qt.QPushButton(i18n.get_text('button_ok', lang))
+        self.cancel_button = aqt.qt.QPushButton(i18n.get_text('button_cancel', lang))
         hlayout.addWidget(self.ok_button)
         hlayout.addWidget(self.cancel_button)
 

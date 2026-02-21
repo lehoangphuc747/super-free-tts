@@ -11,6 +11,7 @@ from . import errors
 from . import gui_utils
 from . import text_utils
 from . import logging_utils
+from . import i18n
 logger = logging_utils.get_child_logger(__name__)
 
 
@@ -29,12 +30,13 @@ class ComponentRealtimeSide(component_common.ConfigComponentBase):
         self.existing_preset_fn = existing_preset_fn
 
         # create certain widgets upfront
-        self.side_enabled_checkbox = aqt.qt.QCheckBox(f'Enable Realtime TTS for {self.side.name} side')
+        lang = self.hypertts.get_ui_language()
+        self.side_enabled_checkbox = aqt.qt.QCheckBox(i18n.get_text('realtime_checkbox_enable_side', lang).format(self.side.name))
 
         self.text_preview_label = aqt.qt.QLabel()
         self.text_preview_label.setWordWrap(True)
 
-        self.preview_sound_button = aqt.qt.QPushButton('Preview Sound')
+        self.preview_sound_button = aqt.qt.QPushButton(i18n.get_text('realtime_button_preview_sound', lang))
 
     def configure_note(self, note):
         self.note = note
@@ -144,7 +146,7 @@ class ComponentRealtimeSide(component_common.ConfigComponentBase):
         self.voice_selection.sample_text_selected(text)
         self.note = self.hypertts.anki_utils.get_note_by_id(note_id)
         self.preview_sound_button.setEnabled(True)
-        self.preview_sound_button.setText('Preview Sound')
+        self.preview_sound_button.setText(i18n.get_text('realtime_button_preview_sound', self.hypertts.get_ui_language()))
 
 
     def draw(self):
@@ -161,9 +163,9 @@ class ComponentRealtimeSide(component_common.ConfigComponentBase):
 
         self.tabs = aqt.qt.QTabWidget()
 
-        self.tabs.addTab(self.source.draw(), 'Source')
-        self.tabs.addTab(self.voice_selection.draw(), 'Voice Selection')
-        self.tabs.addTab(self.text_processing.draw(), 'Text Processing')
+        self.tabs.addTab(self.source.draw(), i18n.get_text('tab_source', self.hypertts.get_ui_language()))
+        self.tabs.addTab(self.voice_selection.draw(), i18n.get_text('tab_voice_selection', self.hypertts.get_ui_language()))
+        self.tabs.addTab(self.text_processing.draw(), i18n.get_text('tab_text_processing', self.hypertts.get_ui_language()))
 
         # self.tabs.setEnabled(False)
 
@@ -172,9 +174,9 @@ class ComponentRealtimeSide(component_common.ConfigComponentBase):
         # add preview box
         # ===============
 
-        self.preview_groupbox = aqt.qt.QGroupBox('Preview')
+        self.preview_groupbox = aqt.qt.QGroupBox(i18n.get_text('realtime_group_preview', self.hypertts.get_ui_language()))
         preview_vlayout = aqt.qt.QVBoxLayout()
-        source_preview_label = aqt.qt.QLabel('Text to be pronounced:')
+        source_preview_label = aqt.qt.QLabel(i18n.get_text('realtime_label_text_pronounced', self.hypertts.get_ui_language()))
         preview_vlayout.addWidget(source_preview_label)
         preview_vlayout.addWidget(self.text_preview_label)
         preview_vlayout.addWidget(self.preview_sound_button)
@@ -195,7 +197,7 @@ class ComponentRealtimeSide(component_common.ConfigComponentBase):
 
     def sound_preview_button_pressed(self):
         logger.info('sound_preview_button_pressed')
-        self.preview_sound_button.setText('Playing Preview...')
+        self.preview_sound_button.setText(i18n.get_text('realtime_button_playing_preview', self.hypertts.get_ui_language()))
         self.preview_sound_button.setEnabled(False)
         self.hypertts.anki_utils.run_in_background(self.sound_preview_task, self.sound_preview_task_done)
 
@@ -216,7 +218,7 @@ class ComponentRealtimeSide(component_common.ConfigComponentBase):
 
     def finish_sound_preview(self):
         self.preview_sound_button.setEnabled(True)
-        self.preview_sound_button.setText('Preview Sound')
+        self.preview_sound_button.setText(i18n.get_text('realtime_button_preview_sound', self.hypertts.get_ui_language()))
 
 
         

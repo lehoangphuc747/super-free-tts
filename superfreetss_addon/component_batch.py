@@ -46,27 +46,27 @@ class ComponentBatch(component_common.ConfigComponentBase):
         self.apply_button = aqt.qt.QPushButton(i18n.get_text("batch_button_apply_to_notes", lang))
         self.cancel_button = aqt.qt.QPushButton(i18n.get_text("button_cancel", lang))
         self.profile_open_button = aqt.qt.QPushButton(i18n.get_text("button_open", lang))
-        self.profile_open_button.setToolTip('Open a different preset')
+        self.profile_open_button.setToolTip(i18n.get_text('batch_tooltip_open', lang))
         gui_utils.configure_secondary_button(self.profile_open_button, min_height=30, min_width=60, font_size=10)
 
         self.profile_duplicate_button = aqt.qt.QPushButton(i18n.get_text("button_duplicate", lang))
-        self.profile_duplicate_button.setToolTip('Duplicate an existing preset')
+        self.profile_duplicate_button.setToolTip(i18n.get_text('batch_tooltip_duplicate', lang))
         gui_utils.configure_secondary_button(self.profile_duplicate_button, min_height=30, min_width=80, font_size=10)
 
         self.profile_save_button = aqt.qt.QPushButton(i18n.get_text("button_save", lang))
-        self.profile_save_button.setToolTip('Save current preset')
+        self.profile_save_button.setToolTip(i18n.get_text('batch_tooltip_save', lang))
         gui_utils.configure_secondary_button(self.profile_save_button, min_height=30, min_width=60, font_size=10)
 
         self.profile_rename_button = aqt.qt.QPushButton(i18n.get_text("button_rename", lang))
-        self.profile_rename_button.setToolTip('Rename the current preset')
+        self.profile_rename_button.setToolTip(i18n.get_text('batch_tooltip_rename', lang))
         gui_utils.configure_secondary_button(self.profile_rename_button, min_height=30, min_width=70, font_size=10)
 
         self.profile_delete_button = aqt.qt.QPushButton(i18n.get_text("button_delete", lang))
-        self.profile_delete_button.setToolTip('Delete the current preset')
+        self.profile_delete_button.setToolTip(i18n.get_text('batch_tooltip_delete', lang))
         gui_utils.configure_secondary_button(self.profile_delete_button, min_height=30, min_width=60, font_size=10)
 
         self.profile_save_and_close_button = aqt.qt.QPushButton(i18n.get_text("button_save_and_close", lang))
-        self.profile_save_and_close_button.setToolTip('Save current preset and close dialog')
+        self.profile_save_and_close_button.setToolTip(i18n.get_text('batch_tooltip_save_and_close', lang))
         gui_utils.configure_primary_button(self.profile_save_and_close_button)
 
     def configure_browser(self, note_id_list):
@@ -293,8 +293,8 @@ class ComponentBatch(component_common.ConfigComponentBase):
             hlayout.addWidget(self.show_settings_button)
             
         # advanced toggle button (show/hide Text Processing tab)
-        self.advanced_toggle_button = aqt.qt.QPushButton('Advanced ▶')
-        self.advanced_toggle_button.setToolTip('Show advanced text processing options')
+        self.advanced_toggle_button = aqt.qt.QPushButton(i18n.get_text('button_advanced', lang) + ' \u25b6')
+        self.advanced_toggle_button.setToolTip(i18n.get_text('batch_tooltip_show_advanced', lang))
         gui_utils.configure_secondary_button(self.advanced_toggle_button, min_width=80)
         self.advanced_toggle_button.pressed.connect(self.toggle_advanced)
         hlayout.addWidget(self.advanced_toggle_button)
@@ -304,12 +304,12 @@ class ComponentBatch(component_common.ConfigComponentBase):
             self.preview_sound_button.setText(i18n.get_text("batch_button_select_note_to_preview", lang))
             self.preview_sound_button.setEnabled(False)
         else:
-            self.preview_sound_button.setText("Preview")
+            self.preview_sound_button.setText(i18n.get_text('batch_button_preview', lang))
         gui_utils.configure_secondary_button(self.preview_sound_button)
         hlayout.addWidget(self.preview_sound_button)
         
         # apply button
-        apply_text = "Apply"
+        apply_text = i18n.get_text('batch_button_apply', lang)
         self.apply_button.setText(apply_text)
         if self.editor_mode == False:
             gui_utils.configure_primary_button(self.apply_button)
@@ -317,11 +317,11 @@ class ComponentBatch(component_common.ConfigComponentBase):
 
         # save and close
         if self.editor_mode == True:
-            self.profile_save_and_close_button.setText("Save & Close")
+            self.profile_save_and_close_button.setText(i18n.get_text('batch_button_save_close', lang))
             hlayout.addWidget(self.profile_save_and_close_button)
 
         # cancel button
-        self.cancel_button.setText("Cancel")
+        self.cancel_button.setText(i18n.get_text('button_cancel', lang))
         gui_utils.configure_secondary_button(self.cancel_button, min_width=70)
         hlayout.addWidget(self.cancel_button)
         self.vlayout.addLayout(hlayout)
@@ -450,11 +450,11 @@ class ComponentBatch(component_common.ConfigComponentBase):
         lang = self.hypertts.get_ui_language()
         advanced_text = i18n.get_text("button_advanced", lang)
         if self.advanced_visible:
-            self.advanced_toggle_button.setText(f'{advanced_text} ▼')
-            self.advanced_toggle_button.setToolTip('Hide advanced text processing options')
+            self.advanced_toggle_button.setText(f'{advanced_text} \u25bc')
+            self.advanced_toggle_button.setToolTip(i18n.get_text('batch_tooltip_hide_advanced', lang))
         else:
-            self.advanced_toggle_button.setText(f'{advanced_text} ▶')
-            self.advanced_toggle_button.setToolTip('Show advanced text processing options')
+            self.advanced_toggle_button.setText(f'{advanced_text} \u25b6')
+            self.advanced_toggle_button.setToolTip(i18n.get_text('batch_tooltip_show_advanced', lang))
 
     @sc.event(Event.click_preview)
     def sound_preview_button_pressed(self):
@@ -473,13 +473,14 @@ class ComponentBatch(component_common.ConfigComponentBase):
         with self.hypertts.error_manager.get_single_action_context('Applying Audio to Notes'):
             self.get_model().validate()
             logger.info('apply_button_pressed')
+            lang = self.hypertts.get_ui_language()
             if self.editor_mode:
                 self.disable_bottom_buttons()
-                self.apply_button.setText('Loading...')
+                self.apply_button.setText(i18n.get_text('batch_button_loading', lang))
                 self.hypertts.anki_utils.run_in_background(self.apply_note_editor_task, self.apply_note_editor_task_done)
             else:
                 self.disable_bottom_buttons()
-                self.apply_button.setText('Loading...')
+                self.apply_button.setText(i18n.get_text('batch_button_loading', lang))
                 self.preview.apply_audio_to_notes()
 
     @sc.event(Event.click_cancel)

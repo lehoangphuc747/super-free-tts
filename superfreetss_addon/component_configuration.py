@@ -128,15 +128,19 @@ class Configuration(component_common.ConfigComponentBase):
     def get_service_enabled_widget_name(self, service):
         return f'{service.name}_enabled'
 
-    def draw_service_options(self, service, layout):
+    def create_service_enabled_toggle(self, service):
         lang = self.superfreetss.get_ui_language()
         service_enabled_checkbox = aqt.qt.QCheckBox(i18n.get_text("generic_enable", lang))
         service_enabled_checkbox.setObjectName(self.get_service_enabled_widget_name(service))
         service_enabled_checkbox.setChecked(service.enabled)
+        service_enabled_checkbox.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
+        gui_utils.configure_toggle_switch(service_enabled_checkbox)
         # store reference for Enable All toggle
         self.service_checkbox_map[service.name] = service_enabled_checkbox
         service_enabled_checkbox.stateChanged.connect(self.get_service_enable_change_fn(service))
-        layout.addWidget(service_enabled_checkbox)
+        return service_enabled_checkbox
+
+    def draw_service_options(self, service, layout, service_enabled_checkbox):
 
         configuration_options = service.configuration_options()
         options_gridlayout = aqt.qt.QGridLayout()
@@ -302,10 +306,10 @@ class Configuration(component_common.ConfigComponentBase):
 
         # layout dọc cho nội dung bên trong card service
         combined_service_vlayout = aqt.qt.QVBoxLayout()
-        combined_service_vlayout.setContentsMargins(16, 16, 16, 16)
+        combined_service_vlayout.setContentsMargins(12, 12, 12, 12)
         combined_service_vlayout.setSpacing(8)
 
-        # header row with badge
+        # header row with badge and toggle
         header_row = aqt.qt.QHBoxLayout()
         header_row.addWidget(get_service_header_label(service))
         
@@ -313,8 +317,10 @@ class Configuration(component_common.ConfigComponentBase):
         if service.service_fee == constants.ServiceFee.free:
             header_row.addSpacing(8)
             header_row.addWidget(gui_utils.get_status_badge("Free"))
-            
+        
         header_row.addStretch()
+        service_enabled_checkbox = self.create_service_enabled_toggle(service)
+        header_row.addWidget(service_enabled_checkbox)
         combined_service_vlayout.addLayout(header_row)
         combined_service_vlayout.addWidget(get_service_description_label(service))
 
@@ -334,7 +340,7 @@ class Configuration(component_common.ConfigComponentBase):
             buttons_layout.addStretch()
             buttons_layout.addWidget(logo)
             service_vlayout.addLayout(buttons_layout)
-        service_enabled_checkbox = self.draw_service_options(service, service_vlayout)
+        service_enabled_checkbox = self.draw_service_options(service, service_vlayout, service_enabled_checkbox)
         service_stack.setLayout(service_vlayout)
 
         # when cloudlanguagetools is enabled
@@ -395,6 +401,7 @@ class Configuration(component_common.ConfigComponentBase):
         lang = self.superfreetss.get_ui_language()
         # layout gốc cho phần nội dung bên phải (Content Panel)
         self.global_vlayout = aqt.qt.QVBoxLayout()
+        self.global_vlayout.setSpacing(8)
 
         # superfreetss pro is removed in Lite version
 
@@ -404,23 +411,34 @@ class Configuration(component_common.ConfigComponentBase):
         # lấy danh sách services một lần để dùng cho cả content và TOC
         service_list = self.get_service_list()
 
-        # tiêu đề khu vực cấu hình dịch vụ
+        # tiêu đề khu vực cấu hình dịch vụ (compact header)
+        header_container = aqt.qt.QWidget()
+        header_layout = aqt.qt.QVBoxLayout(header_container)
+        header_layout.setContentsMargins(0, 0, 0, 0)
+        header_layout.setSpacing(2)
         header_label = aqt.qt.QLabel(i18n.get_text("services_header_title", lang))
         header_font = header_label.font()
         header_font.setBold(True)
         header_label.setFont(header_font)
-        self.global_vlayout.addWidget(header_label)
+        header_layout.addWidget(header_label)
         # mô tả ngắn cho người dùng mới
         services_description_label = aqt.qt.QLabel(i18n.get_text("services_header_description", lang))
         services_description_label.setWordWrap(True)
-        self.global_vlayout.addWidget(services_description_label)
+        desc_font = services_description_label.font()
+        desc_font.setPointSize(max(constants.FONT_SIZE_BODY - 1, 8))
+        services_description_label.setFont(desc_font)
+        header_layout.addWidget(services_description_label)
+        self.global_vlayout.addWidget(header_container)
 
-        # thanh tìm kiếm dịch vụ (bên khu vực Dịch vụ TTS, không nằm ở TOC)
-        search_hlayout = aqt.qt.QHBoxLayout()
+        # thanh tìm kiếm dịch vụ (chuyển sang sidebar)
+        search_container = aqt.qt.QWidget()
+        search_layout = aqt.qt.QVBoxLayout(search_container)
+        search_layout.setContentsMargins(0, 0, 0, 0)
+        search_layout.setSpacing(6)
         self.search_input = aqt.qt.QLineEdit()
         self.search_input.setPlaceholderText(i18n.get_text("config_search_placeholder", lang))
-        search_hlayout.addWidget(self.search_input)
-        self.global_vlayout.addLayout(search_hlayout)
+        self.search_input.setClearButtonEnabled(True)
+        search_layout.addWidget(self.search_input)
 
         # scroll area cho danh sách services
         services_scroll_area = ScrollAreaCustom()
@@ -636,7 +654,7 @@ class Configuration(component_common.ConfigComponentBase):
                         text-align: left;
                         padding: 8px 12px;
                         border: none;
-                        border-bottom: 3px solid {constants.COLOR_ACCENT};
+                        border-left: 3px solid {constants.COLOR_ACCENT};
                         font-weight: bold;
                         background-color: palette(alternate-base);
                         border-radius: 0px;
@@ -669,6 +687,7 @@ class Configuration(component_common.ConfigComponentBase):
         btn_dict.setStyleSheet(get_tab_button_style(False))  # Start as inactive
 
         def switch_to_tts_tab():
+            show_services_tab()
             if active_tab_state["tab"] == "tts":
                 return
             active_tab_state["tab"] = "tts"
@@ -680,6 +699,7 @@ class Configuration(component_common.ConfigComponentBase):
             self.dict_tab_container.setVisible(False)
 
         def switch_to_dict_tab():
+            show_services_tab()
             if active_tab_state["tab"] == "dict":
                 return
             active_tab_state["tab"] = "dict"
@@ -693,12 +713,13 @@ class Configuration(component_common.ConfigComponentBase):
         btn_tts.pressed.connect(switch_to_tts_tab)
         btn_dict.pressed.connect(switch_to_dict_tab)
 
-        # Add tab buttons to a horizontal layout for compact display
-        tabs_hlayout = aqt.qt.QHBoxLayout()
-        tabs_hlayout.setSpacing(0)
-        tabs_hlayout.addWidget(btn_tts)
-        tabs_hlayout.addWidget(btn_dict)
-        toc_layout.addLayout(tabs_hlayout)
+        # Add tab buttons vertically for a sidebar-friendly layout
+        toc_layout.addWidget(btn_tts)
+        toc_layout.addWidget(btn_dict)
+
+        # Sidebar search (compact)
+        toc_layout.addSpacing(8)
+        toc_layout.addWidget(search_container)
 
         # Show TTS tab by default
         self.tts_tab_container.setVisible(True)
@@ -719,17 +740,15 @@ class Configuration(component_common.ConfigComponentBase):
             self._services_scroll_area.setVisible(False)
             self.about_container.setVisible(True)
             # Hide search bar and headers when in About tab
-            self.search_input.setVisible(False)
-            header_label.setVisible(False)
-            services_description_label.setVisible(False)
+            search_container.setVisible(False)
+            header_container.setVisible(False)
 
         def show_services_tab():
             self._services_scroll_area.setVisible(True)
             self.about_container.setVisible(False)
             # Show search bar and headers
-            self.search_input.setVisible(True)
-            header_label.setVisible(True)
-            services_description_label.setVisible(True)
+            search_container.setVisible(True)
+            header_container.setVisible(True)
 
         btn_about.pressed.connect(show_about)
         

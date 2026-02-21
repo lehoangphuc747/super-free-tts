@@ -168,6 +168,30 @@ def configure_secondary_button(button, min_height=30, min_width=80, font_size=9)
     font_btn.setPointSize(font_size)
     button.setFont(font_btn)
 
+def configure_toggle_switch(checkbox):
+    """Style a QCheckBox to look like a compact toggle switch."""
+    toggle_style = f"""
+        QCheckBox {{
+            spacing: 6px;
+        }}
+        QCheckBox::indicator {{
+            width: 34px;
+            height: 18px;
+            border-radius: 9px;
+            border: 1px solid #CBD5E1;
+            background: #E2E8F0;
+        }}
+        QCheckBox::indicator:checked {{
+            border: 1px solid {constants.COLOR_ACCENT};
+            background: {constants.COLOR_ACCENT};
+        }}
+        QCheckBox::indicator:disabled {{
+            border: 1px solid #CBD5E1;
+            background: #CBD5E1;
+        }}
+    """
+    checkbox.setStyleSheet(toggle_style)
+
 def get_help_url(url_path, utm_campaign, distinct_id=None):
     """Generate a help/docs URL with UTM parameters.
     
@@ -213,6 +237,7 @@ def get_superfreetss_label_header(variant='adaptive'):
 
     # Use the new SVG logo instead of text
     logo_widget = get_graphic(constants.GRAPHICS_LITE_BANNER)
+    logo_widget.setFixedSize(140, 32)
 
     version_label = aqt.qt.QLabel('v' + version.ANKI_SUPER_FREE_TTS_VERSION)
     version_label.setFont(get_version_font())

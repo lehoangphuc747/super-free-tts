@@ -12,8 +12,8 @@ logger = logging_utils.get_child_logger(__name__)
 
 class ErrorHandling(component_common.ConfigComponentBase):
 
-    def __init__(self, hypertts, dialog, model_change_callback):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss, dialog, model_change_callback):
+        self.superfreetss = superfreetss
         self.dialog = dialog
         self.model = config_models.ErrorHandling()
         self.model_change_callback = model_change_callback
@@ -24,7 +24,7 @@ class ErrorHandling(component_common.ConfigComponentBase):
         for error_dialog_type in constants.ErrorDialogType:
             self.realtime_tts_errors_dialog_type.addItem(error_dialog_type.name, error_dialog_type)
 
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.error_stats_reporting = aqt.qt.QCheckBox(i18n.get_text('errorhandling_checkbox_usage_stats', lang))
 
         self.disable_ssl_verification = aqt.qt.QCheckBox(i18n.get_text('errorhandling_checkbox_disable_ssl', lang))
@@ -45,7 +45,7 @@ class ErrorHandling(component_common.ConfigComponentBase):
             self.model_change_callback(self.model)
 
     def draw(self):
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         layout_widget = aqt.qt.QWidget()
         layout = aqt.qt.QVBoxLayout(layout_widget)
 

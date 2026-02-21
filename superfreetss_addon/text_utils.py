@@ -13,8 +13,8 @@ logger = logging_utils.get_child_logger(__name__)
 
 
 # Hỗ trợ cả hypertts-template (cũ) và superfreetss-template (mới) cho backward compatibility
-REGEXP_REALTIME_SIMPLE_TEMPLATE = '.*<(?:hypertts|superfreetss)-template\s+setting="(.*)"\s+version="([a-z1-9]*)"[^>]*>(.*)</(?:hypertts|superfreetss)-template>.*'
-REGEXP_REALTIME_ADVANCED_TEMPLATE = '.*<(?:hypertts|superfreetss)-template-advanced\s+setting="(.*)"\s+version="([a-z1-9]*)"[^>]*>\n(.*)</(?:hypertts|superfreetss)-template-advanced>.*'
+REGEXP_REALTIME_SIMPLE_TEMPLATE = '.*<(?:superfreetss|superfreetss)-template\s+setting="(.*)"\s+version="([a-z1-9]*)"[^>]*>(.*)</(?:superfreetss|superfreetss)-template>.*'
+REGEXP_REALTIME_ADVANCED_TEMPLATE = '.*<(?:superfreetss|superfreetss)-template-advanced\s+setting="(.*)"\s+version="([a-z1-9]*)"[^>]*>\n(.*)</(?:superfreetss|superfreetss)-template-advanced>.*'
 
 # convert characters which are problematic on SSML TTS APIs
 SSML_CONVERSION_MAP ={

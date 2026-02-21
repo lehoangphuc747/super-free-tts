@@ -9,8 +9,8 @@ from . import logging_utils
 logger = logging_utils.get_child_logger(__name__)
 
 class LabelPreview(component_common.ComponentBase):
-    def __init__(self, hypertts, note):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss, note):
+        self.superfreetss = superfreetss
         self.note = note
         self.batch_label = aqt.qt.QLabel()
         self.source_preview_label = aqt.qt.QLabel()
@@ -21,9 +21,9 @@ class LabelPreview(component_common.ComponentBase):
             self.batch_model = model
             self.batch_label.setText(str(self.batch_model))
             if self.batch_model.text_processing != None:
-                source_text, processed_text = self.hypertts.get_source_processed_text(self.note, self.batch_model.source, self.batch_model.text_processing)
+                source_text, processed_text = self.superfreetss.get_source_processed_text(self.note, self.batch_model.source, self.batch_model.text_processing)
                 self.source_preview_label.setText(f'<b>Generating Audio for:</b> {processed_text}')
-        except errors.HyperTTSError as error:
+        except errors.SuperFreeTTSError as error:
             message = f'<b>Encountered Error:</b> {str(error)}'
             self.source_preview_label.setText(message)
 

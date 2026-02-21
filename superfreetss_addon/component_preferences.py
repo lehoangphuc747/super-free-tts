@@ -13,14 +13,14 @@ from . import i18n
 logger = logging_utils.get_child_logger(__name__)
 
 class ComponentPreferences(component_common.ConfigComponentBase):
-    def __init__(self, hypertts, dialog):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss, dialog):
+        self.superfreetss = superfreetss
         self.dialog = dialog
         self.model = config_models.Preferences()
-        self.shortcuts = component_shortcuts.Shortcuts(self.hypertts, self.dialog, self.shortcuts_updated)
-        self.error_handling = component_errorhandling.ErrorHandling(self.hypertts, self.dialog, self.error_handling_updated)
+        self.shortcuts = component_shortcuts.Shortcuts(self.superfreetss, self.dialog, self.shortcuts_updated)
+        self.error_handling = component_errorhandling.ErrorHandling(self.superfreetss, self.dialog, self.error_handling_updated)
 
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         # Nút lưu / hủy
         self.save_button = aqt.qt.QPushButton(i18n.get_text('button_apply', lang))
         self.cancel_button = aqt.qt.QPushButton(i18n.get_text('button_cancel', lang))
@@ -58,7 +58,7 @@ class ComponentPreferences(component_common.ConfigComponentBase):
         gui_utils.configure_primary_button(self.save_button)        
 
     def draw(self, layout):
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         vlayout = aqt.qt.QVBoxLayout()
 
         # dialog header 
@@ -129,8 +129,8 @@ class ComponentPreferences(component_common.ConfigComponentBase):
         self.model_part_updated_common()
 
     def save_button_pressed(self):
-        with self.hypertts.error_manager.get_single_action_context('Saving Preferences'):
-            self.hypertts.save_preferences(self.model)
+        with self.superfreetss.error_manager.get_single_action_context('Saving Preferences'):
+            self.superfreetss.save_preferences(self.model)
             self.dialog.close()
 
     def cancel_button_pressed(self):

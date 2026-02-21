@@ -15,18 +15,18 @@ logger = logging_utils.get_child_logger(__name__)
 
 sc = stats.StatsContext(constants_events.EventContext.superfreettspro)
 
-class HyperTTSPro(component_common.ConfigComponentBase):
+class SuperFreeTTSPro(component_common.ConfigComponentBase):
     """Simplified About panel — replaces the old Pro/Trial/API Key UI."""
 
-    def __init__(self, hypertts, model_change_callback):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss, model_change_callback):
+        self.superfreetss = superfreetss
         self.model_change_callback = model_change_callback
-        self.model = config_models.HyperTTSProAccountConfig()
+        self.model = config_models.SuperFreeTTSProAccountConfig()
 
     def get_model(self):
         return self.model
 
-    def load_model(self, model: config_models.HyperTTSProAccountConfig):
+    def load_model(self, model: config_models.SuperFreeTTSProAccountConfig):
         self.model = model
 
     def report_model_change(self):

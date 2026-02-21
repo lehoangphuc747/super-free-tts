@@ -22,9 +22,9 @@ logger = logging_utils.get_child_logger(__name__)
 
 
 class AnkiSuperFreeTTSPlayer(aqt.tts.TTSProcessPlayer):
-    def __init__(self, taskman: aqt.taskman.TaskManager, hypertts) -> None:
+    def __init__(self, taskman: aqt.taskman.TaskManager, superfreetss) -> None:
         super(aqt.tts.TTSProcessPlayer, self).__init__(taskman)
-        self.hypertts = hypertts
+        self.superfreetss = superfreetss
         logger.info('created AnkiSuperFreeTTSPlayer')
 
     # this is called the first time Anki tries to play a TTS file
@@ -60,12 +60,12 @@ class AnkiSuperFreeTTSPlayer(aqt.tts.TTSProcessPlayer):
 
         logger.info(f'playing TTS sound for {tag}, voices: {tag.voices}')
 
-        audio_filename = self.hypertts.get_audio_filename_tts_tag(tag)
+        audio_filename = self.superfreetss.get_audio_filename_tts_tag(tag)
         return audio_filename
 
     # this is called on the main thread, after _play finishes
     def _on_done(self, ret: Future, cb: aqt.sound.OnDoneCallback) -> None:
-        with self.hypertts.get_tts_player_action_context():
+        with self.superfreetss.get_tts_player_action_context():
             audio_filename = ret.result()
             if audio_filename != None:
                 logger.info(f'got audio_filename: {audio_filename}')

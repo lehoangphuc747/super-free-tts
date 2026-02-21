@@ -44,7 +44,7 @@ class RuleActionContext():
 
     def __exit__(self, exception_type, exception_value, traceback):
         if exception_value != None:
-            if isinstance(exception_value, errors.HyperTTSError):
+            if isinstance(exception_value, errors.SuperFreeTTSError):
                 # this is a known exception. capture it.
                 self.exception = exception_value
                 self.success = False

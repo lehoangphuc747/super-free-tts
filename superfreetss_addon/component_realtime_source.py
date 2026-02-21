@@ -10,8 +10,8 @@ logger = logging_utils.get_child_logger(__name__)
 class RealtimeSource(component_common.ConfigComponentBase):
     SOURCE_CONFIG_STACK_ANKITTS = 0
 
-    def __init__(self, hypertts, field_list, model_change_callback):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss, field_list, model_change_callback):
+        self.superfreetss = superfreetss
         self.field_list = field_list
         self.model_change_callback = model_change_callback
 

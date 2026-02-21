@@ -142,11 +142,11 @@ class TextReplacementsTableModel(aqt.qt.QAbstractTableModel):
         return aqt.qt.QVariant()
 
 class TextProcessing(component_common.ConfigComponentBase):
-    def __init__(self, hypertts, model_change_callback):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss, model_change_callback):
+        self.superfreetss = superfreetss
         self.model_change_callback = model_change_callback
         self.model = config_models.TextProcessing()
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.textReplacementTableModel = TextReplacementsTableModel(self.model, self.model_change, lang)
 
     def get_model(self):
@@ -159,7 +159,7 @@ class TextProcessing(component_common.ConfigComponentBase):
         self.set_text_processing_rules_widget_state()
 
     def draw(self): # return scrollarea
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.scroll_area = aqt.qt.QScrollArea()
         self.scroll_area.setWidgetResizable(True)
         self.layout_widget = aqt.qt.QWidget()        
@@ -255,7 +255,7 @@ class TextProcessing(component_common.ConfigComponentBase):
         self.add_replace_simple_button.pressed.connect(lambda: self.textReplacementTableModel.add_replacement(constants.TextReplacementRuleType.Simple))
         self.add_replace_regex_button.pressed.connect(lambda: self.textReplacementTableModel.add_replacement(constants.TextReplacementRuleType.Regex))
         self.remove_replace_button.pressed.connect(self.delete_text_replacement)
-        self.typing_timer = self.hypertts.anki_utils.wire_typing_timer(self.sample_text_input, self.update_transformed_text)
+        self.typing_timer = self.superfreetss.anki_utils.wire_typing_timer(self.sample_text_input, self.update_transformed_text)
 
         self.set_text_processing_rules_widget_state()
 
@@ -315,7 +315,7 @@ class TextProcessing(component_common.ConfigComponentBase):
         # get the sample text
         sample_text = self.sample_text_input.text()
         if len(sample_text) == 0:
-            label_text = i18n.get_text('textproc_label_blank_text', self.hypertts.get_ui_language())
+            label_text = i18n.get_text('textproc_label_blank_text', self.superfreetss.get_ui_language())
         else:
             try:
                 # get the text replacements
@@ -325,7 +325,7 @@ class TextProcessing(component_common.ConfigComponentBase):
                 label_text = f'<b>error: {str(e)}</b>'
 
         # self.sample_text_transformed_label.setText(label_text)
-        self.hypertts.anki_utils.run_on_main(lambda: self.sample_text_transformed_label.setText(label_text))
+        self.superfreetss.anki_utils.run_on_main(lambda: self.sample_text_transformed_label.setText(label_text))
 
 
     def delete_text_replacement(self):

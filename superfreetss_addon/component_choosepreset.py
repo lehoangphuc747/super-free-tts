@@ -11,15 +11,15 @@ from . import i18n
 
 
 class ComponentChoosePreset(component_common.ComponentBase):
-    def __init__(self, hypertts, dialog):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss, dialog):
+        self.superfreetss = superfreetss
         self.dialog = dialog
         self.new_preset = True
         self.preset_id = None
         self.selected_ok = False
 
     def draw(self, layout):
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.vlayout = aqt.qt.QVBoxLayout()
 
         self.existing_or_new = aqt.qt.QButtonGroup()
@@ -33,7 +33,7 @@ class ComponentChoosePreset(component_common.ComponentBase):
 
         self.preset_combo_box = aqt.qt.QComboBox()
         # get preset list
-        self.preset_list: List[config_models.PresetInfo] = self.hypertts.get_preset_list()
+        self.preset_list: List[config_models.PresetInfo] = self.superfreetss.get_preset_list()
         for preset_info in self.preset_list:
             self.preset_combo_box.addItem(preset_info.name, preset_info)
         self.vlayout.addWidget(self.preset_combo_box)
@@ -93,11 +93,11 @@ class ComponentChoosePreset(component_common.ComponentBase):
 # factory methods
 
 class ChoosePresetDialog(aqt.qt.QDialog):
-    def __init__(self, hypertts):
+    def __init__(self, superfreetss):
         super(aqt.qt.QDialog, self).__init__()
         self.setStyleSheet(constants.STYLESHEET_DIALOG)
         self.setupUi()
-        self.choose_preset = ComponentChoosePreset(hypertts, self)
+        self.choose_preset = ComponentChoosePreset(superfreetss, self)
         self.choose_preset.draw(self.main_layout)
     
     def setupUi(self):
@@ -109,12 +109,12 @@ class ChoosePresetDialog(aqt.qt.QDialog):
         self.closed = True
         self.accept()
 
-def get_preset_id(hypertts, editor_context: config_models.EditorContext) -> Optional[str]:
-    dialog = ChoosePresetDialog(hypertts)
-    hypertts.anki_utils.wait_for_dialog_input(dialog, constants.DIALOG_ID_CHOOSE_PRESET)
+def get_preset_id(superfreetss, editor_context: config_models.EditorContext) -> Optional[str]:
+    dialog = ChoosePresetDialog(superfreetss)
+    superfreetss.anki_utils.wait_for_dialog_input(dialog, constants.DIALOG_ID_CHOOSE_PRESET)
     if dialog.choose_preset.selected_ok:
         if dialog.choose_preset.new_preset:
-            return component_batch.create_dialog_editor_new_preset(hypertts, editor_context)
+            return component_batch.create_dialog_editor_new_preset(superfreetss, editor_context)
         else:
             return dialog.choose_preset.preset_id
     else:

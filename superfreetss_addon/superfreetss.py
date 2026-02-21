@@ -497,13 +497,13 @@ class SuperFreeTTS():
                 field_format = f'cloze:{realtime_side_model.source.field_name}'
             elif realtime_side_model.source.field_type == constants.AnkiTTSFieldType.ClozeOnly:
                 field_format = f'cloze-only:{realtime_side_model.source.field_name}'
-            return '{{tts ' + f"""{audio_language.name} {constants.TTS_TAG_HYPERTTS_PRESET}={setting_key} voices={constants.TTS_TAG_VOICE}:{field_format}""" + '}}'
+            return '{{tts ' + f"""{audio_language.name} {constants.TTS_TAG_SUPERFREETSS_PRESET}={setting_key} voices={constants.TTS_TAG_VOICE}:{field_format}""" + '}}'
         else:
             raise Exception(f'unsupported RealtimeSourceType: {realtime_side_model.source.mode}')
 
     def extract_preset(self, extra_args_array):
         # Backward compat: accept both hypertts_preset (old) and superfreetss_preset (new)
-        subset = [x for x in extra_args_array if constants.TTS_TAG_HYPERTTS_PRESET in x or 'hypertts_preset' in x]
+        subset = [x for x in extra_args_array if constants.TTS_TAG_SUPERFREETSS_PRESET in x or 'hypertts_preset' in x]
         if len(subset) != 1:
             logger.error(f'could not process TTS tag extra args: {extra_args_array}')
             raise errors.TTSTagProcessingError()

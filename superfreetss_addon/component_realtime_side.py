@@ -19,8 +19,8 @@ class ComponentRealtimeSide(component_common.ConfigComponentBase):
     MIN_WIDTH_COMPONENT = 600
     MIN_HEIGHT = 400
 
-    def __init__(self, hypertts, dialog, side, card_ord, model_change_callback, existing_preset_fn):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss, dialog, side, card_ord, model_change_callback, existing_preset_fn):
+        self.superfreetss = superfreetss
         self.dialog = dialog
         self.side = side
         self.card_ord = card_ord
@@ -30,7 +30,7 @@ class ComponentRealtimeSide(component_common.ConfigComponentBase):
         self.existing_preset_fn = existing_preset_fn
 
         # create certain widgets upfront
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.side_enabled_checkbox = aqt.qt.QCheckBox(i18n.get_text('realtime_checkbox_enable_side', lang).format(self.side.name))
 
         self.text_preview_label = aqt.qt.QLabel()
@@ -40,16 +40,16 @@ class ComponentRealtimeSide(component_common.ConfigComponentBase):
 
     def configure_note(self, note):
         self.note = note
-        field_list = self.hypertts.get_fields_from_note(self.note)
-        self.source = component_realtime_source.RealtimeSource(self.hypertts, field_list, self.source_model_updated)
-        self.voice_selection = component_voiceselection.VoiceSelection(self.hypertts, self.dialog, self.voice_selection_model_updated)
-        self.text_processing = component_text_processing.TextProcessing(self.hypertts, self.text_processing_model_updated)
+        field_list = self.superfreetss.get_fields_from_note(self.note)
+        self.source = component_realtime_source.RealtimeSource(self.superfreetss, field_list, self.source_model_updated)
+        self.voice_selection = component_voiceselection.VoiceSelection(self.superfreetss, self.dialog, self.voice_selection_model_updated)
+        self.text_processing = component_text_processing.TextProcessing(self.superfreetss, self.text_processing_model_updated)
 
     def load_existing_preset(self):
-        existing_preset_name = self.hypertts.card_template_has_tts_tag(self.note, self.side, self.card_ord)
+        existing_preset_name = self.superfreetss.card_template_has_tts_tag(self.note, self.side, self.card_ord)
         if existing_preset_name != None:
             self.existing_preset_fn(existing_preset_name)
-            realtime_model = self.hypertts.load_realtime_config(existing_preset_name)
+            realtime_model = self.superfreetss.load_realtime_config(existing_preset_name)
             if self.side == constants.AnkiCardSide.Front:
                 logger.info(f'loading realtime_model.front: {realtime_model.front}')
                 self.load_model(realtime_model.front)
@@ -58,7 +58,7 @@ class ComponentRealtimeSide(component_common.ConfigComponentBase):
                 self.load_model(realtime_model.back)
 
     def load_batch(self, batch_name):
-        batch = self.hypertts.load_batch_config(batch_name)
+        batch = self.superfreetss.load_batch_config(batch_name)
         self.load_model(batch)
 
     def load_model(self, model):
@@ -102,7 +102,7 @@ class ComponentRealtimeSide(component_common.ConfigComponentBase):
         try:
             # does the realtime model pass validation ?
             if self.get_model().side_enabled:
-                tts_tags = self.hypertts.render_card_template_extract_tts_tag(self.get_model(),
+                tts_tags = self.superfreetss.render_card_template_extract_tts_tag(self.get_model(),
                     self.note, self.side, self.card_ord)
                 self.preview_process_tts_tags(tts_tags)
         except errors.ModelValidationError as e:
@@ -112,7 +112,7 @@ class ComponentRealtimeSide(component_common.ConfigComponentBase):
     def preview_process_tts_tags(self, tts_tags):
         logger.info('preview_process_tts_tags')
         # retain elements which are TTS tags
-        tts_tags = self.hypertts.anki_utils.extract_tts_tags(tts_tags)
+        tts_tags = self.superfreetss.anki_utils.extract_tts_tags(tts_tags)
         if len(tts_tags) == 0:
             logger.error('no TTS tags found')
             return []
@@ -125,7 +125,7 @@ class ComponentRealtimeSide(component_common.ConfigComponentBase):
         try:
             processed_text = text_utils.process_text(tts_tag.field_text, self.get_model().text_processing)
             self.text_preview_label.setText(processed_text)
-        except errors.HyperTTSError as e:
+        except errors.SuperFreeTTSError as e:
             warning_message = f'could not process text: {str(e)}'
             logger.warning(warning_message)
             self.text_preview_label.setText(warning_message)
@@ -144,9 +144,9 @@ class ComponentRealtimeSide(component_common.ConfigComponentBase):
 
     def sample_selected(self, note_id, text):
         self.voice_selection.sample_text_selected(text)
-        self.note = self.hypertts.anki_utils.get_note_by_id(note_id)
+        self.note = self.superfreetss.anki_utils.get_note_by_id(note_id)
         self.preview_sound_button.setEnabled(True)
-        self.preview_sound_button.setText(i18n.get_text('realtime_button_preview_sound', self.hypertts.get_ui_language()))
+        self.preview_sound_button.setText(i18n.get_text('realtime_button_preview_sound', self.superfreetss.get_ui_language()))
 
 
     def draw(self):
@@ -163,9 +163,9 @@ class ComponentRealtimeSide(component_common.ConfigComponentBase):
 
         self.tabs = aqt.qt.QTabWidget()
 
-        self.tabs.addTab(self.source.draw(), i18n.get_text('tab_source', self.hypertts.get_ui_language()))
-        self.tabs.addTab(self.voice_selection.draw(), i18n.get_text('tab_voice_selection', self.hypertts.get_ui_language()))
-        self.tabs.addTab(self.text_processing.draw(), i18n.get_text('tab_text_processing', self.hypertts.get_ui_language()))
+        self.tabs.addTab(self.source.draw(), i18n.get_text('tab_source', self.superfreetss.get_ui_language()))
+        self.tabs.addTab(self.voice_selection.draw(), i18n.get_text('tab_voice_selection', self.superfreetss.get_ui_language()))
+        self.tabs.addTab(self.text_processing.draw(), i18n.get_text('tab_text_processing', self.superfreetss.get_ui_language()))
 
         # self.tabs.setEnabled(False)
 
@@ -174,9 +174,9 @@ class ComponentRealtimeSide(component_common.ConfigComponentBase):
         # add preview box
         # ===============
 
-        self.preview_groupbox = aqt.qt.QGroupBox(i18n.get_text('realtime_group_preview', self.hypertts.get_ui_language()))
+        self.preview_groupbox = aqt.qt.QGroupBox(i18n.get_text('realtime_group_preview', self.superfreetss.get_ui_language()))
         preview_vlayout = aqt.qt.QVBoxLayout()
-        source_preview_label = aqt.qt.QLabel(i18n.get_text('realtime_label_text_pronounced', self.hypertts.get_ui_language()))
+        source_preview_label = aqt.qt.QLabel(i18n.get_text('realtime_label_text_pronounced', self.superfreetss.get_ui_language()))
         preview_vlayout.addWidget(source_preview_label)
         preview_vlayout.addWidget(self.text_preview_label)
         preview_vlayout.addWidget(self.preview_sound_button)
@@ -197,28 +197,28 @@ class ComponentRealtimeSide(component_common.ConfigComponentBase):
 
     def sound_preview_button_pressed(self):
         logger.info('sound_preview_button_pressed')
-        self.preview_sound_button.setText(i18n.get_text('realtime_button_playing_preview', self.hypertts.get_ui_language()))
+        self.preview_sound_button.setText(i18n.get_text('realtime_button_playing_preview', self.superfreetss.get_ui_language()))
         self.preview_sound_button.setEnabled(False)
-        self.hypertts.anki_utils.run_in_background(self.sound_preview_task, self.sound_preview_task_done)
+        self.superfreetss.anki_utils.run_in_background(self.sound_preview_task, self.sound_preview_task_done)
 
     def sound_preview_task(self):
         logger.info('sound_preview_task')
-        tts_tags = self.hypertts.render_card_template_extract_tts_tag(self.get_model(),
+        tts_tags = self.superfreetss.render_card_template_extract_tts_tag(self.get_model(),
             self.note, self.side, self.card_ord)
         text = tts_tags[0].field_text
         logger.info(f'playing text: [{text}]')
-        self.hypertts.play_realtime_audio(self.get_model(), text)
+        self.superfreetss.play_realtime_audio(self.get_model(), text)
         return True
 
     def sound_preview_task_done(self, result):
         logger.info('sound_preview_task_done')
-        with self.hypertts.error_manager.get_single_action_context('Playing Realtime Sound Preview'):
+        with self.superfreetss.error_manager.get_single_action_context('Playing Realtime Sound Preview'):
             result = result.result()
-        self.hypertts.anki_utils.run_on_main(self.finish_sound_preview)
+        self.superfreetss.anki_utils.run_on_main(self.finish_sound_preview)
 
     def finish_sound_preview(self):
         self.preview_sound_button.setEnabled(True)
-        self.preview_sound_button.setText(i18n.get_text('realtime_button_preview_sound', self.hypertts.get_ui_language()))
+        self.preview_sound_button.setText(i18n.get_text('realtime_button_preview_sound', self.superfreetss.get_ui_language()))
 
 
         

@@ -28,16 +28,16 @@ class ComponentBatch(component_common.ConfigComponentBase):
     MIN_WIDTH_COMPONENT = 600
     MIN_HEIGHT = 250
 
-    def __init__(self, hypertts, dialog):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss, dialog):
+        self.superfreetss = superfreetss
         self.dialog = dialog
-        self.batch_model = config_models.BatchConfig(self.hypertts.anki_utils)
+        self.batch_model = config_models.BatchConfig(self.superfreetss.anki_utils)
         self.model_changed = False
         self.note = None
         self.last_saved_preset_id = None
         self.editor_new_preset_id = None
 
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
 
         # create certain widgets upfront
         self.profile_name_label = aqt.qt.QLabel()
@@ -71,14 +71,14 @@ class ComponentBatch(component_common.ConfigComponentBase):
 
     def configure_browser(self, note_id_list):
         self.note_id_list = note_id_list
-        field_list = self.hypertts.get_all_fields_from_notes(note_id_list)
+        field_list = self.superfreetss.get_all_fields_from_notes(note_id_list)
         if len(field_list) == 0:
             raise Exception(f'could not find any fields in the selected {len(note_id_list)} notes')
-        self.source = component_source.BatchSource(self.hypertts, field_list, self.source_model_updated)
-        self.target = component_target.BatchTarget(self.hypertts, field_list, self.target_model_updated)
-        self.voice_selection = component_voiceselection.VoiceSelection(self.hypertts, self.dialog, self.voice_selection_model_updated)
-        self.text_processing = component_text_processing.TextProcessing(self.hypertts, self.text_processing_model_updated)
-        self.preview = component_batch_preview.BatchPreview(self.hypertts, self.dialog, self.note_id_list, 
+        self.source = component_source.BatchSource(self.superfreetss, field_list, self.source_model_updated)
+        self.target = component_target.BatchTarget(self.superfreetss, field_list, self.target_model_updated)
+        self.voice_selection = component_voiceselection.VoiceSelection(self.superfreetss, self.dialog, self.voice_selection_model_updated)
+        self.text_processing = component_text_processing.TextProcessing(self.superfreetss, self.text_processing_model_updated)
+        self.preview = component_batch_preview.BatchPreview(self.superfreetss, self.dialog, self.note_id_list, 
             self.sample_selected, self.apply_notes_batch_start, self.apply_notes_batch_end)
         self.editor_mode = False
         self.show_settings = True
@@ -89,20 +89,20 @@ class ComponentBatch(component_common.ConfigComponentBase):
         self.editor = editor_context.editor
         self.add_mode = editor_context.add_mode
         field_list = list(self.note.keys())
-        self.source = component_source.BatchSource(self.hypertts, field_list, self.source_model_updated)
-        self.target = component_target.BatchTarget(self.hypertts, field_list, self.target_model_updated)
-        self.voice_selection = component_voiceselection.VoiceSelection(self.hypertts, self.dialog, self.voice_selection_model_updated)
-        self.text_processing = component_text_processing.TextProcessing(self.hypertts, self.text_processing_model_updated)
-        self.preview = component_label_preview.LabelPreview(self.hypertts, self.note)
+        self.source = component_source.BatchSource(self.superfreetss, field_list, self.source_model_updated)
+        self.target = component_target.BatchTarget(self.superfreetss, field_list, self.target_model_updated)
+        self.voice_selection = component_voiceselection.VoiceSelection(self.superfreetss, self.dialog, self.voice_selection_model_updated)
+        self.text_processing = component_text_processing.TextProcessing(self.superfreetss, self.text_processing_model_updated)
+        self.preview = component_label_preview.LabelPreview(self.superfreetss, self.note)
         self.editor_mode = True
 
     def new_preset(self, preset_name = None):
         """start with a new preset"""
         if preset_name == None:
-            new_preset_name = self.hypertts.get_next_preset_name()
+            new_preset_name = self.superfreetss.get_next_preset_name()
         else:
             new_preset_name = preset_name
-        self.batch_model = config_models.BatchConfig(self.hypertts.anki_utils)
+        self.batch_model = config_models.BatchConfig(self.superfreetss.anki_utils)
         self.batch_model.name = new_preset_name
         self.profile_name_label.setText(new_preset_name)
         self.model_changed = True
@@ -112,8 +112,8 @@ class ComponentBatch(component_common.ConfigComponentBase):
     def new_preset_after_delete(self):
         """new preset after user deleted the existing one"""
         # note: don't create new model, just reset the uuid, otherwise members of BatchConfig won't be initialized
-        new_preset_name = self.hypertts.get_next_preset_name()
-        self.batch_model.reset_uuid(self.hypertts.anki_utils)
+        new_preset_name = self.superfreetss.get_next_preset_name()
+        self.batch_model.reset_uuid(self.superfreetss.anki_utils)
         self.batch_model.name = new_preset_name
         self.profile_name_label.setText(new_preset_name)
         self.model_changed = True
@@ -121,7 +121,7 @@ class ComponentBatch(component_common.ConfigComponentBase):
         self.disable_delete_profile_button()
 
     def load_preset(self, preset_id):
-        model = self.hypertts.load_preset(preset_id)
+        model = self.superfreetss.load_preset(preset_id)
         self.load_model(model)
         self.enable_delete_profile_button()
         self.focus_apply_button()
@@ -172,7 +172,7 @@ class ComponentBatch(component_common.ConfigComponentBase):
         if self.note != None:
             if self.batch_model.source != None and self.batch_model.text_processing != None:
                 try:
-                    source_text, processed_text = self.hypertts.get_source_processed_text(self.note, self.batch_model.source, self.batch_model.text_processing)
+                    source_text, processed_text = self.superfreetss.get_source_processed_text(self.note, self.batch_model.source, self.batch_model.text_processing)
                     self.voice_selection.sample_text_selected(processed_text)
                 except Exception as e:
                     logger.warning(f'could not set sample text: {e}')
@@ -210,13 +210,13 @@ class ComponentBatch(component_common.ConfigComponentBase):
 
     def sample_selected(self, note_id, text):
         self.voice_selection.sample_text_selected(text)
-        self.note = self.hypertts.anki_utils.get_note_by_id(note_id)
+        self.note = self.superfreetss.anki_utils.get_note_by_id(note_id)
         self.preview_sound_button.setEnabled(True)
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.preview_sound_button.setText(i18n.get_text("batch_button_preview_sound", lang))
 
     def draw(self, layout):
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.vlayout = aqt.qt.QVBoxLayout()
 
         # profile management
@@ -348,7 +348,7 @@ class ComponentBatch(component_common.ConfigComponentBase):
         self.splitter.setSizes([0, self.MIN_WIDTH_COMPONENT])
         self.dialog.setMinimumSize(self.MIN_WIDTH_COMPONENT, self.get_min_size())
         self.show_settings = False
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.show_settings_button.setText(i18n.get_text("batch_button_show_settings", lang))
 
     def display_settings(self):
@@ -356,14 +356,14 @@ class ComponentBatch(component_common.ConfigComponentBase):
         self.splitter.setSizes([self.MIN_WIDTH_COMPONENT, self.MIN_WIDTH_COMPONENT])
         self.dialog.setMinimumSize(self.MIN_WIDTH_COMPONENT * 2, self.get_min_size())
         self.show_settings = True
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.show_settings_button.setText(i18n.get_text("batch_button_hide_settings", lang))
 
     def choose_existing_preset(self, title):
         # returns preset_id if user chose a preset, None otherwise
-        preset_list = self.hypertts.get_preset_list()
+        preset_list = self.superfreetss.get_preset_list()
         preset_name_list = [preset.name for preset in preset_list]
-        chosen_preset_row, retvalue = self.hypertts.anki_utils.ask_user_choose_from_list(self.dialog, title, preset_name_list)
+        chosen_preset_row, retvalue = self.superfreetss.anki_utils.ask_user_choose_from_list(self.dialog, title, preset_name_list)
         logger.info(f'chosen preset row: {chosen_preset_row}, retvalue: {retvalue}')
         if retvalue == 1:
             preset_id = preset_list[chosen_preset_row].id
@@ -371,20 +371,20 @@ class ComponentBatch(component_common.ConfigComponentBase):
         return None
 
     def open_profile_button_pressed(self):
-        with self.hypertts.error_manager.get_single_action_context('Opening Profile'):
-            lang = self.hypertts.get_ui_language()
+        with self.superfreetss.error_manager.get_single_action_context('Opening Profile'):
+            lang = self.superfreetss.get_ui_language()
             preset_id = self.choose_existing_preset(i18n.get_text("dialog_choose_preset_open", lang))
             if preset_id != None:
                 self.load_preset(preset_id)
 
     def duplicate_profile_button_pressed(self):
-        with self.hypertts.error_manager.get_single_action_context('Duplicating Profile'):
-            lang = self.hypertts.get_ui_language()
+        with self.superfreetss.error_manager.get_single_action_context('Duplicating Profile'):
+            lang = self.superfreetss.get_ui_language()
             preset_id = self.choose_existing_preset(i18n.get_text("dialog_choose_preset_duplicate", lang))
             if preset_id != None:
                 # load preset, and change uuid
                 self.load_preset(preset_id)
-                self.batch_model.reset_uuid(self.hypertts.anki_utils)
+                self.batch_model.reset_uuid(self.superfreetss.anki_utils)
                 # rename the preset
                 new_profile_name = self.batch_model.name + ' (copy)'
                 self.batch_model.name = new_profile_name
@@ -396,8 +396,8 @@ class ComponentBatch(component_common.ConfigComponentBase):
 
 
     def save_profile(self):
-        with self.hypertts.error_manager.get_single_action_context('Saving Preset'):
-            self.hypertts.save_preset(self.get_model())
+        with self.superfreetss.error_manager.get_single_action_context('Saving Preset'):
+            self.superfreetss.save_preset(self.get_model())
             self.model_changed = False
             self.last_saved_preset_id = self.get_model().uuid
             self.update_save_profile_button_state()
@@ -406,8 +406,8 @@ class ComponentBatch(component_common.ConfigComponentBase):
     def save_profile_if_changed(self):
         if self.model_changed:
             # does the user want to save the profile ?
-            lang = self.hypertts.get_ui_language()
-            proceed = self.hypertts.anki_utils.ask_user(i18n.get_text("dialog_save_changes", lang), self.dialog)
+            lang = self.superfreetss.get_ui_language()
+            proceed = self.superfreetss.anki_utils.ask_user(i18n.get_text("dialog_save_changes", lang), self.dialog)
             if proceed:
                 self.save_profile()
 
@@ -416,8 +416,8 @@ class ComponentBatch(component_common.ConfigComponentBase):
 
     def rename_profile_button_pressed(self):
         current_profile_name = self.batch_model.name
-        lang = self.hypertts.get_ui_language()
-        new_profile_name, result = self.hypertts.anki_utils.ask_user_get_text(
+        lang = self.superfreetss.get_ui_language()
+        new_profile_name, result = self.superfreetss.anki_utils.ask_user_get_text(
             i18n.get_text("dialog_enter_new_name", lang), self.dialog, current_profile_name, i18n.get_text("dialog_rename_title", lang))
         if result == 1:
             # user pressed ok, rename profile
@@ -431,11 +431,11 @@ class ComponentBatch(component_common.ConfigComponentBase):
     def delete_profile_button_pressed(self):
         profile_name = self.batch_model.name
         preset_id = self.batch_model.uuid
-        lang = self.hypertts.get_ui_language()
-        proceed = self.hypertts.anki_utils.ask_user(i18n.get_text("dialog_delete_confirm", lang).format(profile_name), self.dialog)
+        lang = self.superfreetss.get_ui_language()
+        proceed = self.superfreetss.anki_utils.ask_user(i18n.get_text("dialog_delete_confirm", lang).format(profile_name), self.dialog)
         if proceed == True:
-            with self.hypertts.error_manager.get_single_action_context('Deleting Preset'):
-                self.hypertts.delete_preset(preset_id)
+            with self.superfreetss.error_manager.get_single_action_context('Deleting Preset'):
+                self.superfreetss.delete_preset(preset_id)
                 self.new_preset_after_delete()
 
     def show_settings_button_pressed(self):
@@ -447,7 +447,7 @@ class ComponentBatch(component_common.ConfigComponentBase):
     def toggle_advanced(self):
         self.advanced_visible = not self.advanced_visible
         self.tabs.setTabVisible(self.text_processing_tab_index, self.advanced_visible)
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         advanced_text = i18n.get_text("button_advanced", lang)
         if self.advanced_visible:
             self.advanced_toggle_button.setText(f'{advanced_text} \u25bc')
@@ -459,9 +459,9 @@ class ComponentBatch(component_common.ConfigComponentBase):
     @sc.event(Event.click_preview)
     def sound_preview_button_pressed(self):
         self.disable_bottom_buttons()
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.preview_sound_button.setText(i18n.get_text("easy_button_previewing", lang))
-        self.hypertts.anki_utils.run_in_background(self.sound_preview_task, self.sound_preview_task_done)
+        self.superfreetss.anki_utils.run_in_background(self.sound_preview_task, self.sound_preview_task_done)
 
     def profile_save_and_close_button_pressed(self):
         self.save_profile()
@@ -470,14 +470,14 @@ class ComponentBatch(component_common.ConfigComponentBase):
 
     @sc.event(Event.click_add)
     def apply_button_pressed(self):
-        with self.hypertts.error_manager.get_single_action_context('Applying Audio to Notes'):
+        with self.superfreetss.error_manager.get_single_action_context('Applying Audio to Notes'):
             self.get_model().validate()
             logger.info('apply_button_pressed')
-            lang = self.hypertts.get_ui_language()
+            lang = self.superfreetss.get_ui_language()
             if self.editor_mode:
                 self.disable_bottom_buttons()
                 self.apply_button.setText(i18n.get_text('batch_button_loading', lang))
-                self.hypertts.anki_utils.run_in_background(self.apply_note_editor_task, self.apply_note_editor_task_done)
+                self.superfreetss.anki_utils.run_in_background(self.apply_note_editor_task, self.apply_note_editor_task_done)
             else:
                 self.disable_bottom_buttons()
                 self.apply_button.setText(i18n.get_text('batch_button_loading', lang))
@@ -489,35 +489,35 @@ class ComponentBatch(component_common.ConfigComponentBase):
 
     def apply_note_editor_task(self):
         logger.debug('apply_note_editor_task')
-        self.hypertts.editor_note_add_audio(self.batch_model, self.editor_context)
+        self.superfreetss.editor_note_add_audio(self.batch_model, self.editor_context)
         return True
 
     def apply_note_editor_task_done(self, result):
         logger.debug('apply_note_editor_task_done')
-        with self.hypertts.error_manager.get_single_action_context('Adding Audio to Note'):
+        with self.superfreetss.error_manager.get_single_action_context('Adding Audio to Note'):
             result = result.result()
             self.dialog.close()
-        self.hypertts.anki_utils.run_on_main(self.finish_apply_note_editor)
+        self.superfreetss.anki_utils.run_on_main(self.finish_apply_note_editor)
     
     def finish_apply_note_editor(self):
         self.enable_bottom_buttons()
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.apply_button.setText(i18n.get_text("batch_button_apply_to_note", lang))
 
     def sound_preview_task(self):
         if self.note == None:
             raise errors.NoNotesSelectedPreview()
-        self.hypertts.preview_note_audio(self.batch_model, self.note, None)
+        self.superfreetss.preview_note_audio(self.batch_model, self.note, None)
         return True
 
     def sound_preview_task_done(self, result):
-        with self.hypertts.error_manager.get_single_action_context('Playing Sound Preview'):
+        with self.superfreetss.error_manager.get_single_action_context('Playing Sound Preview'):
             result = result.result()
-        self.hypertts.anki_utils.run_on_main(self.finish_sound_preview)
+        self.superfreetss.anki_utils.run_on_main(self.finish_sound_preview)
 
     def finish_sound_preview(self):
         self.enable_bottom_buttons()
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.preview_sound_button.setText(i18n.get_text("batch_button_preview_sound", lang))
 
     def disable_bottom_buttons(self):
@@ -535,11 +535,11 @@ class ComponentBatch(component_common.ConfigComponentBase):
 
     def batch_interrupted_button_setup(self):
         self.enable_bottom_buttons()
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.apply_button.setText(i18n.get_text("batch_button_apply_to_notes", lang))
 
     def batch_completed_button_setup(self):
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.cancel_button.setText(i18n.get_text("button_close", lang))
         # Keep cancel button as secondary, maybe emphasize it's done?
         # Actually standard secondary is fine for "Close"
@@ -549,9 +549,9 @@ class ComponentBatch(component_common.ConfigComponentBase):
 
     def apply_notes_batch_end(self, completed):
         if completed:
-            self.hypertts.anki_utils.run_on_main(self.batch_completed_button_setup)
+            self.superfreetss.anki_utils.run_on_main(self.batch_completed_button_setup)
         else:
-            self.hypertts.anki_utils.run_on_main(self.batch_interrupted_button_setup)
+            self.superfreetss.anki_utils.run_on_main(self.batch_interrupted_button_setup)
 
         
 
@@ -559,43 +559,43 @@ class ComponentBatch(component_common.ConfigComponentBase):
 # =========================================================================================
 
 class BatchDialog(aqt.qt.QDialog):
-    def __init__(self, hypertts):
+    def __init__(self, superfreetss):
         super(aqt.qt.QDialog, self).__init__()
-        self.hypertts = hypertts
+        self.superfreetss = superfreetss
         # Cho phép dialog Collection Mode thu nhỏ/phóng to
         self.setWindowFlag(aqt.qt.Qt.WindowType.WindowMinMaxButtonsHint, True)
         self.setSizeGripEnabled(True)  # Cho phép kéo thay đổi kích thước
         self.setSizePolicy(aqt.qt.QSizePolicy.Policy.Expanding, aqt.qt.QSizePolicy.Policy.Expanding)
         self.setStyleSheet(constants.STYLESHEET_DIALOG)
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.setWindowTitle(i18n.get_text("dialog_collection_title", lang))
         self.main_layout = aqt.qt.QVBoxLayout(self)        
 
     def configure_browser_existing_preset(self, note_id_list, preset_id: str):
-        self.batch_component = ComponentBatch(self.hypertts, self)
+        self.batch_component = ComponentBatch(self.superfreetss, self)
         self.batch_component.configure_browser(note_id_list)
         self.batch_component.draw(self.main_layout)
         self.batch_component.load_preset(preset_id)
         self.batch_component.collapse_settings()           
 
     def configure_browser_new_preset(self, note_id_list, new_preset_name: str):
-        self.batch_component = ComponentBatch(self.hypertts, self)
+        self.batch_component = ComponentBatch(self.superfreetss, self)
         self.batch_component.configure_browser(note_id_list)
         self.batch_component.new_preset(new_preset_name)
         self.batch_component.draw(self.main_layout)
         self.batch_component.display_settings()
 
     def configure_editor_new_preset(self, editor_context: config_models.EditorContext):
-        batch_component = ComponentBatch(self.hypertts, self)
+        batch_component = ComponentBatch(self.superfreetss, self)
         batch_component.configure_editor(editor_context)
-        new_preset_name = self.hypertts.get_next_preset_name()
+        new_preset_name = self.superfreetss.get_next_preset_name()
         batch_component.new_preset(new_preset_name)
         batch_component.draw(self.main_layout)
         batch_component.no_settings_editor()
         self.batch_component = batch_component
 
     def configure_editor_existing_preset(self, editor_context: config_models.EditorContext, preset_id: str):
-        batch_component = ComponentBatch(self.hypertts, self)
+        batch_component = ComponentBatch(self.superfreetss, self)
         batch_component.configure_editor(editor_context)
         batch_component.draw(self.main_layout)
         batch_component.load_preset(preset_id)
@@ -616,31 +616,31 @@ class BatchDialog(aqt.qt.QDialog):
         self.accept()
 
 @sc.event(Event.open, EventMode.advanced_browser_existing_preset)
-def create_component_batch_browser_existing_preset(hypertts, note_id_list, preset_id: str) -> ComponentBatch:
+def create_component_batch_browser_existing_preset(superfreetss, note_id_list, preset_id: str) -> ComponentBatch:
     if len(note_id_list) == 0:
         raise errors.NoNotesSelected()
-    dialog = BatchDialog(hypertts)
+    dialog = BatchDialog(superfreetss)
     dialog.configure_browser_existing_preset(note_id_list, preset_id)
-    hypertts.anki_utils.wait_for_dialog_input(dialog, constants.DIALOG_ID_BATCH)
+    superfreetss.anki_utils.wait_for_dialog_input(dialog, constants.DIALOG_ID_BATCH)
 
 @sc.event(Event.open, EventMode.advanced_browser_new_preset)
-def create_component_batch_browser_new_preset(hypertts, note_id_list, new_preset_name: str) -> ComponentBatch:
+def create_component_batch_browser_new_preset(superfreetss, note_id_list, new_preset_name: str) -> ComponentBatch:
     if len(note_id_list) == 0:
         raise errors.NoNotesSelected()    
-    dialog = BatchDialog(hypertts)
+    dialog = BatchDialog(superfreetss)
     dialog.configure_browser_new_preset(note_id_list, new_preset_name)
-    hypertts.anki_utils.wait_for_dialog_input(dialog, constants.DIALOG_ID_BATCH)
+    superfreetss.anki_utils.wait_for_dialog_input(dialog, constants.DIALOG_ID_BATCH)
 
 @sc.event(Event.open, EventMode.advanced_editor_existing_preset)
-def create_dialog_editor_existing_preset(hypertts, editor_context: config_models.EditorContext, preset_id: str):
-    dialog = BatchDialog(hypertts)
+def create_dialog_editor_existing_preset(superfreetss, editor_context: config_models.EditorContext, preset_id: str):
+    dialog = BatchDialog(superfreetss)
     dialog.configure_editor_existing_preset(editor_context, preset_id)
-    hypertts.anki_utils.wait_for_dialog_input(dialog, constants.DIALOG_ID_BATCH)    
+    superfreetss.anki_utils.wait_for_dialog_input(dialog, constants.DIALOG_ID_BATCH)    
 
 @sc.event(Event.open, EventMode.advanced_editor_new_preset)
-def create_dialog_editor_new_preset(hypertts, editor_context: config_models.EditorContext):
+def create_dialog_editor_new_preset(superfreetss, editor_context: config_models.EditorContext):
     """get a new preset_id from the editor, and return the new preset_id"""
-    dialog = BatchDialog(hypertts)
+    dialog = BatchDialog(superfreetss)
     dialog.configure_editor_new_preset(editor_context)
-    hypertts.anki_utils.wait_for_dialog_input(dialog, constants.DIALOG_ID_BATCH)
+    superfreetss.anki_utils.wait_for_dialog_input(dialog, constants.DIALOG_ID_BATCH)
     return dialog.batch_component.editor_new_preset_id

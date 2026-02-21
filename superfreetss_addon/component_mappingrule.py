@@ -14,12 +14,12 @@ logger = logging_utils.get_child_logger(__name__)
 
 class ComponentMappingRule(component_common.ConfigComponentBase):
 
-    def __init__(self, hypertts, editor_context: config_models.EditorContext, 
+    def __init__(self, superfreetss, editor_context: config_models.EditorContext, 
             model_change_callback, 
             model_delete_callback,
             request_started_callback,
             request_finished_callback):
-        self.hypertts = hypertts
+        self.superfreetss = superfreetss
         self.model = None
         self.editor_context = editor_context
         self.model_change_callback = model_change_callback
@@ -31,7 +31,7 @@ class ComponentMappingRule(component_common.ConfigComponentBase):
         logger.info('load_model')
         self.model = model
         try:
-            self.preset_name_label.setText(self.hypertts.get_preset_name(self.model.preset_id))
+            self.preset_name_label.setText(self.superfreetss.get_preset_name(self.model.preset_id))
         except errors.PresetNotFound as e:
             self.preset_name_label.setText(constants.GUI_TEXT_UNKNOWN_PRESET)
         if self.model.rule_type == constants.MappingRuleType.NoteType:
@@ -48,7 +48,7 @@ class ComponentMappingRule(component_common.ConfigComponentBase):
 
     def draw(self, gridlayout, gridlayout_index):
         logger.debug('draw')
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
 
         self.preview_button = aqt.qt.QPushButton(i18n.get_text('mappingrule_button_preview', lang))
         self.preview_button.setToolTip(i18n.get_text('mappingrule_tooltip_preview', lang))
@@ -133,14 +133,14 @@ class ComponentMappingRule(component_common.ConfigComponentBase):
         logger.debug('preview_button_clicked')
         self.disable_preview_run()
         self.request_started_callback()
-        self.hypertts.anki_utils.run_in_background(self.sound_preview_task, self.sound_preview_task_done)
+        self.superfreetss.anki_utils.run_in_background(self.sound_preview_task, self.sound_preview_task_done)
 
     def edit_button_clicked(self):
-        with self.hypertts.error_manager.get_single_action_context('Editing Preset'):
-            component_batch.create_dialog_editor_existing_preset(self.hypertts, self.editor_context, self.model.preset_id)
+        with self.superfreetss.error_manager.get_single_action_context('Editing Preset'):
+            component_batch.create_dialog_editor_existing_preset(self.superfreetss, self.editor_context, self.model.preset_id)
 
     def delete_button_clicked(self):
-        # self.hypertts.anki_utils.run_on_main(self.model_delete_callback)
+        # self.superfreetss.anki_utils.run_on_main(self.model_delete_callback)
         self.model_delete_callback()
 
     def disable_preview_run(self):
@@ -159,14 +159,14 @@ class ComponentMappingRule(component_common.ConfigComponentBase):
     def sound_preview_task(self):
         if self.editor_context.note == None:
             raise errors.NoNotesSelectedPreview()
-        preset = self.hypertts.load_preset(self.model.preset_id)
-        self.hypertts.preview_note_audio_editor(preset, self.editor_context)
+        preset = self.superfreetss.load_preset(self.model.preset_id)
+        self.superfreetss.preview_note_audio_editor(preset, self.editor_context)
         return True
 
     def sound_preview_task_done(self, result):
-        with self.hypertts.error_manager.get_single_action_context('Playing Sound Preview'):
+        with self.superfreetss.error_manager.get_single_action_context('Playing Sound Preview'):
             result = result.result()
-        self.hypertts.anki_utils.run_on_main(self.finish_sound_preview)
+        self.superfreetss.anki_utils.run_on_main(self.finish_sound_preview)
     
     def finish_sound_preview(self):
         self.enable_preview_run()
@@ -179,19 +179,19 @@ class ComponentMappingRule(component_common.ConfigComponentBase):
         logger.debug('run_button_clicked')
         self.disable_preview_run()
         self.request_started_callback()
-        self.hypertts.anki_utils.run_in_background(self.apply_note_editor_task, self.apply_note_editor_task_done)
+        self.superfreetss.anki_utils.run_in_background(self.apply_note_editor_task, self.apply_note_editor_task_done)
 
     def apply_note_editor_task(self):
         logger.debug('apply_note_editor_task')
-        preset = self.hypertts.load_preset(self.model.preset_id)
-        self.hypertts.editor_note_add_audio(preset, self.editor_context)
+        preset = self.superfreetss.load_preset(self.model.preset_id)
+        self.superfreetss.editor_note_add_audio(preset, self.editor_context)
         return True
 
     def apply_note_editor_task_done(self, result):
         logger.debug('apply_note_editor_task_done')
-        with self.hypertts.error_manager.get_single_action_context('Adding Audio to Note'):
+        with self.superfreetss.error_manager.get_single_action_context('Adding Audio to Note'):
             result = result.result()
-        self.hypertts.anki_utils.run_on_main(self.finish_apply_note_editor)
+        self.superfreetss.anki_utils.run_on_main(self.finish_apply_note_editor)
     
     def finish_apply_note_editor(self):
         self.enable_preview_run()

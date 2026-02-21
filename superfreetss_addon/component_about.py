@@ -10,8 +10,8 @@ from . import logging_utils
 logger = logging_utils.get_child_logger(__name__)
 
 class AboutComponent(component_common.ConfigComponentBase):
-    def __init__(self, hypertts):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss):
+        self.superfreetss = superfreetss
 
     def get_model(self):
         return None
@@ -20,7 +20,7 @@ class AboutComponent(component_common.ConfigComponentBase):
         pass
 
     def draw(self, layout):
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         
         # Main container with some padding
         container = aqt.qt.QWidget()

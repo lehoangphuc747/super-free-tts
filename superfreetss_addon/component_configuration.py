@@ -33,8 +33,8 @@ sc = stats.StatsContext(constants_events.EventContext.services)
 class Configuration(component_common.ConfigComponentBase):
 
     @sc.event(Event.open)
-    def __init__(self, hypertts, dialog):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss, dialog):
+        self.superfreetss = superfreetss
         self.dialog = dialog
         self.model = config_models.Configuration()
         self.service_stack_map = {}
@@ -48,7 +48,7 @@ class Configuration(component_common.ConfigComponentBase):
         self._services_container_widget = None
         self.enable_model_change = False
         self.api_key_valid = False
-        self.about_component = component_about.AboutComponent(hypertts)
+        self.about_component = component_about.AboutComponent(superfreetss)
 
     def get_model(self):
         return self.model
@@ -129,7 +129,7 @@ class Configuration(component_common.ConfigComponentBase):
         return f'{service.name}_enabled'
 
     def draw_service_options(self, service, layout):
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         service_enabled_checkbox = aqt.qt.QCheckBox(i18n.get_text("generic_enable", lang))
         service_enabled_checkbox.setObjectName(self.get_service_enabled_widget_name(service))
         service_enabled_checkbox.setChecked(service.enabled)
@@ -215,7 +215,7 @@ class Configuration(component_common.ConfigComponentBase):
                 
                 # Special logic for PiperTTS Models Path: Add "Download Models" button
                 if service.name == "PiperTTS" and key == "models_path":
-                     lang = self.hypertts.get_ui_language()
+                     lang = self.superfreetss.get_ui_language()
                      dl_btn = aqt.qt.QPushButton(i18n.get_text("piper_button_download_models", lang))
                      def open_downloader(le=lineedit):
                          dest_dir = le.text()
@@ -276,7 +276,7 @@ class Configuration(component_common.ConfigComponentBase):
 
         def get_service_description_label(service):
             # Dùng i18n để mô tả rõ ràng hơn theo ngôn ngữ giao diện
-            lang = self.hypertts.get_ui_language()
+            lang = self.superfreetss.get_ui_language()
             fee_key = f"service_fee_{service.service_fee.name}"
             # type_key = f"service_type_{service.service_type.name}_description"
             fee_text = i18n.get_text(fee_key, lang)
@@ -383,14 +383,14 @@ class Configuration(component_common.ConfigComponentBase):
     def get_service_list(self):
         def service_sort_key(service):
             return service.name
-        # HyperTTS Lite: Only show Free services
-        service_list = [s for s in self.hypertts.service_manager.get_all_services() if s.service_fee == constants.ServiceFee.free]
+        # SuperFreeTTS Lite: Only show Free services
+        service_list = [s for s in self.superfreetss.service_manager.get_all_services() if s.service_fee == constants.ServiceFee.free]
         service_list.sort(key=service_sort_key)
         return service_list
 
 
     def draw(self, layout):
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         # layout gốc cho phần nội dung bên phải (Content Panel)
         self.global_vlayout = aqt.qt.QVBoxLayout()
 
@@ -729,9 +729,9 @@ class Configuration(component_common.ConfigComponentBase):
 
     @sc.event(Event.click_save)
     def save_button_pressed(self):
-        with self.hypertts.error_manager.get_single_action_context('Saving Service Configuration'):
-            self.hypertts.save_configuration(self.model)
-            self.hypertts.reconfigure_service_manager()
+        with self.superfreetss.error_manager.get_single_action_context('Saving Service Configuration'):
+            self.superfreetss.save_configuration(self.model)
+            self.superfreetss.reconfigure_service_manager()
             self.dialog.close()
 
     @sc.event(Event.click_cancel)

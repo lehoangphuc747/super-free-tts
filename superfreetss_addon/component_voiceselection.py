@@ -19,8 +19,8 @@ logger = logging_utils.get_child_logger(__name__)
 sc = stats.StatsContext(constants_events.EventContext.voice_selection)
 
 class VoiceSelection(component_common.ConfigComponentBase):
-    def __init__(self, hypertts, dialog, model_change_callback):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss, dialog, model_change_callback):
+        self.superfreetss = superfreetss
         self.dialog = dialog
         self.model_change_callback = model_change_callback
         self.enable_model_change_callback = True
@@ -52,7 +52,7 @@ class VoiceSelection(component_common.ConfigComponentBase):
 
 
     def get_voices(self):
-        self.voice_list = self.hypertts.service_manager.full_voice_list()
+        self.voice_list = self.superfreetss.service_manager.full_voice_list()
 
         languages = set()
         audio_languages = set()
@@ -97,7 +97,7 @@ class VoiceSelection(component_common.ConfigComponentBase):
             # here we need to select the correct voice, based on what the user has saved in their preset (single voice)
             # we have access to the voice_id, but we need to locate the proper voice
             voice_id = model.voice.voice_id
-            voice = self.hypertts.service_manager.locate_voice(voice_id)
+            voice = self.superfreetss.service_manager.locate_voice(voice_id)
             voice_index = self.voice_list.index(voice)
             self.voices_combobox.setCurrentIndex(voice_index)
             # self.voice_options_layout
@@ -134,7 +134,7 @@ class VoiceSelection(component_common.ConfigComponentBase):
     def sample_text_selected(self, text):
         logger.debug(f'sample_text_selected: {text}')
         self.sample_text = text
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.play_sample_button.setText(i18n.get_text("voice_button_play_sample", lang))
         self.play_sample_button.setEnabled(True)
 
@@ -168,7 +168,7 @@ class VoiceSelection(component_common.ConfigComponentBase):
         # 3. populate filters
         # 4. draw all voices
 
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
 
         self.scroll_area = aqt.qt.QScrollArea()
         self.scroll_area.setWidgetResizable(True)
@@ -348,16 +348,16 @@ class VoiceSelection(component_common.ConfigComponentBase):
 
 
     def play_sample(self):
-        with self.hypertts.error_manager.get_single_action_context('Playing Voice Sample'):
+        with self.superfreetss.error_manager.get_single_action_context('Playing Voice Sample'):
             logger.info('play_sample')
             selected_voice = self.get_selected_voice()
             # get options
             options = self.current_voice_options
             logger.debug(f'play_sample, sample_text: {self.sample_text}')
-            self.hypertts.play_sound(self.sample_text, selected_voice.voice_id, options)
+            self.superfreetss.play_sound(self.sample_text, selected_voice.voice_id, options)
 
     def add_voice(self):
-        with self.hypertts.error_manager.get_single_action_context('Adding Voice'):
+        with self.superfreetss.error_manager.get_single_action_context('Adding Voice'):
             selected_voice = self.get_selected_voice()
             options = copy.copy(self.current_voice_options)
 
@@ -523,7 +523,7 @@ class VoiceSelection(component_common.ConfigComponentBase):
             return down
         
         # draw all voices
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         row = 0
         for voice_entry in self.voice_selection_model.voice_list:
             column_index = 0
@@ -531,7 +531,7 @@ class VoiceSelection(component_common.ConfigComponentBase):
             voice_id = voice_entry.voice_id
             assert isinstance(voice_id, voice_module.TtsVoiceId_v3), f"Expected voice_id to be TtsVoiceId_v3, got {type(voice_id).__name__}"
             # need to locate the voice for this voice_id
-            voice = self.hypertts.service_manager.locate_voice(voice_id)
+            voice = self.superfreetss.service_manager.locate_voice(voice_id)
             # generate the string representation
             voice_with_options_str = voice_module.generate_voice_with_options_str(voice, voice_entry.options)
             self.voice_list_grid_layout.addWidget(aqt.qt.QLabel(voice_with_options_str), row, column_index, 1, 1)

@@ -15,8 +15,8 @@ logger = logging_utils.get_child_logger(__name__)
 
 class ComponentPresetMappingRules(component_common.ConfigComponentBase):
 
-    def __init__(self, hypertts, dialog, deck_note_type: config_models.DeckNoteType, editor_context: config_models.EditorContext):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss, dialog, deck_note_type: config_models.DeckNoteType, editor_context: config_models.EditorContext):
+        self.superfreetss = superfreetss
         self.dialog = dialog
         self.model = config_models.PresetMappingRules()
         self.deck_note_type = deck_note_type
@@ -43,7 +43,7 @@ class ComponentPresetMappingRules(component_common.ConfigComponentBase):
         return self.model
 
     def draw(self, layout):
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.vlayout = aqt.qt.QVBoxLayout()
 
         # dialog header 
@@ -71,7 +71,7 @@ class ComponentPresetMappingRules(component_common.ConfigComponentBase):
         # note type
         hlayout = aqt.qt.QHBoxLayout()
         hlayout.addWidget(aqt.qt.QLabel(f'<b>Note Type:</b>'))
-        self.note_type_label = aqt.qt.QLabel(self.hypertts.anki_utils.get_note_type_name(self.deck_note_type.model_id))
+        self.note_type_label = aqt.qt.QLabel(self.superfreetss.anki_utils.get_note_type_name(self.deck_note_type.model_id))
         hlayout.addWidget(self.note_type_label)
         hlayout.addStretch()
         deck_note_type_vlayout.addLayout(hlayout)
@@ -79,7 +79,7 @@ class ComponentPresetMappingRules(component_common.ConfigComponentBase):
         # deck info
         hlayout = aqt.qt.QHBoxLayout()
         hlayout.addWidget(aqt.qt.QLabel(f'<b>Deck:</b>'))
-        self.deck_name_label = aqt.qt.QLabel(self.hypertts.anki_utils.get_deck_name(self.deck_note_type.deck_id))
+        self.deck_name_label = aqt.qt.QLabel(self.superfreetss.anki_utils.get_deck_name(self.deck_note_type.deck_id))
         hlayout.addWidget(self.deck_name_label)
         hlayout.addStretch()
         deck_note_type_vlayout.addLayout(hlayout)
@@ -222,7 +222,7 @@ class ComponentPresetMappingRules(component_common.ConfigComponentBase):
     def draw_mapping_rules(self):
         for absolute_index, subset_index, rule in self.get_model().iterate_related_rules(self.deck_note_type):
             self.rules_components.append(component_mappingrule.ComponentMappingRule(
-                self.hypertts, 
+                self.superfreetss, 
                 self.editor_context, 
                 self.get_mapping_rule_updated_fn(absolute_index),
                 self.get_mapping_rule_deleted_fn(absolute_index),
@@ -237,10 +237,10 @@ class ComponentPresetMappingRules(component_common.ConfigComponentBase):
 
     def choose_preset(self) -> str:
         """returns the preset id of the chosen preset, or None if user cancels"""
-        return component_choosepreset.get_preset_id(self.hypertts, self.editor_context)
+        return component_choosepreset.get_preset_id(self.superfreetss, self.editor_context)
 
     def add_rule_button_pressed(self):
-        with self.hypertts.error_manager.get_single_action_context('Adding Preset Rule'):
+        with self.superfreetss.error_manager.get_single_action_context('Adding Preset Rule'):
             preset_id = self.choose_preset()
             if preset_id != None:
                 new_rule = config_models.MappingRule(preset_id=preset_id, 
@@ -263,16 +263,16 @@ class ComponentPresetMappingRules(component_common.ConfigComponentBase):
         self.dialog.close()
 
     def save(self):
-        with self.hypertts.error_manager.get_single_action_context('Saving Rules'):
+        with self.superfreetss.error_manager.get_single_action_context('Saving Rules'):
             logger.info('saving mapping rules')
-            self.hypertts.save_mapping_rules(self.get_model())
+            self.superfreetss.save_mapping_rules(self.get_model())
             self.model_changed = False
             self.update_button_states()
 
     def save_if_changed(self):
         if self.model_changed:
             # does the user want to save the profile ?
-            proceed = self.hypertts.anki_utils.ask_user('Save changes to mapping rules ?', self.dialog)
+            proceed = self.superfreetss.anki_utils.ask_user('Save changes to mapping rules ?', self.dialog)
             if proceed:
                 self.save()
 
@@ -305,31 +305,31 @@ class ComponentPresetMappingRules(component_common.ConfigComponentBase):
 
     def preview_all_button_pressed(self):
         logger.debug('preview_all_button_pressed')
-        self.hypertts.preview_all_mapping_rules(self.editor_context, self.get_model())
+        self.superfreetss.preview_all_mapping_rules(self.editor_context, self.get_model())
 
     def run_all_button_pressed(self):
         logger.debug('run_all_button_pressed')
-        self.hypertts.apply_all_mapping_rules(self.editor_context, self.get_model())
+        self.superfreetss.apply_all_mapping_rules(self.editor_context, self.get_model())
 
 # factory and setup functions for ComponentPresetMappingRules
 # ===========================================================
 
 class PresetMappingRulesDialog(aqt.qt.QDialog):
-    def __init__(self, hypertts, deck_note_type: config_models.DeckNoteType, editor_context: config_models.EditorContext):
+    def __init__(self, superfreetss, deck_note_type: config_models.DeckNoteType, editor_context: config_models.EditorContext):
         super(aqt.qt.QDialog, self).__init__()
         # Cho phép dialog Preset Mapping Rules thu nhỏ/phóng to
         self.setWindowFlag(aqt.qt.Qt.WindowType.WindowMinMaxButtonsHint, True)
         self.setSizeGripEnabled(True)  # Cho phép kéo thay đổi kích thước
         self.setStyleSheet(constants.STYLESHEET_DIALOG)
         self.setupUi()
-        self.mapping_rules = ComponentPresetMappingRules(hypertts, 
+        self.mapping_rules = ComponentPresetMappingRules(superfreetss, 
             self, deck_note_type, editor_context)
         self.mapping_rules.draw(self.main_layout)
-        self.mapping_rules.load_model(hypertts.load_mapping_rules())        
+        self.mapping_rules.load_model(superfreetss.load_mapping_rules())        
     
     def setupUi(self):
         # dùng i18n cho tiêu đề dialog
-        # lưu ý: trong lite version này, chỉ cần đọc ngôn ngữ từ Preferences qua hypertts trong mapping_rules
+        # lưu ý: trong lite version này, chỉ cần đọc ngôn ngữ từ Preferences qua superfreetss trong mapping_rules
         # nhưng setupUi được gọi trước khi mapping_rules được tạo, nên tạm để constants
         self.setWindowTitle(constants.GUI_PRESET_MAPPING_RULES_DIALOG_TITLE)
         self.setSizePolicy(aqt.qt.QSizePolicy.Policy.Expanding, aqt.qt.QSizePolicy.Policy.Expanding)
@@ -347,6 +347,6 @@ class PresetMappingRulesDialog(aqt.qt.QDialog):
         self.closed = True
         self.accept()
 
-def create_dialog(hypertts, deck_note_type: config_models.DeckNoteType, editor_context: config_models.EditorContext) -> ComponentPresetMappingRules:
-    dialog = PresetMappingRulesDialog(hypertts, deck_note_type, editor_context)
-    hypertts.anki_utils.wait_for_dialog_input(dialog, constants.DIALOG_ID_PRESET_MAPPING_RULES)
+def create_dialog(superfreetss, deck_note_type: config_models.DeckNoteType, editor_context: config_models.EditorContext) -> ComponentPresetMappingRules:
+    dialog = PresetMappingRulesDialog(superfreetss, deck_note_type, editor_context)
+    superfreetss.anki_utils.wait_for_dialog_input(dialog, constants.DIALOG_ID_PRESET_MAPPING_RULES)

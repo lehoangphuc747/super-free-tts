@@ -147,13 +147,13 @@ else:
         current_script_path = os.path.realpath(__file__)
         current_script_dir = os.path.dirname(current_script_path)
         return os.path.join(current_script_dir, 'services')
-    service_manager = servicemanager.ServiceManager(services_dir(), f'{constants.DIR_HYPERTTS_ADDON}.{constants.DIR_SERVICES}', False)
+    service_manager = servicemanager.ServiceManager(services_dir(), f'{constants.DIR_SUPERFREETSS_ADDON}.{constants.DIR_SERVICES}', False)
     service_manager.init_services()
-    hyper_tts = superfreetss.SuperFreeTTS(ankiutils, service_manager)
+    superfreetss = superfreetss.SuperFreeTTS(ankiutils, service_manager)
     # configure services based on config
-    with hyper_tts.error_manager.get_single_action_context('Configuring Services'):
-        service_manager.configure(hyper_tts.get_configuration())
-    gui.init(hyper_tts)
+    with superfreetss.error_manager.get_single_action_context('Configuring Services'):
+        service_manager.configure(superfreetss.get_configuration())
+    gui.init(superfreetss)
 
 
     # stats

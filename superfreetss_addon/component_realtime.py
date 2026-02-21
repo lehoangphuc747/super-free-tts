@@ -17,8 +17,8 @@ class ComponentRealtime(component_common.ConfigComponentBase):
     MIN_WIDTH_COMPONENT = 600
     MIN_HEIGHT = 400
 
-    def __init__(self, hypertts, dialog, card_ord):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss, dialog, card_ord):
+        self.superfreetss = superfreetss
         self.dialog = dialog
         self.card_ord = card_ord
         self.model = config_models.RealtimeConfig()
@@ -33,9 +33,9 @@ class ComponentRealtime(component_common.ConfigComponentBase):
     def configure_note(self, note):
         self.manage_apply_button = False
         self.note = note
-        self.front = component_realtime_side.ComponentRealtimeSide(self.hypertts, 
+        self.front = component_realtime_side.ComponentRealtimeSide(self.superfreetss, 
             self.dialog, constants.AnkiCardSide.Front, self.card_ord, self.front_model_updated, self.existing_preset_found)
-        self.back = component_realtime_side.ComponentRealtimeSide(self.hypertts, 
+        self.back = component_realtime_side.ComponentRealtimeSide(self.superfreetss, 
             self.dialog, constants.AnkiCardSide.Back, self.card_ord, self.back_model_updated, self.existing_preset_found)
         self.front.configure_note(note)
         self.back.configure_note(note)
@@ -74,7 +74,7 @@ class ComponentRealtime(component_common.ConfigComponentBase):
             self.enable_apply_button()
 
     def draw(self, layout):
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.vlayout = aqt.qt.QVBoxLayout()
 
         # header
@@ -139,9 +139,9 @@ class ComponentRealtime(component_common.ConfigComponentBase):
         gui_utils.configure_primary_button(self.apply_button)
 
     def apply_button_pressed(self):
-        with self.hypertts.error_manager.get_single_action_context('Applying Realtime Audio to Card'):
+        with self.superfreetss.error_manager.get_single_action_context('Applying Realtime Audio to Card'):
             self.get_model().validate()
-            self.hypertts.persist_realtime_config_update_note_type(self.get_model(), 
+            self.superfreetss.persist_realtime_config_update_note_type(self.get_model(), 
                 self.note, self.card_ord, self.existing_preset_name)
             self.dialog.close()
 

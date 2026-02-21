@@ -10,93 +10,92 @@ class SuperFreeTTSError(Exception):
     pass
 
 # backward compat alias
-HyperTTSError = SuperFreeTTSError
 
-class CollectionNotOpen(HyperTTSError):
+class CollectionNotOpen(SuperFreeTTSError):
     def __init__(self):
         message = "Anki Collection not open. Please ensure your Anki profile is loaded and that you can access your notes."
         super().__init__(message)    
 
-class FieldNotFoundError(HyperTTSError):
+class FieldNotFoundError(SuperFreeTTSError):
     def __init__(self, field_name):
         message = f'Field <b>{field_name}</b> not found'
         super().__init__(message)    
 
-class SourceFieldNotFoundError(HyperTTSError):
+class SourceFieldNotFoundError(SuperFreeTTSError):
     def __init__(self, field_name):
         message = f'Source Field <b>{field_name}</b> not found'
         super().__init__(message)    
 
 
-class TargetFieldNotFoundError(HyperTTSError):
+class TargetFieldNotFoundError(SuperFreeTTSError):
     def __init__(self, field_name):
         message = f'Target Field <b>{field_name}</b> not found'
         super().__init__(message)    
 
-class FieldEmptyError(HyperTTSError):
+class FieldEmptyError(SuperFreeTTSError):
     def __init__(self, field_name):
         message = f'Field <b>{field_name}</b> is empty'
         super().__init__(message)    
 
-class SourceTextEmpty(HyperTTSError):
+class SourceTextEmpty(SuperFreeTTSError):
     def __init__(self):
         message = 'Source text is empty'
         super().__init__(message)    
 
-class TextReplacementError(HyperTTSError):
+class TextReplacementError(SuperFreeTTSError):
     def __init__(self, text, pattern, replacement, error_msg):
         message = f'Could not process text replacement (pattern: {pattern}, replacement: {replacement}, text: {text}): {error_msg}'
         super().__init__(message)
 
-class AudioNotFoundError(HyperTTSError):
+class AudioNotFoundError(SuperFreeTTSError):
     def __init__(self, source_text, voice):
         message = f'Audio not found for [{source_text}] (voice: {voice})'
         super().__init__(message)
         self.source_text = source_text
         self.voice = voice
 
-class AudioNotFoundAnyVoiceError(HyperTTSError):
+class AudioNotFoundAnyVoiceError(SuperFreeTTSError):
     def __init__(self, source_text):
         message = f'Audio not found in any voices for [{source_text}]'
         super().__init__(message)
         self.source_text = source_text
 
-class VoiceNotFound(HyperTTSError):
+class VoiceNotFound(SuperFreeTTSError):
     def __init__(self, voice_data):
         message = f'Voice not found: {voice_data}]'
         super().__init__(message)
         self.voice_data = voice_data
 
-class VoiceIdNotFound(HyperTTSError):
+class VoiceIdNotFound(SuperFreeTTSError):
     def __init__(self, voice_id):
         message = f'Voice not found: {voice_id}]'
         super().__init__(message)
         self.voice_id = voice_id
 
-class PresetNotFound(HyperTTSError):
+class PresetNotFound(SuperFreeTTSError):
     def __init__(self, preset_name):
         message = f'Preset not found: {preset_name}]'
         super().__init__(message)
 
-class RealtimePresetNotFound(HyperTTSError):
+class RealtimePresetNotFound(SuperFreeTTSError):
     def __init__(self, preset_name):
         message = f'Realtime Preset not found: {preset_name}. Please remove, then re-add TTS tag.]'
         super().__init__(message)        
 
 
-class MissingDirectory(HyperTTSError):
+class MissingDirectory(SuperFreeTTSError):
     def __init__(self, directory):
         message = f'Could not find directory {directory}, cannot generate audio files. Please check whether this directory exists.'
         super().__init__(message)        
 
 
-class MissingGraphicsFile(HyperTTSError):
+class MissingGraphicsFile(SuperFreeTTSError):
     def __init__(self, filename):
         message = f'Could not find graphics file {filename}. This is likely due to a corrupted installation. Please re-install SuperFreeTTS from AnkiWeb.'
         super().__init__(message)
 
 
-class RequestError(HyperTTSError):
+class RequestError(SuperFreeTTSError):
     def __init__(self, source_text, voice, error_message):
         message = f'Could not request audio for [{source_text}]: {error_message} (voice: {voice})'
         super().__init__(message)
@@ -104,34 +103,34 @@ class RequestError(HyperTTSError):
         self.voice = voice
         self.error_message = error_message
 
-class NoVoiceSelected(HyperTTSError):
+class NoVoiceSelected(SuperFreeTTSError):
     def __init__(self):
         message = f'No voice selected. Please select a voice, you may need to update your filters.'
         super().__init__(message)
 
-class NoVoicesAvailable(HyperTTSError):
+class NoVoicesAvailable(SuperFreeTTSError):
     def __init__(self):
         message = f'No voices available. You may need to configure some services in the SuperFreeTTS Configuration. ' \
             'Please go to the Services tab in Super Free TTS settings to enable TTS services.'
         super().__init__(message)
 
 
-class NoVoicesAdded(HyperTTSError):
+class NoVoicesAdded(SuperFreeTTSError):
     def __init__(self):
         message = f'No voices have been added. You must add at least one voice when in Random or Priority mode.'
         super().__init__(message)
 
-class NoNotesSelected(HyperTTSError):
+class NoNotesSelected(SuperFreeTTSError):
     def __init__(self):
         message = f'No notes have been selected. You must select at least one note from the browser.'
         super().__init__(message)
 
-class NoNotesSelectedPreview(HyperTTSError):
+class NoNotesSelectedPreview(SuperFreeTTSError):
     def __init__(self):
         message = f'No notes have been selected. Select one note to preview sound.'
         super().__init__(message)        
 
-class NoPresetMappingRulesDefined(HyperTTSError):
+class NoPresetMappingRulesDefined(SuperFreeTTSError):
     def __init__(self):
         message = ('You have not configured any preset mapping rules, '
         'please click the gear icon in the editor to add some, then you will be able to add / preview audio')
@@ -139,18 +138,18 @@ class NoPresetMappingRulesDefined(HyperTTSError):
 
 
 # template expansion errors
-class NoResultVar(HyperTTSError):
+class NoResultVar(SuperFreeTTSError):
     def __init__(self):
         message = f'No "result" variable found. You must assign the final template output to a result variable.'
         super().__init__(message)
 
-class TemplateExpansionError(HyperTTSError):
+class TemplateExpansionError(SuperFreeTTSError):
     def __init__(self, exception):
         message = f'Could not process template: {str(exception)}'
         super().__init__(message)
 
 # TTS related errors
-class TTSTagProcessingError(HyperTTSError):
+class TTSTagProcessingError(SuperFreeTTSError):
     def __init__(self):
         message = f'Could not process TTS Tag, please re-add TTS tag by adding Realtime Audio to Note'
         super().__init__(message)
@@ -158,7 +157,7 @@ class TTSTagProcessingError(HyperTTSError):
 # model validation errors
 # =======================
 
-class ModelValidationError(HyperTTSError):
+class ModelValidationError(SuperFreeTTSError):
     def __init__(self, message):
         super().__init__(message)    
 
@@ -197,7 +196,7 @@ class NoVoiceSet(ModelValidationError):
 # service configuration related errors
 # ====================================
 
-class MissingServiceConfiguration(HyperTTSError):
+class MissingServiceConfiguration(SuperFreeTTSError):
     def __init__(self, service_name, key):
         super().__init__(f'You must configure {key} for service {service_name}')
 
@@ -213,7 +212,7 @@ class SingleActionContext():
 
     def __exit__(self, exception_type, exception_value, traceback):
         if exception_value != None:
-            if isinstance(exception_value, HyperTTSError):
+            if isinstance(exception_value, SuperFreeTTSError):
                 self.error_manager.report_single_exception(exception_value, self.action)
             else:
                 self.error_manager.report_unknown_exception_interactive(exception_value, self.action)
@@ -231,7 +230,7 @@ class SingleActionContextConfigurable():
 
     def __exit__(self, exception_type, exception_value, traceback):
         if exception_value != None:
-            if isinstance(exception_value, HyperTTSError):
+            if isinstance(exception_value, SuperFreeTTSError):
                 self.error_manager.report_single_exception_dialog_type(exception_value, self.action, self.error_dialog_type)
             else:
                 self.error_manager.report_unknown_exception_interactive(exception_value, self.action)
@@ -248,7 +247,7 @@ class BatchActionContext():
 
     def __exit__(self, exception_type, exception_value, traceback):
         if exception_value != None:
-            if isinstance(exception_value, HyperTTSError):
+            if isinstance(exception_value, SuperFreeTTSError):
                 self.batch_error_manager.report_batch_exception(exception_value)
             else:
                 self.batch_error_manager.report_unknown_exception(exception_value)

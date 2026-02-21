@@ -38,20 +38,20 @@ logger = logging_utils.get_child_logger(__name__)
 
 
 class ConfigurationDialog(aqt.qt.QDialog):
-    def __init__(self, hypertts):
+    def __init__(self, superfreetss):
         super(aqt.qt.QDialog, self).__init__()
         # lưu tham chiếu để tra ngôn ngữ giao diện
-        self.hypertts = hypertts
+        self.superfreetss = superfreetss
         # Cho phép thu nhỏ/phóng to cửa sổ cấu hình (min/max buttons trên title bar)
         # Giúp user có thể mở rộng ra full màn hình khi cần xem nhiều services hơn
         self.setWindowFlag(aqt.qt.Qt.WindowType.WindowMinMaxButtonsHint, True)
         self.setSizeGripEnabled(True)  # Cho phép kéo thay đổi kích thước
         self.setStyleSheet(constants.STYLESHEET_DIALOG)
-        self.configuration = component_configuration.Configuration(hypertts, self)
-        self.configuration.load_model(hypertts.get_configuration())
+        self.configuration = component_configuration.Configuration(superfreetss, self)
+        self.configuration.load_model(superfreetss.get_configuration())
 
     def setupUi(self):
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.setMinimumSize(500, 300)
         self.setSizePolicy(aqt.qt.QSizePolicy.Policy.Expanding, aqt.qt.QSizePolicy.Policy.Expanding)
         self.setWindowTitle(i18n.get_text("dialog_services_title", lang))
@@ -63,18 +63,18 @@ class ConfigurationDialog(aqt.qt.QDialog):
         self.accept()
 
 class PreferencesDialog(aqt.qt.QDialog):
-    def __init__(self, hypertts):
+    def __init__(self, superfreetss):
         super(aqt.qt.QDialog, self).__init__()
-        self.hypertts = hypertts
+        self.superfreetss = superfreetss
         # Cho phép thu nhỏ/phóng to cho màn hình Preferences
         self.setWindowFlag(aqt.qt.Qt.WindowType.WindowMinMaxButtonsHint, True)
         self.setSizeGripEnabled(True)  # Cho phép kéo thay đổi kích thước
         self.setStyleSheet(constants.STYLESHEET_DIALOG)
-        self.preferences = component_preferences.ComponentPreferences(hypertts, self)
-        self.preferences.load_model(hypertts.get_preferences())
+        self.preferences = component_preferences.ComponentPreferences(superfreetss, self)
+        self.preferences.load_model(superfreetss.get_preferences())
 
     def setupUi(self):
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.setSizePolicy(aqt.qt.QSizePolicy.Policy.Expanding, aqt.qt.QSizePolicy.Policy.Expanding)
         self.setWindowTitle(i18n.get_text("dialog_preferences_title", lang))
         self.main_layout = aqt.qt.QVBoxLayout(self)
@@ -87,16 +87,16 @@ class PreferencesDialog(aqt.qt.QDialog):
 
 class SuperFreeTTSMainDialog(aqt.qt.QDialog):
     """Một cửa sổ duy nhất Super Free TTS với 2 tab: Nguồn âm thanh (Services), Cấu hình (Preferences)."""
-    def __init__(self, hypertts, initial_tab=0):
+    def __init__(self, superfreetss, initial_tab=0):
         super(aqt.qt.QDialog, self).__init__()
-        self.hypertts = hypertts
+        self.superfreetss = superfreetss
         self.initial_tab = initial_tab
         self.setWindowFlag(aqt.qt.Qt.WindowType.WindowMinMaxButtonsHint, True)
         self.setSizeGripEnabled(True)  # Cho phép kéo thay đổi kích thước
         self.setStyleSheet(constants.STYLESHEET_DIALOG)
 
     def setupUi(self):
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.setWindowTitle(i18n.get_text("dialog_main_title", lang))
         self.setMinimumSize(500, 400)
         self.setSizePolicy(aqt.qt.QSizePolicy.Policy.Expanding, aqt.qt.QSizePolicy.Policy.Expanding)
@@ -106,16 +106,16 @@ class SuperFreeTTSMainDialog(aqt.qt.QDialog):
         # Tab 1: Services (Nguồn âm thanh)
         tab_services_widget = aqt.qt.QWidget()
         tab_services_layout = aqt.qt.QVBoxLayout(tab_services_widget)
-        self.configuration = component_configuration.Configuration(self.hypertts, self)
-        self.configuration.load_model(self.hypertts.get_configuration())
+        self.configuration = component_configuration.Configuration(self.superfreetss, self)
+        self.configuration.load_model(self.superfreetss.get_configuration())
         self.configuration.draw(tab_services_layout)
         self.tabs.addTab(tab_services_widget, i18n.get_text("tab_services", lang))
 
         # Tab 2: Preferences (Cấu hình)
         tab_preferences_widget = aqt.qt.QWidget()
         tab_preferences_layout = aqt.qt.QVBoxLayout(tab_preferences_widget)
-        self.preferences = component_preferences.ComponentPreferences(self.hypertts, self)
-        self.preferences.load_model(self.hypertts.get_preferences())
+        self.preferences = component_preferences.ComponentPreferences(self.superfreetss, self)
+        self.preferences.load_model(self.superfreetss.get_preferences())
         self.preferences.draw(tab_preferences_layout)
         self.tabs.addTab(tab_preferences_widget, i18n.get_text("tab_preferences", lang))
 
@@ -137,17 +137,17 @@ class DialogBase(aqt.qt.QDialog):
 
 
 class RealtimeDialog(DialogBase):
-    def __init__(self, hypertts, card_ord):
+    def __init__(self, superfreetss, card_ord):
         super(DialogBase, self).__init__()
-        self.hypertts = hypertts
+        self.superfreetss = superfreetss
         # Cho phép thu nhỏ/phóng to cho dialog Realtime TTS
         self.setWindowFlag(aqt.qt.Qt.WindowType.WindowMinMaxButtonsHint, True)
         self.setSizeGripEnabled(True)  # Cho phép kéo thay đổi kích thước
         self.setStyleSheet(constants.STYLESHEET_DIALOG)
-        self.realtime_component = component_realtime.ComponentRealtime(hypertts, self, card_ord)
+        self.realtime_component = component_realtime.ComponentRealtime(superfreetss, self, card_ord)
 
     def setupUi(self):
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.setSizePolicy(aqt.qt.QSizePolicy.Policy.Expanding, aqt.qt.QSizePolicy.Policy.Expanding)
         self.setWindowTitle(i18n.get_text("dialog_realtime_title", lang))
         self.main_layout = aqt.qt.QVBoxLayout(self)
@@ -161,11 +161,11 @@ class RealtimeDialog(DialogBase):
     def close(self):
         self.accept()        
 
-def launch_superfreetss_dialog(hypertts, initial_tab=0):
+def launch_superfreetss_dialog(superfreetss, initial_tab=0):
     """Mở cửa sổ Super Free TTS (2 tab). Mở giữa màn hình, có thể kéo thanh title và co giãn kích thước. initial_tab: 0 = Services, 1 = Preferences."""
-    with hypertts.error_manager.get_single_action_context('Launching Super Free TTS Dialog'):
+    with superfreetss.error_manager.get_single_action_context('Launching Super Free TTS Dialog'):
         logger.info('launch_superfreetss_dialog initial_tab=%s', initial_tab)
-        dialog = SuperFreeTTSMainDialog(hypertts, initial_tab=initial_tab)
+        dialog = SuperFreeTTSMainDialog(superfreetss, initial_tab=initial_tab)
         dialog.setupUi()
         # Căn giữa màn hình (không maximized để user kéo được thanh title và resize)
         screen = aqt.qt.QApplication.primaryScreen().availableGeometry()
@@ -176,23 +176,23 @@ def launch_superfreetss_dialog(hypertts, initial_tab=0):
         )
         dialog.exec()
 
-def launch_configuration_dialog(hypertts):
-    launch_superfreetss_dialog(hypertts, initial_tab=0)
+def launch_configuration_dialog(superfreetss):
+    launch_superfreetss_dialog(superfreetss, initial_tab=0)
 
-def launch_services_configuration(hypertts):
+def launch_services_configuration(superfreetss):
     # Super Free TTS Lite: Skip trial signup, go straight to configuration
-    launch_superfreetss_dialog(hypertts, initial_tab=0)
+    launch_superfreetss_dialog(superfreetss, initial_tab=0)
 
-def launch_preferences_dialog(hypertts):
-    launch_superfreetss_dialog(hypertts, initial_tab=1)        
+def launch_preferences_dialog(superfreetss):
+    launch_superfreetss_dialog(superfreetss, initial_tab=1)        
 
-def launch_realtime_dialog_browser(hypertts, note_id_list):
-    with hypertts.error_manager.get_single_action_context('Launching Super Free TTS Realtime Dialog from Browser'):
+def launch_realtime_dialog_browser(superfreetss, note_id_list):
+    with superfreetss.error_manager.get_single_action_context('Launching Super Free TTS Realtime Dialog from Browser'):
         if len(note_id_list) != 1:
             aqt.utils.showCritical(constants.GUI_TEXT_REALTIME_SINGLE_NOTE)
             return
 
-        note = hypertts.anki_utils.get_note_by_id(note_id_list[0])
+        note = superfreetss.anki_utils.get_note_by_id(note_id_list[0])
         note_model = note.note_type()
         templates = note_model['tmpls']
         card_ord = 0 # default
@@ -203,17 +203,17 @@ def launch_realtime_dialog_browser(hypertts, note_id_list):
             logger.info(f'user chose row {chosen_row}')
             card_ord = chosen_row
 
-        dialog = RealtimeDialog(hypertts, card_ord)
+        dialog = RealtimeDialog(superfreetss, card_ord)
         dialog.configure_note(note)
         dialog.exec()
 
-def remove_realtime_tts_tag(hypertts, browser, note_id_list):
-    with hypertts.error_manager.get_single_action_context('Removing TTS Tag'):
+def remove_realtime_tts_tag(superfreetss, browser, note_id_list):
+    with superfreetss.error_manager.get_single_action_context('Removing TTS Tag'):
         if len(note_id_list) != 1:
             aqt.utils.showCritical(constants.GUI_TEXT_REALTIME_SINGLE_NOTE)
             return
 
-        note = hypertts.anki_utils.get_note_by_id(note_id_list[0])
+        note = superfreetss.anki_utils.get_note_by_id(note_id_list[0])
         note_model = note.note_type()
         templates = note_model['tmpls']
         card_ord = 0 # default
@@ -224,51 +224,51 @@ def remove_realtime_tts_tag(hypertts, browser, note_id_list):
             logger.info(f'user chose row {chosen_row}')
             card_ord = chosen_row
 
-        hypertts.remove_tts_tags(note, card_ord)
-        hypertts.anki_utils.info_message(constants.GUI_TEXT_REALTIME_REMOVED_TAG, browser)
+        superfreetss.remove_tts_tags(note, card_ord)
+        superfreetss.anki_utils.info_message(constants.GUI_TEXT_REALTIME_REMOVED_TAG, browser)
 
 
 
 # Một action duy nhất: Tools → Super Free TTS (bấm vào mở dialog luôn, không submenu)
 action_superfreetts = None
 
-def update_menu_language(hypertts):
+def update_menu_language(superfreetss):
     """Cập nhật chữ trên menu theo ngôn ngữ (Super Free TTS)."""
     global action_superfreetts
-    lang = hypertts.get_ui_language()
+    lang = superfreetss.get_ui_language()
     if action_superfreetts:
         action_superfreetts.setText(i18n.get_text("dialog_main_title", lang))
 
-def init(hypertts):
+def init(superfreetss):
 
     def browerMenusInit(browser: aqt.browser.Browser):
         
-        def get_launch_dialog_browser_new_fn(hypertts, browser):
+        def get_launch_dialog_browser_new_fn(superfreetss, browser):
             def launch():
-                with hypertts.error_manager.get_single_action_context('Opening Super Free TTS Dialog from Browser'):
-                    component_batch.create_component_batch_browser_new_preset(hypertts, browser.selectedNotes(), hypertts.get_next_preset_name())
+                with superfreetss.error_manager.get_single_action_context('Opening Super Free TTS Dialog from Browser'):
+                    component_batch.create_component_batch_browser_new_preset(superfreetss, browser.selectedNotes(), superfreetss.get_next_preset_name())
                     # required to make sound tags appear
                     browser.model.reset()
             return launch
 
-        def get_launch_dialog_browser_existing_fn(hypertts, browser, preset_id: str):
+        def get_launch_dialog_browser_existing_fn(superfreetss, browser, preset_id: str):
             def launch():
-                with hypertts.error_manager.get_single_action_context('Opening Super Free TTS Dialog from Browser'):
-                    component_batch.create_component_batch_browser_existing_preset(hypertts, browser.selectedNotes(), preset_id)
+                with superfreetss.error_manager.get_single_action_context('Opening Super Free TTS Dialog from Browser'):
+                    component_batch.create_component_batch_browser_existing_preset(superfreetss, browser.selectedNotes(), preset_id)
                     # required to make sound tags appear
                     browser.model.reset()
             return launch            
 
-        def get_launch_realtime_dialog_browser_fn(hypertts, browser):
+        def get_launch_realtime_dialog_browser_fn(superfreetss, browser):
             def launch():
-                with hypertts.error_manager.get_single_action_context('Adding Realtime TTS'):
-                    launch_realtime_dialog_browser(hypertts, browser.selectedNotes())
+                with superfreetss.error_manager.get_single_action_context('Adding Realtime TTS'):
+                    launch_realtime_dialog_browser(superfreetss, browser.selectedNotes())
             return launch
 
-        def get_remove_realtime_tts_tag_fn(hypertts, browser):
+        def get_remove_realtime_tts_tag_fn(superfreetss, browser):
             def launch():
-                with hypertts.error_manager.get_single_action_context('Removing Realtime TTS'):
-                    remove_realtime_tts_tag(hypertts, browser, browser.selectedNotes())
+                with superfreetss.error_manager.get_single_action_context('Removing Realtime TTS'):
+                    remove_realtime_tts_tag(superfreetss, browser, browser.selectedNotes())
             return launch
 
         # Prevent duplicate menus in the same browser window
@@ -280,58 +280,58 @@ def init(hypertts):
         menu.setObjectName("sf_browser_menu")
         browser.form.menubar.addMenu(menu)
 
-        action = aqt.qt.QAction(i18n.get_text('menu_add_audio_collection', hypertts.get_ui_language()), browser)
-        action.triggered.connect(get_launch_dialog_browser_new_fn(hypertts, browser))
+        action = aqt.qt.QAction(i18n.get_text('menu_add_audio_collection', superfreetss.get_ui_language()), browser)
+        action.triggered.connect(get_launch_dialog_browser_new_fn(superfreetss, browser))
         menu.addAction(action)
 
         # add a menu entry for each preset
-        for preset_info in hypertts.get_preset_list():
-            action = aqt.qt.QAction(i18n.get_text('menu_add_audio_collection_preset', hypertts.get_ui_language()).format(preset_info.name), browser)
-            action.triggered.connect(get_launch_dialog_browser_existing_fn(hypertts, browser, preset_info.id))
+        for preset_info in superfreetss.get_preset_list():
+            action = aqt.qt.QAction(i18n.get_text('menu_add_audio_collection_preset', superfreetss.get_ui_language()).format(preset_info.name), browser)
+            action.triggered.connect(get_launch_dialog_browser_existing_fn(superfreetss, browser, preset_info.id))
             menu.addAction(action)
 
         menu.addSeparator()
 
-        action = aqt.qt.QAction(i18n.get_text('menu_add_audio_realtime', hypertts.get_ui_language()), browser)
-        action.triggered.connect(get_launch_realtime_dialog_browser_fn(hypertts, browser))
+        action = aqt.qt.QAction(i18n.get_text('menu_add_audio_realtime', superfreetss.get_ui_language()), browser)
+        action.triggered.connect(get_launch_realtime_dialog_browser_fn(superfreetss, browser))
         menu.addAction(action)
 
-        action = aqt.qt.QAction(i18n.get_text('menu_remove_audio_realtime', hypertts.get_ui_language()), browser)
-        action.triggered.connect(get_remove_realtime_tts_tag_fn(hypertts, browser))
+        action = aqt.qt.QAction(i18n.get_text('menu_remove_audio_realtime', superfreetss.get_ui_language()), browser)
+        action.triggered.connect(get_remove_realtime_tts_tag_fn(superfreetss, browser))
         menu.addAction(action)
 
     def run_superfreetss_settings(editor):
-        with hypertts.error_manager.get_single_action_context('Opening Preset Mapping Rules'):
+        with superfreetss.error_manager.get_single_action_context('Opening Preset Mapping Rules'):
             logger.info(f'clicked superfreetss settings, editor: {editor}')
-            editor_context = hypertts.get_editor_context(editor)
-            deck_note_type = hypertts.get_editor_deck_note_type(editor)
-            component_presetmappingrules.create_dialog(hypertts, deck_note_type, editor_context)
+            editor_context = superfreetss.get_editor_context(editor)
+            deck_note_type = superfreetss.get_editor_deck_note_type(editor)
+            component_presetmappingrules.create_dialog(superfreetss, deck_note_type, editor_context)
 
     def run_superfreetss_preview(editor):
-        with hypertts.error_manager.get_single_action_context('Previewing Audio'):
-            if component_choose_easy_advanced.ensure_easy_advanced_choice_made(hypertts):
-                editor_context = hypertts.get_editor_context(editor)
-                if hypertts.load_mapping_rules().use_easy_mode:
+        with superfreetss.error_manager.get_single_action_context('Previewing Audio'):
+            if component_choose_easy_advanced.ensure_easy_advanced_choice_made(superfreetss):
+                editor_context = superfreetss.get_editor_context(editor)
+                if superfreetss.load_mapping_rules().use_easy_mode:
                     logger.debug('use easy mode')
-                    deck_note_type: config_models.DeckNoteType = hypertts.get_editor_deck_note_type(editor)
-                    component_easy.create_dialog_editor(hypertts, deck_note_type, editor_context)
+                    deck_note_type: config_models.DeckNoteType = superfreetss.get_editor_deck_note_type(editor)
+                    component_easy.create_dialog_editor(superfreetss, deck_note_type, editor_context)
                 else:
-                    hypertts.preview_all_mapping_rules(editor_context)
+                    superfreetss.preview_all_mapping_rules(editor_context)
 
     def run_superfreetss_apply(editor):
-        with hypertts.error_manager.get_single_action_context('Generating Audio'):
-            if component_choose_easy_advanced.ensure_easy_advanced_choice_made(hypertts):
-                editor_context = hypertts.get_editor_context(editor)
-                if hypertts.load_mapping_rules().use_easy_mode:
+        with superfreetss.error_manager.get_single_action_context('Generating Audio'):
+            if component_choose_easy_advanced.ensure_easy_advanced_choice_made(superfreetss):
+                editor_context = superfreetss.get_editor_context(editor)
+                if superfreetss.load_mapping_rules().use_easy_mode:
                     logger.debug('use easy mode')
-                    deck_note_type: config_models.DeckNoteType = hypertts.get_editor_deck_note_type(editor)
-                    component_easy.create_dialog_editor(hypertts, deck_note_type, editor_context)
+                    deck_note_type: config_models.DeckNoteType = superfreetss.get_editor_deck_note_type(editor)
+                    component_easy.create_dialog_editor(superfreetss, deck_note_type, editor_context)
                 else:
-                    hypertts.apply_all_mapping_rules(editor_context)
+                    superfreetss.apply_all_mapping_rules(editor_context)
 
     def setup_editor_buttons(buttons, editor):
-        with hypertts.error_manager.get_single_action_context('Setting up Super Free TTS editor buttons'):
-            preferences = hypertts.get_preferences()
+        with superfreetss.error_manager.get_single_action_context('Setting up Super Free TTS editor buttons'):
+            preferences = superfreetss.get_preferences()
 
             add_audio_shortcut = ''
             if preferences.keyboard_shortcuts.shortcut_editor_add_audio != None:
@@ -343,7 +343,7 @@ def init(hypertts):
             new_button = editor.addButton(gui_utils.get_graphics_path(constants.GRAPHICS_ICON_SPEAKER),
                 'superfreetss_add_audio',
                 run_superfreetss_apply,
-                tip = i18n.get_text('editor_tooltip_add_audio', hypertts.get_ui_language()) + f' {add_audio_shortcut}',
+                tip = i18n.get_text('editor_tooltip_add_audio', superfreetss.get_ui_language()) + f' {add_audio_shortcut}',
                 keys = preferences.keyboard_shortcuts.shortcut_editor_add_audio,
                 disables=False)
             buttons.append(new_button)
@@ -351,7 +351,7 @@ def init(hypertts):
             new_button = editor.addButton(gui_utils.get_graphics_path(constants.GRAPHICS_ICON_PLAY),
                 'superfreetss_preview_audio',
                 run_superfreetss_preview,
-                tip = i18n.get_text('editor_tooltip_preview_audio', hypertts.get_ui_language()) + f' {preview_audio_shortcut}',
+                tip = i18n.get_text('editor_tooltip_preview_audio', superfreetss.get_ui_language()) + f' {preview_audio_shortcut}',
                 keys = preferences.keyboard_shortcuts.shortcut_editor_preview_audio,
                 disables=False)
             buttons.append(new_button)
@@ -359,7 +359,7 @@ def init(hypertts):
             new_button = editor.addButton(gui_utils.get_graphics_path(constants.GRAPHICS_ICON_SETTINGS),
                 'superfreetss_settings',
                 run_superfreetss_settings,
-                tip = i18n.get_text('editor_tooltip_configure_presets', hypertts.get_ui_language()),
+                tip = i18n.get_text('editor_tooltip_configure_presets', superfreetss.get_ui_language()),
                 disables=False)
             buttons.append(new_button)        
 
@@ -391,14 +391,14 @@ def init(hypertts):
     if action_superfreetts is None:
         action_superfreetts = aqt.qt.QAction("", aqt.mw)
         action_superfreetts.setObjectName("sf_action_main")
-        action_superfreetts.triggered.connect(lambda: launch_superfreetss_dialog(hypertts))
+        action_superfreetts.triggered.connect(lambda: launch_superfreetss_dialog(superfreetss))
         ankivn_menu.addAction(action_superfreetts)
 
     # Initial update
-    update_menu_language(hypertts)
+    update_menu_language(superfreetss)
 
     # Update on profile load
-    aqt.gui_hooks.profile_did_open.append(lambda: update_menu_language(hypertts)) 
+    aqt.gui_hooks.profile_did_open.append(lambda: update_menu_language(superfreetss)) 
 
     # browser menus
     aqt.gui_hooks.browser_menus_did_init.append(browerMenusInit)
@@ -407,13 +407,13 @@ def init(hypertts):
     aqt.gui_hooks.editor_did_init_buttons.append(setup_editor_buttons)
 
     # register TTS player
-    aqt.sound.av_player.players.append(ttsplayer.AnkiSuperFreeTTSPlayer(aqt.mw.taskman, hypertts))
+    aqt.sound.av_player.players.append(ttsplayer.AnkiSuperFreeTTSPlayer(aqt.mw.taskman, superfreetss))
 
     # 
 
 
-    def should_show_welcome_message(hypertts):
-        configuration = hypertts.get_configuration()
+    def should_show_welcome_message(superfreetss):
+        configuration = superfreetss.get_configuration()
         return configuration.display_introduction_message
 
     def on_deck_browser_will_render_content(deck_browser, content):
@@ -422,12 +422,12 @@ def init(hypertts):
             # load required data
             sys._superfreetss_stats_global.init_load()
 
-        if should_show_welcome_message(hypertts):
-            configuration = hypertts.get_configuration()
-            lang = hypertts.get_ui_language()
+        if should_show_welcome_message(superfreetss):
+            configuration = superfreetss.get_configuration()
+            lang = superfreetss.get_ui_language()
             
             # Check if night mode is enabled
-            night_mode = hypertts.anki_utils.night_mode_enabled()
+            night_mode = superfreetss.anki_utils.night_mode_enabled()
             
             # Set colors based on night mode
             bg_color = "#2f2f31" if night_mode else "white"
@@ -558,19 +558,19 @@ def init(hypertts):
     
     def on_bridge_cmd(handled, cmd, context):
         if cmd.startswith('superfreetss:welcome_closed'):
-            configuration = hypertts.get_configuration()
+            configuration = superfreetss.get_configuration()
             configuration.display_introduction_message = False
-            hypertts.save_configuration(configuration)
+            superfreetss.save_configuration(configuration)
             return (True, None)
         elif cmd.startswith('superfreetss:configure_services'):
             stats.event_global(constants_events.Event.click_welcome_configure_services)
-            launch_services_configuration(hypertts)
+            launch_services_configuration(superfreetss)
             return (True, None)
         elif cmd.startswith('superfreetss:how_to_add_audio'):
             stats.event_global(constants_events.Event.click_welcome_add_audio)
-            configuration = hypertts.get_configuration()
+            configuration = superfreetss.get_configuration()
             user_uuid = configuration.user_uuid
-            help_url = gui_utils.get_vocab_ai_url('tips/hypertts-adding-audio', 'deckbrowser_welcome', user_uuid)
+            help_url = gui_utils.get_help_url('tips/superfreetss-adding-audio', 'deckbrowser_welcome', user_uuid)
             aqt.utils.openLink(help_url)
             logger.info(f'opening url: {help_url}')
             return (True, None)

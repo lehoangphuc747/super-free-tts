@@ -168,8 +168,8 @@ def configure_secondary_button(button, min_height=30, min_width=80, font_size=9)
     font_btn.setPointSize(font_size)
     button.setFont(font_btn)
 
-def get_vocab_ai_url(url_path, utm_campaign, distinct_id=None):
-    """Generate a vocab.ai URL with UTM parameters
+def get_help_url(url_path, utm_campaign, distinct_id=None):
+    """Generate a help/docs URL with UTM parameters.
     
     Args:
         url_path: Path after the domain (e.g., 'tips/superfreetss-adding-audio')

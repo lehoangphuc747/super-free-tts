@@ -12,8 +12,8 @@ logger = logging_utils.get_child_logger(__name__)
 
 class Shortcuts(component_common.ConfigComponentBase):
 
-    def __init__(self, hypertts, dialog, model_change_callback):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss, dialog, model_change_callback):
+        self.superfreetss = superfreetss
         self.dialog = dialog
         self.model = config_models.KeyboardShortcuts()
         self.model_change_callback = model_change_callback
@@ -38,7 +38,7 @@ class Shortcuts(component_common.ConfigComponentBase):
             self.model_change_callback(self.model)
 
     def draw(self):
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         layout_widget = aqt.qt.QWidget()
         layout = aqt.qt.QVBoxLayout(layout_widget)
 

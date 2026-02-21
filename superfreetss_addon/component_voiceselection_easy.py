@@ -15,13 +15,13 @@ logger = logging_utils.get_child_logger(__name__)
 sc = stats.StatsContext(constants_events.EventContext.voice_selection)
 
 class VoiceSelectionEasy(component_voiceselection.VoiceSelection):
-    def __init__(self, hypertts, dialog, model_change_callback):
+    def __init__(self, superfreetss, dialog, model_change_callback):
         self.model = config_models.VoiceSelectionSingle()
-        super().__init__(hypertts, dialog, model_change_callback)
+        super().__init__(superfreetss, dialog, model_change_callback)
         self.enable_model_change_callback = True
 
     def draw(self):
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         grid_layout = aqt.qt.QGridLayout()
         
         # Get voice list and populate combo boxes
@@ -95,7 +95,7 @@ class VoiceSelectionEasy(component_voiceselection.VoiceSelection):
             # we have access to the voice_id, but we need to locate the proper voice
             voice_id = model.voice.voice_id
         try:
-            voice = self.hypertts.service_manager.locate_voice(voice_id)
+            voice = self.superfreetss.service_manager.locate_voice(voice_id)
             voice_index = self.voice_list.index(voice)
             self.voices_combobox.setCurrentIndex(voice_index)
         except ValueError as e:
@@ -116,7 +116,7 @@ class VoiceSelectionEasy(component_voiceselection.VoiceSelection):
             voice_key={'name': 'Microsoft Server Speech Text to Speech Voice (en-US, JennyMultilingualNeural)'}, 
             service='Azure')
         try:
-            voice = self.hypertts.service_manager.locate_voice(voice_id)
+            voice = self.superfreetss.service_manager.locate_voice(voice_id)
             voice_index = self.voice_list.index(voice)
             self.voices_combobox.setCurrentIndex(voice_index)
         except ValueError as e:

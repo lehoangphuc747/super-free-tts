@@ -10,8 +10,8 @@ logger = logging_utils.get_child_logger(__name__)
 
 
 class BatchTarget(component_common.ConfigComponentBase):
-    def __init__(self, hypertts, field_list, model_change_callback):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss, field_list, model_change_callback):
+        self.superfreetss = superfreetss
         self.field_list = field_list
         self.model_change_callback = model_change_callback
 
@@ -20,7 +20,7 @@ class BatchTarget(component_common.ConfigComponentBase):
         # initialize widgets
         self.target_field_combobox = aqt.qt.QComboBox()
         # text and sound
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.text_sound_group = aqt.qt.QButtonGroup()
         self.radio_button_sound_only = aqt.qt.QRadioButton(i18n.get_text('target_radio_sound_only', lang))
         self.radio_button_text_sound = aqt.qt.QRadioButton(i18n.get_text('target_radio_text_and_sound', lang))
@@ -63,7 +63,7 @@ class BatchTarget(component_common.ConfigComponentBase):
         
         # target field
         # ============
-        groupbox = aqt.qt.QGroupBox(i18n.get_text('target_group_field', self.hypertts.get_ui_language()))
+        groupbox = aqt.qt.QGroupBox(i18n.get_text('target_group_field', self.superfreetss.get_ui_language()))
         vlayout = aqt.qt.QVBoxLayout()
         vlayout.addWidget(aqt.qt.QLabel(constants.GUI_TEXT_TARGET_FIELD))
         self.target_field_combobox.addItems(self.field_list)
@@ -74,7 +74,7 @@ class BatchTarget(component_common.ConfigComponentBase):
 
         # text and sound tag
         # ==================
-        groupbox = aqt.qt.QGroupBox(i18n.get_text('target_group_text_sound_handling', self.hypertts.get_ui_language()))
+        groupbox = aqt.qt.QGroupBox(i18n.get_text('target_group_text_sound_handling', self.superfreetss.get_ui_language()))
         vlayout = aqt.qt.QVBoxLayout()
         label = aqt.qt.QLabel(constants.GUI_TEXT_TARGET_TEXT_AND_SOUND)
         label.setWordWrap(True)
@@ -87,7 +87,7 @@ class BatchTarget(component_common.ConfigComponentBase):
 
         # remove sound tag
         # ================
-        groupbox = aqt.qt.QGroupBox(i18n.get_text('target_group_existing_sound_handling', self.hypertts.get_ui_language()))
+        groupbox = aqt.qt.QGroupBox(i18n.get_text('target_group_existing_sound_handling', self.superfreetss.get_ui_language()))
         vlayout = aqt.qt.QVBoxLayout()        
         label = aqt.qt.QLabel(constants.GUI_TEXT_TARGET_REMOVE_SOUND_TAG)
         label.setWordWrap(True)

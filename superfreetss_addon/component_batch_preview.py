@@ -77,15 +77,15 @@ class BatchPreviewTableModel(aqt.qt.QAbstractTableModel):
         return aqt.qt.QVariant()
 
 class BatchPreview(component_common.ComponentBase):
-    def __init__(self, hypertts, dialog, note_id_list, sample_selection_fn, batch_start_fn, batch_end_fn):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss, dialog, note_id_list, sample_selection_fn, batch_start_fn, batch_end_fn):
+        self.superfreetss = superfreetss
         self.dialog = dialog
         self.note_id_list = note_id_list
         self.sample_selection_fn = sample_selection_fn
         self.batch_start_fn = batch_start_fn
         self.batch_end_fn = batch_end_fn
 
-        self.batch_status = batch_status.BatchStatus(hypertts.anki_utils, note_id_list, self)
+        self.batch_status = batch_status.BatchStatus(superfreetss.anki_utils, note_id_list, self)
         self.batch_preview_table_model = BatchPreviewTableModel(self.batch_status)
         self.table_view = None
 
@@ -103,7 +103,7 @@ class BatchPreview(component_common.ComponentBase):
 
     def load_model(self, model):
         self.batch_model = model
-        self.hypertts.anki_utils.run_in_background(self.update_batch_status_task, self.update_batch_status_task_done)
+        self.superfreetss.anki_utils.run_in_background(self.update_batch_status_task, self.update_batch_status_task_done)
 
     def update_batch_status_task(self):
         if self.batch_status.is_running():
@@ -114,7 +114,7 @@ class BatchPreview(component_common.ComponentBase):
 
         logger.info('update_batch_status_task')
         if self.batch_model.text_processing != None:
-            self.hypertts.populate_batch_status_processed_text(self.note_id_list, self.batch_model.source, self.batch_model.text_processing, self.batch_status)
+            self.superfreetss.populate_batch_status_processed_text(self.note_id_list, self.batch_model.source, self.batch_model.text_processing, self.batch_status)
 
     def update_batch_status_task_done(self, result):
         logger.info('update_batch_status_task_done')
@@ -211,26 +211,26 @@ class BatchPreview(component_common.ComponentBase):
 
     def apply_audio_to_notes(self):
         self.apply_to_notes_batch_started = True
-        self.hypertts.anki_utils.run_in_background_collection_op(self.dialog, self.apply_audio_fn, self.finished_apply_audio_fn)
+        self.superfreetss.anki_utils.run_in_background_collection_op(self.dialog, self.apply_audio_fn, self.finished_apply_audio_fn)
 
     def stop_button_pressed(self):
         self.batch_status.stop()
 
     def apply_audio_fn(self, anki_collection):
-        self.hypertts.process_batch_audio(self.note_id_list, self.batch_model, self.batch_status, anki_collection)
+        self.superfreetss.process_batch_audio(self.note_id_list, self.batch_model, self.batch_status, anki_collection)
 
     def finished_apply_audio_fn(self, result):
         logger.debug(f'finished_apply_audio_fn, result: {result}')
 
     def batch_start(self):
-        self.hypertts.anki_utils.run_on_main(self.show_running_stack)
-        self.hypertts.anki_utils.run_on_main(self.batch_start_fn)
+        self.superfreetss.anki_utils.run_on_main(self.show_running_stack)
+        self.superfreetss.anki_utils.run_on_main(self.batch_start_fn)
 
     def batch_end(self, completed):
         if completed and self.apply_to_notes_batch_started == True:
-            self.hypertts.anki_utils.run_on_main(self.show_completed_stack)
+            self.superfreetss.anki_utils.run_on_main(self.show_completed_stack)
         else:
-            self.hypertts.anki_utils.run_on_main(self.show_not_running_stack)
+            self.superfreetss.anki_utils.run_on_main(self.show_not_running_stack)
         if self.apply_to_notes_batch_started:
             self.batch_end_fn(completed)
 
@@ -261,7 +261,7 @@ class BatchPreview(component_common.ComponentBase):
 
     def table_viewport_repaint_refresh_timer(self):
         # needs to be called on main thread
-        self.hypertts.anki_utils.call_on_timer_expire(self.table_repaint_timer, self.table_viewport_repaint)        
+        self.superfreetss.anki_utils.call_on_timer_expire(self.table_repaint_timer, self.table_viewport_repaint)        
 
     def table_viewport_repaint(self):
         if self.table_view != None:
@@ -270,9 +270,9 @@ class BatchPreview(component_common.ComponentBase):
 
     def batch_change(self, note_id, row, total_count, start_time, current_time):
         # logger.info(f'change_listener row {row}')
-        self.hypertts.anki_utils.run_on_main(lambda: self.batch_preview_table_model.notifyChange(row))
-        self.hypertts.anki_utils.run_on_main(lambda: self.update_progress_bar(row, total_count, start_time, current_time))
-        self.hypertts.anki_utils.run_on_main(lambda: self.table_viewport_repaint_refresh_timer())
+        self.superfreetss.anki_utils.run_on_main(lambda: self.batch_preview_table_model.notifyChange(row))
+        self.superfreetss.anki_utils.run_on_main(lambda: self.update_progress_bar(row, total_count, start_time, current_time))
+        self.superfreetss.anki_utils.run_on_main(lambda: self.table_viewport_repaint_refresh_timer())
         if row == self.selected_row:
-            self.hypertts.anki_utils.run_on_main(self.update_error_label_for_selected)
-            self.hypertts.anki_utils.run_on_main(self.report_sample_text)
+            self.superfreetss.anki_utils.run_on_main(self.update_error_label_for_selected)
+            self.superfreetss.anki_utils.run_on_main(self.report_sample_text)

@@ -10,8 +10,8 @@ logger = logging_utils.get_child_logger(__name__)
 MAX_PREVIEW_CHARACTERS = 20
 
 class ComponentEasySource(component_common.ConfigComponentBase):
-    def __init__(self, hypertts, editor_context: config_models.EditorContext, model_change_callback):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss, editor_context: config_models.EditorContext, model_change_callback):
+        self.superfreetss = superfreetss
         self.editor_context = editor_context
         self.model_change_callback = model_change_callback
         
@@ -161,14 +161,14 @@ class ComponentEasySource(component_common.ConfigComponentBase):
             source_text = self.editor_context.note[current_field]
             # Clear clipboard if we're moving away from clipboard source
             if self.editor_context.clipboard:
-                self.hypertts.anki_utils.clear_clipboard_contents()
+                self.superfreetss.anki_utils.clear_clipboard_contents()
         elif self.selection_radio.isChecked():
             self.field_combobox.setEnabled(False)
             self.source_text_origin = config_models.SourceTextOrigin.SELECTION
             source_text = self.editor_context.selected_text
             # Clear clipboard if we're moving away from clipboard source
             if self.editor_context.clipboard:
-                self.hypertts.anki_utils.clear_clipboard_contents()
+                self.superfreetss.anki_utils.clear_clipboard_contents()
         else:
             self.field_combobox.setEnabled(False)
             self.source_text_origin = config_models.SourceTextOrigin.CLIPBOARD

@@ -24,7 +24,7 @@ class BatchNoteActionContext():
 
     def __exit__(self, exception_type, exception_value, traceback):
         if exception_value != None:
-            if isinstance(exception_value, errors.HyperTTSError):
+            if isinstance(exception_value, errors.SuperFreeTTSError):
                 self.batch_status.report_known_error(self.note_id, exception_value)
             else:
                 self.batch_status.report_unknown_exception(self.note_id, exception_value)

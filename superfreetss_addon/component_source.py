@@ -15,8 +15,8 @@ class BatchSource(component_common.ConfigComponentBase):
     SOURCE_CONFIG_STACK_TEMPLATE = 1
     SOURCE_CONFIG_STACK_ADVANCED_TEMPLATE = 2
 
-    def __init__(self, hypertts, field_list, model_change_callback):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss, field_list, model_change_callback):
+        self.superfreetss = superfreetss
         self.field_list = field_list
         self.model_change_callback = model_change_callback
 
@@ -60,8 +60,8 @@ class BatchSource(component_common.ConfigComponentBase):
         self.batch_mode_combobox.currentIndexChanged.connect(self.batch_mode_change)
         self.source_field_combobox.currentIndexChanged.connect(self.source_field_change)
         self.use_selection_checkbox.stateChanged.connect(self.use_selection_checkbox_change)
-        self.simple_template_typing_timer = self.hypertts.anki_utils.wire_typing_timer(self.simple_template_input, self.simple_template_change)
-        self.advanced_template_typing_timer = self.hypertts.anki_utils.wire_typing_timer(self.advanced_template_input, self.advanced_template_change)
+        self.simple_template_typing_timer = self.superfreetss.anki_utils.wire_typing_timer(self.simple_template_input, self.simple_template_change)
+        self.advanced_template_typing_timer = self.superfreetss.anki_utils.wire_typing_timer(self.advanced_template_input, self.advanced_template_change)
 
         # select default
         self.source_field_change(0)
@@ -94,7 +94,7 @@ class BatchSource(component_common.ConfigComponentBase):
 
     def draw_source_mode(self, overall_layout):
         # batch mode
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         groupbox = aqt.qt.QGroupBox(i18n.get_text('source_group_mode', lang))
         vlayout = aqt.qt.QVBoxLayout()
         label = aqt.qt.QLabel(gui_utils.process_label_text(constants.GUI_TEXT_SOURCE_MODE))
@@ -107,7 +107,7 @@ class BatchSource(component_common.ConfigComponentBase):
         overall_layout.addWidget(groupbox)
 
     def draw_source_config(self, overall_layout):
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         groupbox = aqt.qt.QGroupBox(i18n.get_text('source_group_configuration', lang))
         self.source_config_stack = aqt.qt.QStackedWidget()
 

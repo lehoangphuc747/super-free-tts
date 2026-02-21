@@ -10,13 +10,13 @@ logger = logging_utils.get_child_logger(__name__)
 
 
 class BatchTargetEasy(component_target.BatchTarget):
-    def __init__(self, hypertts, field_list, model_change_callback):
+    def __init__(self, superfreetss, field_list, model_change_callback):
         logger.debug('BatchTargetEasy.__init__')
-        super().__init__(hypertts, field_list, model_change_callback)
+        super().__init__(superfreetss, field_list, model_change_callback)
 
         # initialize widgets
         # same field
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.same_field_group = aqt.qt.QButtonGroup()
         self.radio_button_same_field = aqt.qt.QRadioButton(i18n.get_text('target_easy_radio_same_field', lang))
         self.radio_button_different_field = aqt.qt.QRadioButton(i18n.get_text('target_easy_radio_different_field', lang))
@@ -36,7 +36,7 @@ class BatchTargetEasy(component_target.BatchTarget):
         # Same field option
         target_field_container = aqt.qt.QWidget()
         vlayout = aqt.qt.QVBoxLayout(target_field_container)
-        vlayout.addWidget(aqt.qt.QLabel(i18n.get_text('target_easy_label_which_field', self.hypertts.get_ui_language())))
+        vlayout.addWidget(aqt.qt.QLabel(i18n.get_text('target_easy_label_which_field', self.superfreetss.get_ui_language())))
         vlayout.addWidget(self.radio_button_same_field)
         vlayout.addWidget(self.radio_button_different_field)
 
@@ -52,7 +52,7 @@ class BatchTargetEasy(component_target.BatchTarget):
         # Insert location options (only shown when same field selected)
         self.insert_location_widget = aqt.qt.QWidget()
         insert_location_layout = aqt.qt.QVBoxLayout(self.insert_location_widget)
-        insert_location_layout.addWidget(aqt.qt.QLabel(i18n.get_text('target_easy_label_where_insert', self.hypertts.get_ui_language())))
+        insert_location_layout.addWidget(aqt.qt.QLabel(i18n.get_text('target_easy_label_where_insert', self.superfreetss.get_ui_language())))
         insert_location_layout.addWidget(self.radio_button_after)
         insert_location_layout.addWidget(self.radio_button_cursor)
         self.batch_target_layout.addWidget(self.insert_location_widget)

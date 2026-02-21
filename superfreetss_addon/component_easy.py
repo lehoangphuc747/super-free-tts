@@ -45,8 +45,8 @@ class ComponentEasy(component_common.ComponentBase):
     BUTTON_TEXT_ADD_AUDIO = 'Add Audio'
     BUTTON_TEXT_ADDING_AUDIO = 'Adding Audio...'
 
-    def __init__(self, hypertts, dialog, deck_note_type: config_models.DeckNoteType, editor_context: config_models.EditorContext):
-        self.hypertts = hypertts
+    def __init__(self, superfreetss, dialog, deck_note_type: config_models.DeckNoteType, editor_context: config_models.EditorContext):
+        self.superfreetss = superfreetss
         self.dialog = dialog
         self.deck_note_type = deck_note_type
         self.editor_context = editor_context
@@ -54,22 +54,22 @@ class ComponentEasy(component_common.ComponentBase):
         self.batch_model = None
 
         # initialize source component
-        self.source = component_source_easy.ComponentEasySource(hypertts, editor_context, self.model_update_source)
+        self.source = component_source_easy.ComponentEasySource(superfreetss, editor_context, self.model_update_source)
         source_field = editor_context.current_field
         field_list = field_list = list(editor_context.note.keys())
 
         # initialize sub-components
-        self.target = component_target_easy.BatchTargetEasy(hypertts, field_list, self.model_update_target)
-        self.voice_selection = component_voiceselection_easy.VoiceSelectionEasy(hypertts, dialog, self.model_update_voice_selection)
+        self.target = component_target_easy.BatchTargetEasy(superfreetss, field_list, self.model_update_target)
+        self.voice_selection = component_voiceselection_easy.VoiceSelectionEasy(superfreetss, dialog, self.model_update_voice_selection)
         
         # configure the model
-        self.batch_model = config_models.BatchConfig(self.hypertts.anki_utils)
+        self.batch_model = config_models.BatchConfig(self.superfreetss.anki_utils)
         self.set_model_defaults()
 
 
     def set_model_defaults(self):
         # this will get overwritten if we load a model
-        self.batch_model.name = self.hypertts.get_default_easy_preset_name(self.deck_note_type)
+        self.batch_model.name = self.superfreetss.get_default_easy_preset_name(self.deck_note_type)
         # set dummy source, will not get used
         self.batch_model.source = config_models.BatchSource(
             mode=constants.BatchMode.simple,
@@ -79,7 +79,7 @@ class ComponentEasy(component_common.ComponentBase):
         self.batch_model.text_processing = config_models.TextProcessing()
 
     def load_preset(self, preset_id):
-        model = self.hypertts.load_preset(preset_id)
+        model = self.superfreetss.load_preset(preset_id)
         self.load_model(model)
 
     def load_model(self, model):
@@ -120,7 +120,7 @@ class ComponentEasy(component_common.ComponentBase):
         return self.batch_model
 
     def draw(self, layout):
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
 
         # thiết lập text theo ngôn ngữ hiện tại
         self.BUTTON_TEXT_PREVIEW_AUDIO = i18n.get_text("easy_button_preview_audio", lang)
@@ -177,7 +177,7 @@ class ComponentEasy(component_common.ComponentBase):
         
         self.toggle_settings_button = aqt.qt.QPushButton(i18n.get_text("easy_button_more_settings", lang))
         # get shortcuts from preferences
-        preferences = self.hypertts.get_preferences()
+        preferences = self.superfreetss.get_preferences()
         preview_shortcut = preferences.keyboard_shortcuts.shortcut_editor_preview_audio
         add_shortcut = preferences.keyboard_shortcuts.shortcut_editor_add_audio
 
@@ -235,17 +235,17 @@ class ComponentEasy(component_common.ComponentBase):
     def preview_button_pressed(self):
         self.preview_sound_button.setText(self.BUTTON_TEXT_PREVIEWING)
         self.preview_sound_button.setEnabled(False)
-        self.hypertts.anki_utils.run_in_background(self.sound_preview_task, self.sound_preview_task_done)
+        self.superfreetss.anki_utils.run_in_background(self.sound_preview_task, self.sound_preview_task_done)
 
     def sound_preview_task(self):
         # get text
-        self.hypertts.preview_note_audio(self.get_model(), self.editor_context.note, self.get_source_text())
+        self.superfreetss.preview_note_audio(self.get_model(), self.editor_context.note, self.get_source_text())
         return True
 
     def sound_preview_task_done(self, result):
-        with self.hypertts.error_manager.get_single_action_context('Playing Sound Preview'):
+        with self.superfreetss.error_manager.get_single_action_context('Playing Sound Preview'):
             result = result.result()
-        self.hypertts.anki_utils.run_on_main(self.finish_sound_preview)
+        self.superfreetss.anki_utils.run_on_main(self.finish_sound_preview)
 
     def finish_sound_preview(self):
         self.preview_sound_button.setText(self.BUTTON_TEXT_PREVIEW_AUDIO)
@@ -258,21 +258,21 @@ class ComponentEasy(component_common.ComponentBase):
     def add_audio_button_pressed(self):
         self.add_audio_button.setText(self.BUTTON_TEXT_ADDING_AUDIO)
         self.add_audio_button.setEnabled(False)
-        self.hypertts.anki_utils.run_in_background(self.add_audio_task, self.add_audio_task_done)
+        self.superfreetss.anki_utils.run_in_background(self.add_audio_task, self.add_audio_task_done)
 
     def add_audio_task(self):
         logger.debug('add_audio_task')
-        self.hypertts.editor_note_add_audio(self.get_model(), self.editor_context, text_input=self.get_source_text())
+        self.superfreetss.editor_note_add_audio(self.get_model(), self.editor_context, text_input=self.get_source_text())
         return True
 
     def add_audio_task_done(self, result):
         logger.debug('add_audio_task_done')
-        with self.hypertts.error_manager.get_single_action_context('Adding Audio to Note'):
+        with self.superfreetss.error_manager.get_single_action_context('Adding Audio to Note'):
             result = result.result()
             # save default profile
-            self.hypertts.save_default_preset(self.deck_note_type, self.get_model())
+            self.superfreetss.save_default_preset(self.deck_note_type, self.get_model())
             self.dialog.close()
-        self.hypertts.anki_utils.run_on_main(self.finish_add_audio)
+        self.superfreetss.anki_utils.run_on_main(self.finish_add_audio)
     
     def finish_add_audio(self):
         self.add_audio_button.setText(self.BUTTON_TEXT_ADD_AUDIO)
@@ -285,32 +285,32 @@ class ComponentEasy(component_common.ComponentBase):
     def toggle_settings(self):
         if self.target_widget.isVisible():
             self.target_widget.hide()
-            lang = self.hypertts.get_ui_language()
+            lang = self.superfreetss.get_ui_language()
             self.toggle_settings_button.setText(i18n.get_text("easy_button_more_settings", lang))
             if self.original_width is not None:
                  # Logic for width adjustment might be less relevant in vertical layout, but keeping it safe
                 self.dialog.adjustSize()
         else:
             self.target_widget.show()
-            lang = self.hypertts.get_ui_language()
+            lang = self.superfreetss.get_ui_language()
             self.toggle_settings_button.setText(i18n.get_text("easy_button_hide_settings", lang))
             self.dialog.adjustSize()
 
 class EasyDialog(aqt.qt.QDialog):
-    def __init__(self, hypertts):
+    def __init__(self, superfreetss):
         super(aqt.qt.QDialog, self).__init__()
-        self.hypertts = hypertts
+        self.superfreetss = superfreetss
         # Cho phép dialog Easy Mode thu nhỏ/phóng to theo ý người dùng
         self.setWindowFlag(aqt.qt.Qt.WindowType.WindowMinMaxButtonsHint, True)
         self.setSizeGripEnabled(True)  # Cho phép kéo thay đổi kích thước
         self.setSizePolicy(aqt.qt.QSizePolicy.Policy.Expanding, aqt.qt.QSizePolicy.Policy.Expanding)
         self.setStyleSheet(constants.STYLESHEET_DIALOG)
-        lang = self.hypertts.get_ui_language()
+        lang = self.superfreetss.get_ui_language()
         self.setWindowTitle(i18n.get_text("dialog_easy_title", lang))
         self.main_layout = aqt.qt.QVBoxLayout(self)
 
     def configure(self, deck_note_type: config_models.DeckNoteType, editor_context: config_models.EditorContext):
-        easy_component = ComponentEasy(self.hypertts, self, deck_note_type, editor_context)
+        easy_component = ComponentEasy(self.superfreetss, self, deck_note_type, editor_context)
         layout = aqt.qt.QVBoxLayout()
         easy_component.draw(self.main_layout)
         self.easy_component = easy_component
@@ -328,27 +328,27 @@ class EasyDialog(aqt.qt.QDialog):
         self.accept()
 
 
-def create_dialog_editor_new_preset(hypertts, deck_note_type: config_models.DeckNoteType, editor_context: config_models.EditorContext):
-    dialog = EasyDialog(hypertts)
+def create_dialog_editor_new_preset(superfreetss, deck_note_type: config_models.DeckNoteType, editor_context: config_models.EditorContext):
+    dialog = EasyDialog(superfreetss)
     dialog.configure(deck_note_type, editor_context)
-    hypertts.anki_utils.wait_for_dialog_input(dialog, constants.DIALOG_ID_EASY)
+    superfreetss.anki_utils.wait_for_dialog_input(dialog, constants.DIALOG_ID_EASY)
 
-def create_dialog_editor_existing_preset(hypertts, 
+def create_dialog_editor_existing_preset(superfreetss, 
         deck_note_type: config_models.DeckNoteType, 
         editor_context: config_models.EditorContext,
         preset_id: str):
     logger.debug(f'create_dialog_editor_existing_preset: {preset_id}')
-    dialog = EasyDialog(hypertts)
+    dialog = EasyDialog(superfreetss)
     dialog.configure(deck_note_type, editor_context)
     dialog.load_preset(preset_id)
-    hypertts.anki_utils.wait_for_dialog_input(dialog, constants.DIALOG_ID_EASY)    
+    superfreetss.anki_utils.wait_for_dialog_input(dialog, constants.DIALOG_ID_EASY)    
 
 @sc.event(Event.open, EventMode.easy_editor)
-def create_dialog_editor(hypertts, deck_note_type: config_models.DeckNoteType, editor_context: config_models.EditorContext):
-    dialog = EasyDialog(hypertts)
+def create_dialog_editor(superfreetss, deck_note_type: config_models.DeckNoteType, editor_context: config_models.EditorContext):
+    dialog = EasyDialog(superfreetss)
     dialog.configure(deck_note_type, editor_context)
     # load preset if one exists
-    preset_id: str = hypertts.get_default_preset_id(deck_note_type)
+    preset_id: str = superfreetss.get_default_preset_id(deck_note_type)
     if preset_id != None:
         logger.info(f'loading preset_id {preset_id}')
         dialog.load_preset(preset_id)
@@ -356,4 +356,4 @@ def create_dialog_editor(hypertts, deck_note_type: config_models.DeckNoteType, e
         # no voice selected, pick a default voice
         logger.info('no preset_id found, using default voice')
         dialog.pick_default_voice()
-    hypertts.anki_utils.wait_for_dialog_input(dialog, constants.DIALOG_ID_EASY)
+    superfreetss.anki_utils.wait_for_dialog_input(dialog, constants.DIALOG_ID_EASY)

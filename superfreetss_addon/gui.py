@@ -359,21 +359,13 @@ def init(hypertts):
 
             return buttons
 
-    # Tools menu: tạo menu "AnkiVN" và thêm "Super Free TTS" vào dưới nó
+    # Top-level menu bar: tạo menu "AnkiVN" ngang hàng với Tools, File, Edit
     global action_superfreetts
-    menu_tools = aqt.mw.form.menuTools
+    menubar = aqt.mw.form.menubar
 
-    # Gỡ submenu cũ hoặc hai action cũ (nếu đã cài bản trước)
-    for action in list(menu_tools.actions()):
-        if action.menu() and action.menu().objectName() == "sf_tools_menu":
-            menu_tools.removeAction(action)
-            break
-        if action.objectName() in ("sf_action_services", "sf_action_preferences"):
-            menu_tools.removeAction(action)
-
-    # Tìm hoặc tạo menu "AnkiVN"
+    # Tìm hoặc tạo menu "AnkiVN" ở top-level menu bar
     ankivn_menu = None
-    for action in menu_tools.actions():
+    for action in menubar.actions():
         if action.menu() and action.menu().objectName() == "ankivn_menu":
             ankivn_menu = action.menu()
             break
@@ -381,7 +373,7 @@ def init(hypertts):
     if ankivn_menu is None:
         ankivn_menu = aqt.qt.QMenu("AnkiVN", aqt.mw)
         ankivn_menu.setObjectName("ankivn_menu")
-        menu_tools.addMenu(ankivn_menu)
+        menubar.addMenu(ankivn_menu)
 
     # Tìm action "Super Free TTS" đã có trong menu AnkiVN (sau reload addon)
     action_superfreetts = None

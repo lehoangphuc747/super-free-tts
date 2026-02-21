@@ -250,9 +250,10 @@ class Configuration(component_common.ConfigComponentBase):
         - enabled = True: Emerald border and soft slate background
         - enabled = False: Subtle border, semi-transparent background
         """
+        obj_name = service_card.objectName()
         if enabled:
             service_card.setStyleSheet(
-                f"""QFrame {{ 
+                f"""QFrame#{obj_name} {{ 
                     background-color: palette(window); 
                     border: 1px solid {constants.COLOR_ACCENT}; 
                     border-radius: 12px;
@@ -260,11 +261,11 @@ class Configuration(component_common.ConfigComponentBase):
             )
         else:
             service_card.setStyleSheet(
-                """QFrame { 
+                f"""QFrame#{obj_name} {{ 
                     background-color: transparent; 
                     border: 1px solid #E2E8F0; 
                     border-radius: 12px;
-                }"""
+                }}"""
             )
 
     def draw_service(self, service, layout):
@@ -356,6 +357,7 @@ class Configuration(component_common.ConfigComponentBase):
 
         # bọc tất cả vào một "card" tối giản để phân tách từng service rõ ràng
         service_card = aqt.qt.QFrame()
+        service_card.setObjectName(f'service_card_{service.name}')
         service_card.setLayout(combined_service_vlayout)
         service_card.setFrameShape(aqt.qt.QFrame.Shape.NoFrame)
 
@@ -604,6 +606,7 @@ class Configuration(component_common.ConfigComponentBase):
 
         # TOC panel (sidebar trái) - đóng vai trò mục lục / filter
         toc_widget = aqt.qt.QWidget()
+        toc_widget.setObjectName('toc_sidebar')
         toc_layout = aqt.qt.QVBoxLayout(toc_widget)
         toc_layout.setContentsMargins(8, 8, 8, 8)
         toc_layout.setSpacing(12)
@@ -708,7 +711,7 @@ class Configuration(component_common.ConfigComponentBase):
 
         toc_widget.setFixedWidth(220)
         toc_widget.setStyleSheet("""
-            QWidget {
+            QWidget#toc_sidebar {
                 border-right: 1px solid palette(mid);
                 background-color: palette(window);
             }

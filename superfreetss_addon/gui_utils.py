@@ -170,6 +170,20 @@ def configure_secondary_button(button, min_height=30, min_width=80, font_size=9)
 
 def configure_toggle_switch(checkbox):
     """Style a QCheckBox to look like a compact toggle switch."""
+    def svg_toggle(bg_color, border_color, knob_x):
+        svg = (
+            "<svg xmlns='http://www.w3.org/2000/svg' width='34' height='18' viewBox='0 0 34 18'>"
+            f"<rect x='1' y='1' width='32' height='16' rx='8' ry='8' fill='{bg_color}' "
+            f"stroke='{border_color}' stroke-width='1'/>"
+            f"<circle cx='{knob_x}' cy='9' r='6' fill='#FFFFFF'/>"
+            "</svg>"
+        )
+        return "data:image/svg+xml;utf8," + svg.replace("#", "%23").replace(" ", "%20")
+
+    unchecked_svg = svg_toggle("#E2E8F0", "#CBD5E1", 9)
+    checked_svg = svg_toggle(constants.COLOR_ACCENT, constants.COLOR_ACCENT, 25)
+    disabled_svg = svg_toggle("#CBD5E1", "#CBD5E1", 9)
+
     toggle_style = f"""
         QCheckBox {{
             spacing: 6px;
@@ -177,17 +191,15 @@ def configure_toggle_switch(checkbox):
         QCheckBox::indicator {{
             width: 34px;
             height: 18px;
-            border-radius: 9px;
-            border: 1px solid #CBD5E1;
-            background: #E2E8F0;
+        }}
+        QCheckBox::indicator:unchecked {{
+            image: url("{unchecked_svg}");
         }}
         QCheckBox::indicator:checked {{
-            border: 1px solid {constants.COLOR_ACCENT};
-            background: {constants.COLOR_ACCENT};
+            image: url("{checked_svg}");
         }}
         QCheckBox::indicator:disabled {{
-            border: 1px solid #CBD5E1;
-            background: #CBD5E1;
+            image: url("{disabled_svg}");
         }}
     """
     checkbox.setStyleSheet(toggle_style)

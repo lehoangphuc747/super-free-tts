@@ -100,8 +100,113 @@ class SuperFreeTTSMainDialog(aqt.qt.QDialog):
         self.setWindowTitle(i18n.get_text("dialog_main_title", lang))
         self.setMinimumSize(500, 400)
         self.setSizePolicy(aqt.qt.QSizePolicy.Policy.Expanding, aqt.qt.QSizePolicy.Policy.Expanding)
-        self.main_layout = aqt.qt.QVBoxLayout(self)
-        self.tabs = aqt.qt.QTabWidget()
+        self.main_layout = aqt.qt.QHBoxLayout(self)
+        self.main_layout.setContentsMargins(8, 8, 8, 8)
+        self.main_layout.setSpacing(8)
+
+        # Sidebar container for primary navigation
+        sidebar = aqt.qt.QWidget()
+        sidebar.setObjectName("main_sidebar")
+        sidebar_layout = aqt.qt.QVBoxLayout(sidebar)
+        sidebar_layout.setContentsMargins(8, 8, 8, 8)
+        sidebar_layout.setSpacing(10)
+
+        # Sidebar logo
+        header_widget = aqt.qt.QWidget()
+        header_widget.setLayout(gui_utils.get_superfreetss_label_header())
+        sidebar_layout.addWidget(header_widget)
+        sidebar_layout.addSpacing(8)
+
+        def get_sidebar_button_style(is_active):
+            if is_active:
+                return f"""
+                    QPushButton {{
+                        text-align: left;
+                        padding: 8px 12px;
+                        border: none;
+                        border-left: 3px solid {constants.COLOR_ACCENT};
+                        font-weight: bold;
+                        background-color: palette(alternate-base);
+                    }}
+                    QPushButton:hover {{ background-color: palette(alternate-base); }}
+                """
+            return """
+                QPushButton {
+                    text-align: left;
+                    padding: 8px 12px;
+                    border: none;
+                    font-weight: bold;
+                    background-color: transparent;
+                }
+                QPushButton:hover { background-color: palette(alternate-base); }
+            """
+
+        btn_services = aqt.qt.QPushButton(i18n.get_text("tab_services", lang))
+        btn_services.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
+        btn_services.setStyleSheet(get_sidebar_button_style(True))
+        sidebar_layout.addWidget(btn_services)
+
+        # Services sub-tabs
+        services_sub_container = aqt.qt.QWidget()
+        services_sub_layout = aqt.qt.QVBoxLayout(services_sub_container)
+        services_sub_layout.setContentsMargins(12, 0, 0, 0)
+        services_sub_layout.setSpacing(4)
+
+        def get_sub_button_style(is_active):
+            if is_active:
+                return f"""
+                    QPushButton {{
+                        text-align: left;
+                        padding: 6px 10px;
+                        border: none;
+                        border-left: 3px solid {constants.COLOR_ACCENT};
+                        background-color: palette(alternate-base);
+                    }}
+                    QPushButton:hover {{ background-color: palette(alternate-base); }}
+                """
+            return """
+                QPushButton {
+                    text-align: left;
+                    padding: 6px 10px;
+                    border: none;
+                    background-color: transparent;
+                }
+                QPushButton:hover { background-color: palette(alternate-base); }
+            """
+
+        btn_services_tts = aqt.qt.QPushButton(i18n.get_text("config_category_tts", lang))
+        btn_services_tts.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
+        btn_services_tts.setStyleSheet(get_sub_button_style(True))
+        services_sub_layout.addWidget(btn_services_tts)
+
+        btn_services_dict = aqt.qt.QPushButton(i18n.get_text("config_category_dictionary", lang))
+        btn_services_dict.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
+        btn_services_dict.setStyleSheet(get_sub_button_style(False))
+        services_sub_layout.addWidget(btn_services_dict)
+
+        btn_services_about = aqt.qt.QPushButton(i18n.get_text("config_toc_about", lang))
+        btn_services_about.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
+        btn_services_about.setStyleSheet(get_sub_button_style(False))
+        services_sub_layout.addWidget(btn_services_about)
+
+        sidebar_layout.addWidget(services_sub_container)
+
+        btn_preferences = aqt.qt.QPushButton(i18n.get_text("tab_preferences", lang))
+        btn_preferences.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
+        btn_preferences.setStyleSheet(get_sidebar_button_style(False))
+        sidebar_layout.addWidget(btn_preferences)
+
+        sidebar_layout.addStretch()
+        sidebar.setFixedWidth(220)
+        sidebar.setStyleSheet("""
+            QWidget#main_sidebar {
+                border-right: 1px solid palette(mid);
+                background-color: palette(window);
+            }
+        """)
+
+        # Content stack for main pages
+        self.pages = aqt.qt.QStackedWidget()
 
         # Tab 1: Services (Nguồn âm thanh)
         tab_services_widget = aqt.qt.QWidget()
@@ -109,7 +214,7 @@ class SuperFreeTTSMainDialog(aqt.qt.QDialog):
         self.configuration = component_configuration.Configuration(self.superfreetss, self)
         self.configuration.load_model(self.superfreetss.get_configuration())
         self.configuration.draw(tab_services_layout)
-        self.tabs.addTab(tab_services_widget, i18n.get_text("tab_services", lang))
+        self.pages.addWidget(tab_services_widget)
 
         # Tab 2: Preferences (Cấu hình)
         tab_preferences_widget = aqt.qt.QWidget()
@@ -117,10 +222,47 @@ class SuperFreeTTSMainDialog(aqt.qt.QDialog):
         self.preferences = component_preferences.ComponentPreferences(self.superfreetss, self)
         self.preferences.load_model(self.superfreetss.get_preferences())
         self.preferences.draw(tab_preferences_layout)
-        self.tabs.addTab(tab_preferences_widget, i18n.get_text("tab_preferences", lang))
+        self.pages.addWidget(tab_preferences_widget)
 
-        self.tabs.setCurrentIndex(self.initial_tab)
-        self.main_layout.addWidget(self.tabs)
+        def set_services_sub_active(tts=False, dictionary=False, about=False):
+            btn_services_tts.setStyleSheet(get_sub_button_style(tts))
+            btn_services_dict.setStyleSheet(get_sub_button_style(dictionary))
+            btn_services_about.setStyleSheet(get_sub_button_style(about))
+
+        def show_page(index):
+            self.pages.setCurrentIndex(index)
+            btn_services.setStyleSheet(get_sidebar_button_style(index == 0))
+            btn_preferences.setStyleSheet(get_sidebar_button_style(index == 1))
+            services_sub_container.setVisible(index == 0)
+
+        def show_services_tts():
+            show_page(0)
+            self.configuration.show_tts_tab()
+            set_services_sub_active(tts=True)
+
+        def show_services_dict():
+            show_page(0)
+            self.configuration.show_dict_tab()
+            set_services_sub_active(dictionary=True)
+
+        def show_services_about():
+            show_page(0)
+            self.configuration.show_about_section()
+            set_services_sub_active(about=True)
+
+        btn_services.pressed.connect(show_services_tts)
+        btn_preferences.pressed.connect(lambda: show_page(1))
+        btn_services_tts.pressed.connect(show_services_tts)
+        btn_services_dict.pressed.connect(show_services_dict)
+        btn_services_about.pressed.connect(show_services_about)
+
+        if self.initial_tab == 1:
+            show_page(1)
+        else:
+            show_services_tts()
+
+        self.main_layout.addWidget(sidebar)
+        self.main_layout.addWidget(self.pages, 1)
         self.resize(600, 700)
 
     def close(self):

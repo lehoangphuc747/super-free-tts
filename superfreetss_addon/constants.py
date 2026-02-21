@@ -232,6 +232,27 @@ STYLESHEET_DIALOG = """
         border-bottom-color: transparent;
     }
 
+    /* ── Main dialog tabs (vertical) ── */
+    QTabWidget#main_tabs::pane {
+        border: 1px solid #E2E8F0;
+        border-radius: 10px;
+    }
+    QTabWidget#main_tabs QTabBar::tab {
+        padding: 10px 16px;
+        margin: 2px 0;
+        min-width: 140px;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+        background-color: palette(button);
+        color: palette(button-text);
+        text-align: left;
+    }
+    QTabWidget#main_tabs QTabBar::tab:selected {
+        font-weight: bold;
+        background-color: palette(window);
+        border-right: 3px solid """ + COLOR_ACCENT + """;
+    }
+
     /* ── Input controls ── */
     QLineEdit, QComboBox, QSpinBox, QDoubleSpinBox {
         padding: 8px 12px;

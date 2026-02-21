@@ -439,6 +439,7 @@ class Configuration(component_common.ConfigComponentBase):
         self.search_input.setPlaceholderText(i18n.get_text("config_search_placeholder", lang))
         self.search_input.setClearButtonEnabled(True)
         search_layout.addWidget(self.search_input)
+        self.global_vlayout.addWidget(search_container)
 
         # scroll area cho danh sách services
         services_scroll_area = ScrollAreaCustom()
@@ -625,156 +626,43 @@ class Configuration(component_common.ConfigComponentBase):
         # filter ngay khi người dùng gõ (debounce nhẹ do Qt tự xử lý sự kiện tuần tự)
         self.search_input.textChanged.connect(lambda _text: run_search())
 
-        # === Swiss Style main layout: TOC bên trái, content bên phải ===
-        main_hlayout = aqt.qt.QHBoxLayout()
-
-        # TOC panel (sidebar trái) - Logo + Tab buttons + About
-        toc_widget = aqt.qt.QWidget()
-        toc_widget.setObjectName('toc_sidebar')
-        toc_layout = aqt.qt.QVBoxLayout(toc_widget)
-        toc_layout.setContentsMargins(8, 8, 8, 8)
-        toc_layout.setSpacing(12)
-
-        # Logo at top of sidebar
-        header_widget = aqt.qt.QWidget()
-        header_widget.setLayout(gui_utils.get_superfreetss_label_header())
-        toc_layout.addWidget(header_widget)
-
-        toc_layout.addSpacing(12)
-
-        # Tab buttons for Services view
-        # Track current active tab
-        active_tab_state = {"tab": "tts"}  # Default to TTS tab
-
-        def get_tab_button_style(is_active):
-            """Return stylesheet for tab button (active or inactive)"""
-            if is_active:
-                return f"""
-                    QPushButton {{
-                        text-align: left;
-                        padding: 8px 12px;
-                        border: none;
-                        border-left: 3px solid {constants.COLOR_ACCENT};
-                        font-weight: bold;
-                        background-color: palette(alternate-base);
-                        border-radius: 0px;
-                    }}
-                    QPushButton:hover {{ background-color: palette(alternate-base); }}
-                """
-            else:
-                return """
-                    QPushButton {
-                        text-align: left;
-                        padding: 8px 12px;
-                        border: none;
-                        font-weight: bold;
-                        background-color: transparent;
-                        border-radius: 0px;
-                    }
-                    QPushButton:hover { background-color: palette(alternate-base); }
-                """
-
-        # TTS Tab Button
-        btn_tts = aqt.qt.QPushButton(i18n.get_text("config_category_tts", lang))
-        btn_tts.setFlat(True)
-        btn_tts.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
-        btn_tts.setStyleSheet(get_tab_button_style(True))  # Start as active
-        
-        # Dictionary Tab Button
-        btn_dict = aqt.qt.QPushButton(i18n.get_text("config_category_dictionary", lang))
-        btn_dict.setFlat(True)
-        btn_dict.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
-        btn_dict.setStyleSheet(get_tab_button_style(False))  # Start as inactive
-
-        def switch_to_tts_tab():
-            show_services_tab()
-            if active_tab_state["tab"] == "tts":
-                return
-            active_tab_state["tab"] = "tts"
-            # Update tab button styles
-            btn_tts.setStyleSheet(get_tab_button_style(True))
-            btn_dict.setStyleSheet(get_tab_button_style(False))
-            # Show/hide containers
-            self.tts_tab_container.setVisible(True)
-            self.dict_tab_container.setVisible(False)
-
-        def switch_to_dict_tab():
-            show_services_tab()
-            if active_tab_state["tab"] == "dict":
-                return
-            active_tab_state["tab"] = "dict"
-            # Update tab button styles
-            btn_tts.setStyleSheet(get_tab_button_style(False))
-            btn_dict.setStyleSheet(get_tab_button_style(True))
-            # Show/hide containers
-            self.tts_tab_container.setVisible(False)
-            self.dict_tab_container.setVisible(True)
-
-        btn_tts.pressed.connect(switch_to_tts_tab)
-        btn_dict.pressed.connect(switch_to_dict_tab)
-
-        # Add tab buttons vertically for a sidebar-friendly layout
-        toc_layout.addWidget(btn_tts)
-        toc_layout.addWidget(btn_dict)
-
-        # Sidebar search (compact)
-        toc_layout.addSpacing(8)
-        toc_layout.addWidget(search_container)
-
-        # Show TTS tab by default
-        self.tts_tab_container.setVisible(True)
-        self.dict_tab_container.setVisible(False)
-
-        toc_layout.addSpacing(20)
-        
-        # Tab "About" in TOC
-        btn_about = aqt.qt.QPushButton(i18n.get_text("config_toc_about", lang))
-        btn_about.setFlat(True)
-        btn_about.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
-        btn_about.setStyleSheet("""
-            QPushButton { text-align: left; padding: 6px 10px; border: none; font-weight: bold; }
-            QPushButton:hover { background-color: palette(alternate-base); border-radius: 4px; }
-        """)
-        
-        def show_about():
-            self._services_scroll_area.setVisible(False)
-            self.about_container.setVisible(True)
-            # Hide search bar and headers when in About tab
-            search_container.setVisible(False)
-            header_container.setVisible(False)
-
-        def show_services_tab():
-            self._services_scroll_area.setVisible(True)
-            self.about_container.setVisible(False)
-            # Show search bar and headers
-            search_container.setVisible(True)
-            header_container.setVisible(True)
-
-        btn_about.pressed.connect(show_about)
-        
-        toc_layout.addWidget(btn_about)
-        toc_layout.addStretch()
-
-        toc_widget.setFixedWidth(220)
-        toc_widget.setStyleSheet("""
-            QWidget#toc_sidebar {
-                border-right: 1px solid palette(mid);
-                background-color: palette(window);
-            }
-        """)
-
-        # gắn TOC và content vào layout chính
-        main_hlayout.addWidget(toc_widget)
-
-        content_widget = aqt.qt.QWidget()
-        content_widget.setLayout(self.global_vlayout)
-        main_hlayout.addWidget(content_widget, 1)
-
         # lưu reference để TOC có thể scroll tới phần services
         self._services_scroll_area = services_scroll_area
         self._services_container_widget = services_widget
 
-        layout.addLayout(main_hlayout)
+        def show_services_tab():
+            self._services_scroll_area.setVisible(True)
+            self.about_container.setVisible(False)
+            header_container.setVisible(True)
+            search_container.setVisible(True)
+
+        def show_about():
+            self._services_scroll_area.setVisible(False)
+            self.about_container.setVisible(True)
+            header_container.setVisible(False)
+            search_container.setVisible(False)
+
+        def show_tts_tab():
+            show_services_tab()
+            self.active_services_tab = "tts"
+            self.tts_tab_container.setVisible(True)
+            self.dict_tab_container.setVisible(False)
+
+        def show_dict_tab():
+            show_services_tab()
+            self.active_services_tab = "dict"
+            self.tts_tab_container.setVisible(False)
+            self.dict_tab_container.setVisible(True)
+
+        self.show_tts_tab = show_tts_tab
+        self.show_dict_tab = show_dict_tab
+        self.show_about_section = show_about
+        self.show_services_section = show_services_tab
+
+        # Show TTS tab by default
+        show_tts_tab()
+
+        layout.addLayout(self.global_vlayout)
 
     @sc.event(Event.click_save)
     def save_button_pressed(self):

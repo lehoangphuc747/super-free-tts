@@ -15,7 +15,6 @@ from . import version
 from . import constants
 from . import constants_events
 from . import config_models
-from . import cloudlanguagetools as cloudlanguagetools_module
 from . import logging_utils
 from . import stats
 logger = logging_utils.get_child_logger(__name__)
@@ -31,38 +30,29 @@ class ServiceManager():
     this class will discover the services that are available and query their voices. it can also route a request
     to the correct service.
     """
-    def __init__(self, services_directory, package_name, allow_test_services, cloudlanguagetools=cloudlanguagetools_module.CloudLanguageTools()):
+    def __init__(self, services_directory, package_name, allow_test_services):
         self.services_directory = services_directory
         self.package_name = package_name
         self.services = {}
-        self.cloudlanguagetools_enabled = False
         self.allow_test_services = allow_test_services
-        self.cloudlanguagetools = cloudlanguagetools
 
     def configure(self, configuration_model, disable_ssl_verification: bool = False) -> bool:
         # will return true if at least one service is enabled
         return_value = False
-        # Super Free TTS: Pro mode is permanently disabled
-        hypertts_pro_mode = False
         for service_name, enabled in configuration_model.get_service_enabled_map().items():
             if not self.service_exists(service_name):
                 logger.warning(f'could not find service {service_name}, cannot configure')
                 continue
             service = self.get_service(service_name)
-            logger.info(f'configuring service {service_name}, hypertts_pro_mode: {hypertts_pro_mode}, clt_enabled: {service.cloudlanguagetools_enabled()}')
-            if not (hypertts_pro_mode == True and service.cloudlanguagetools_enabled()):
-                service.enabled = enabled
-                if enabled:
-                    # at least one service enabled
-                    return_value = True
-                # do we need to set configuration for this service ? only do so if the service is enabled
-                if enabled and service_name in configuration_model.get_service_config():
-                    service_config = configuration_model.get_service_config()[service_name]
-                    service.configure(service_config)
-        # if we enable cloudlanguagetools, it may force some services to enabled
-        self.cloudlanguagetools.configure(configuration_model, disable_ssl_verification)
-        # Super Free TTS: CloudLanguageTools and Pro mode disabled
-        self.cloudlanguagetools_enabled = False
+            logger.info(f'configuring service {service_name}')
+            service.enabled = enabled
+            if enabled:
+                # at least one service enabled
+                return_value = True
+            # do we need to set configuration for this service ? only do so if the service is enabled
+            if enabled and service_name in configuration_model.get_service_config():
+                service_config = configuration_model.get_service_config()[service_name]
+                service.configure(service_config)
 
         return return_value
 
@@ -135,28 +125,11 @@ class ServiceManager():
     # service configuration
     # =====================
 
-    def configure_cloudlanguagetools(self, configuration: config_models.Configuration):
-        logger.info('configure_cloudlanguagetools')
-        self.cloudlanguagetools_enabled = True
-        # enable all services which are supported by cloud language tools
-        for service in self.get_all_services():
-            if service.cloudlanguagetools_enabled():
-                logger.info(f'enabling {service.name} with cloud language tools')
-                service.enabled = True
-
     def service_configuration_options(self, service_name):
         return self.services[service_name].configuration_options()
 
     # getting TTS audio and voice list
     # ================================
-
-    def use_cloud_language_tools(self, voice: voice_module.TtsVoice_v3):
-        assert isinstance(voice, voice_module.TtsVoice_v3), f"Expected voice to be TtsVoice_v3, got {type(voice).__name__}"
-        if self.cloudlanguagetools_enabled:
-            service = self.get_service(voice.service)
-            if service.cloudlanguagetools_enabled():
-                return True
-        return False
 
     def get_tts_audio(self, source_text, voice: voice_module.TtsVoice_v3, options, audio_request_context):
         logger.debug(f'get_tts_audio for voice: {voice}')
@@ -169,8 +142,6 @@ class ServiceManager():
 
     def get_tts_audio_instrumented(self, source_text, voice: voice_module.TtsVoice_v3, options, audio_request_context):
         transaction_name = f'{voice.service}'
-        if self.use_cloud_language_tools(voice):
-            transaction_name = f'cloudlanguagetools_{voice.service}'
         sentry_sdk.set_tag('clt.audio_request_reason', audio_request_context.get_audio_request_reason_tag())
         raise_exception = None
         with sentry_sdk.start_transaction(op="audio", name=transaction_name) as transaction:
@@ -191,7 +162,6 @@ class ServiceManager():
 
     def get_tts_audio_implementation(self, source_text, voice: voice_module.TtsVoice_v3, options, audio_request_context):
         logger.debug(f'get_tts_audio_implementation for voice: {voice}, source_text: {source_text}')
-        use_clt = self.use_cloud_language_tools(voice)
 
         event_count = COUNT_BY_BATCH_UUID.get(audio_request_context.batch_uuid, 0)
         if event_count < constants_events.GENERATE_MAX_EVENTS:
@@ -199,7 +169,6 @@ class ServiceManager():
                                 constants_events.Event.get_tts_audio, 
                                 None,
                                 {
-                                    'use_clt': use_clt,
                                     'service_fee': voice.service_fee.name,
                                     'service': voice.service,
                                     'voice_name': voice.name,
@@ -208,13 +177,9 @@ class ServiceManager():
             event_count += 1
             COUNT_BY_BATCH_UUID[audio_request_context.batch_uuid] = event_count
 
-        if use_clt:
-            logger.debug(f'voice: {voice}, using cloudlanguagetools')
-            return self.cloudlanguagetools.get_tts_audio(source_text, voice, options, audio_request_context)
-        else:
-            service = self.services[voice.service]
-            logger.debug(f'voice: {voice}, using service {service.name}')
-            return service.get_tts_audio(source_text, voice, options)
+        service = self.services[voice.service]
+        logger.debug(f'voice: {voice}, using service {service.name}')
+        return service.get_tts_audio(source_text, voice, options)
 
     def full_voice_list(self, single_service_name=None) -> typing.List[voice_module.TtsVoice_v3]:
         full_list = []

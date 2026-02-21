@@ -130,7 +130,7 @@ class ComponentEasy(component_common.ComponentBase):
         # Add header with logo at the top
         header_layout = aqt.qt.QHBoxLayout()
         header_layout.addStretch()
-        header_layout.addLayout(gui_utils.get_superfreetss_label_header(self.hypertts.superfreetss_pro_enabled()))
+        header_layout.addLayout(gui_utils.get_superfreetss_label_header())
         layout.addLayout(header_layout)
 
         # Main Vertical Content Layout
@@ -302,6 +302,8 @@ class EasyDialog(aqt.qt.QDialog):
         self.hypertts = hypertts
         # Cho phép dialog Easy Mode thu nhỏ/phóng to theo ý người dùng
         self.setWindowFlag(aqt.qt.Qt.WindowType.WindowMinMaxButtonsHint, True)
+        self.setSizeGripEnabled(True)  # Cho phép kéo thay đổi kích thước
+        self.setSizePolicy(aqt.qt.QSizePolicy.Policy.Expanding, aqt.qt.QSizePolicy.Policy.Expanding)
         self.setStyleSheet(constants.STYLESHEET_DIALOG)
         lang = self.hypertts.get_ui_language()
         self.setWindowTitle(i18n.get_text("dialog_easy_title", lang))

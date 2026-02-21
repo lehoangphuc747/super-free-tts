@@ -28,8 +28,6 @@ from . import component_configuration
 from . import component_preferences
 from . import component_easy
 from . import component_choose_easy_advanced
-from . import component_services_configuration
-from . import component_trialsignup
 from . import text_utils
 from . import ttsplayer
 from . import logging_utils
@@ -47,6 +45,7 @@ class ConfigurationDialog(aqt.qt.QDialog):
         # Cho phép thu nhỏ/phóng to cửa sổ cấu hình (min/max buttons trên title bar)
         # Giúp user có thể mở rộng ra full màn hình khi cần xem nhiều services hơn
         self.setWindowFlag(aqt.qt.Qt.WindowType.WindowMinMaxButtonsHint, True)
+        self.setSizeGripEnabled(True)  # Cho phép kéo thay đổi kích thước
         self.setStyleSheet(constants.STYLESHEET_DIALOG)
         self.configuration = component_configuration.Configuration(hypertts, self)
         self.configuration.load_model(hypertts.get_configuration())
@@ -54,6 +53,7 @@ class ConfigurationDialog(aqt.qt.QDialog):
     def setupUi(self):
         lang = self.hypertts.get_ui_language()
         self.setMinimumSize(500, 300)
+        self.setSizePolicy(aqt.qt.QSizePolicy.Policy.Expanding, aqt.qt.QSizePolicy.Policy.Expanding)
         self.setWindowTitle(i18n.get_text("dialog_services_title", lang))
         self.main_layout = aqt.qt.QVBoxLayout(self)
         self.configuration.draw(self.main_layout)
@@ -68,12 +68,14 @@ class PreferencesDialog(aqt.qt.QDialog):
         self.hypertts = hypertts
         # Cho phép thu nhỏ/phóng to cho màn hình Preferences
         self.setWindowFlag(aqt.qt.Qt.WindowType.WindowMinMaxButtonsHint, True)
+        self.setSizeGripEnabled(True)  # Cho phép kéo thay đổi kích thước
         self.setStyleSheet(constants.STYLESHEET_DIALOG)
         self.preferences = component_preferences.ComponentPreferences(hypertts, self)
         self.preferences.load_model(hypertts.get_preferences())
 
     def setupUi(self):
         lang = self.hypertts.get_ui_language()
+        self.setSizePolicy(aqt.qt.QSizePolicy.Policy.Expanding, aqt.qt.QSizePolicy.Policy.Expanding)
         self.setWindowTitle(i18n.get_text("dialog_preferences_title", lang))
         self.main_layout = aqt.qt.QVBoxLayout(self)
         self.preferences.draw(self.main_layout)
@@ -90,12 +92,14 @@ class SuperFreeTTSMainDialog(aqt.qt.QDialog):
         self.hypertts = hypertts
         self.initial_tab = initial_tab
         self.setWindowFlag(aqt.qt.Qt.WindowType.WindowMinMaxButtonsHint, True)
+        self.setSizeGripEnabled(True)  # Cho phép kéo thay đổi kích thước
         self.setStyleSheet(constants.STYLESHEET_DIALOG)
 
     def setupUi(self):
         lang = self.hypertts.get_ui_language()
         self.setWindowTitle(i18n.get_text("dialog_main_title", lang))
         self.setMinimumSize(500, 400)
+        self.setSizePolicy(aqt.qt.QSizePolicy.Policy.Expanding, aqt.qt.QSizePolicy.Policy.Expanding)
         self.main_layout = aqt.qt.QVBoxLayout(self)
         self.tabs = aqt.qt.QTabWidget()
 
@@ -138,11 +142,13 @@ class RealtimeDialog(DialogBase):
         self.hypertts = hypertts
         # Cho phép thu nhỏ/phóng to cho dialog Realtime TTS
         self.setWindowFlag(aqt.qt.Qt.WindowType.WindowMinMaxButtonsHint, True)
+        self.setSizeGripEnabled(True)  # Cho phép kéo thay đổi kích thước
         self.setStyleSheet(constants.STYLESHEET_DIALOG)
         self.realtime_component = component_realtime.ComponentRealtime(hypertts, self, card_ord)
 
     def setupUi(self):
         lang = self.hypertts.get_ui_language()
+        self.setSizePolicy(aqt.qt.QSizePolicy.Policy.Expanding, aqt.qt.QSizePolicy.Policy.Expanding)
         self.setWindowTitle(i18n.get_text("dialog_realtime_title", lang))
         self.main_layout = aqt.qt.QVBoxLayout(self)
         self.realtime_component.draw(self.main_layout)
@@ -408,10 +414,7 @@ def init(hypertts):
 
     def should_show_welcome_message(hypertts):
         configuration = hypertts.get_configuration()
-        if configuration.display_introduction_message:
-            if configuration.trial_registration_step in [config_models.TrialRegistrationStep.new_install, config_models.TrialRegistrationStep.pending_add_audio]:
-                return True
-        return False
+        return configuration.display_introduction_message
 
     def on_deck_browser_will_render_content(deck_browser, content):
         # initialize stats
@@ -421,7 +424,6 @@ def init(hypertts):
 
         if should_show_welcome_message(hypertts):
             configuration = hypertts.get_configuration()
-            trial_step = configuration.trial_registration_step
             
             # Check if night mode is enabled
             night_mode = hypertts.anki_utils.night_mode_enabled()
@@ -431,15 +433,7 @@ def init(hypertts):
             border_color = "#555555" if night_mode else "#cccccc"
             text_color = "#ffffff" if night_mode else "#000000"
             
-            # Determine which buttons to show based on trial registration step
-            show_configure_services = trial_step == config_models.TrialRegistrationStep.new_install
-            show_add_audio = trial_step == config_models.TrialRegistrationStep.pending_add_audio
-            
-            # Set initial visibility styles
-            configure_services_style = "" if show_configure_services else "display: none;"
-            add_audio_style = "" if show_add_audio else "display: none;"
-            
-            # Generate button content - only non-large variant
+            # Generate button content
             configure_services_content = f"""
                 <p id="superfreetss-important-text"><b class="important-gradient-text">Important</b>: you have to configure services before adding audio.</p>
                 <button class="superfreetss-welcome-button">
@@ -462,10 +456,10 @@ def init(hypertts):
                     <button id="superfreetss-welcome-close" style="background: none; border: none; cursor: pointer; font-size: 1.2em; color: {text_color};">× Close</button>
                 </div>
                 <div style="text-align: center; margin-top: 10px;">
-                    <div id="superfreetss-configure-services" style="{configure_services_style}">
+                    <div id="superfreetss-configure-services">
                         {configure_services_content}
                     </div>
-                    <div id="superfreetss-how-to-add-audio" style="{add_audio_style}">
+                    <div id="superfreetss-how-to-add-audio" style="display: none;">
                         {add_audio_content}
                     </div>
                 </div>

@@ -83,7 +83,7 @@ class ComponentRealtime(component_common.ConfigComponentBase):
         hlayout = aqt.qt.QHBoxLayout()
 
         # logo header
-        hlayout.addLayout(gui_utils.get_superfreetss_label_header(self.hypertts.superfreetss_pro_enabled()))
+        hlayout.addLayout(gui_utils.get_superfreetss_label_header())
         self.vlayout.addLayout(hlayout)
 
         # sides tabs
@@ -131,7 +131,7 @@ class ComponentRealtime(component_common.ConfigComponentBase):
 
     def disable_apply_button(self):
         self.apply_button.setEnabled(False)
-        self.apply_button.setStyleSheet(None)
+        self.apply_button.setStyleSheet("")
 
     def enable_apply_button(self):
         logger.info('enable_apply_button')

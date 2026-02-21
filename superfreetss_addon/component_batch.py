@@ -197,7 +197,7 @@ class ComponentBatch(component_common.ConfigComponentBase):
     def disable_save_profile_button(self):
         logger.info('disable_save_profile_button')
         self.profile_save_button.setEnabled(False)
-        self.profile_save_button.setStyleSheet(None)
+        self.profile_save_button.setStyleSheet("")
 
     def enable_delete_profile_button(self):
         self.profile_delete_button.setEnabled(True)
@@ -239,7 +239,7 @@ class ComponentBatch(component_common.ConfigComponentBase):
 
         hlayout.addStretch()
         # logo header
-        hlayout.addLayout(gui_utils.get_superfreetss_label_header(self.hypertts.superfreetss_pro_enabled()))
+        hlayout.addLayout(gui_utils.get_superfreetss_label_header())
         self.vlayout.addLayout(hlayout)
 
         self.profile_open_button.pressed.connect(self.open_profile_button_pressed)
@@ -543,7 +543,7 @@ class ComponentBatch(component_common.ConfigComponentBase):
         # Keep cancel button as secondary, maybe emphasize it's done?
         # Actually standard secondary is fine for "Close"
         self.cancel_button.setEnabled(True)
-        self.apply_button.setStyleSheet(None)
+        self.apply_button.setStyleSheet("")
         self.apply_button.setText(i18n.get_text("batch_button_done", lang))
 
     def apply_notes_batch_end(self, completed):
@@ -563,6 +563,8 @@ class BatchDialog(aqt.qt.QDialog):
         self.hypertts = hypertts
         # Cho phép dialog Collection Mode thu nhỏ/phóng to
         self.setWindowFlag(aqt.qt.Qt.WindowType.WindowMinMaxButtonsHint, True)
+        self.setSizeGripEnabled(True)  # Cho phép kéo thay đổi kích thước
+        self.setSizePolicy(aqt.qt.QSizePolicy.Policy.Expanding, aqt.qt.QSizePolicy.Policy.Expanding)
         self.setStyleSheet(constants.STYLESHEET_DIALOG)
         lang = self.hypertts.get_ui_language()
         self.setWindowTitle(i18n.get_text("dialog_collection_title", lang))

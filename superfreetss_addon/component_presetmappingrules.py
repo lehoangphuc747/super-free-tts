@@ -53,7 +53,7 @@ class ComponentPresetMappingRules(component_common.ConfigComponentBase):
         hlayout = aqt.qt.QHBoxLayout()
         hlayout.addStretch()
         # logo header
-        hlayout.addLayout(gui_utils.get_superfreetss_label_header(self.hypertts.superfreetss_pro_enabled()))
+        hlayout.addLayout(gui_utils.get_superfreetss_label_header())
         self.vlayout.addLayout(hlayout)
 
         # font setup
@@ -290,7 +290,7 @@ class ComponentPresetMappingRules(component_common.ConfigComponentBase):
 
         # if there are no rules, set the green stylesheet on the add rule button
         if at_least_one_rule:
-            self.add_rule_button.setStyleSheet(None)
+            self.add_rule_button.setStyleSheet("")
         else:
             self.add_rule_button.setStyleSheet(self.hypertts.anki_utils.get_green_stylesheet())
         
@@ -301,7 +301,7 @@ class ComponentPresetMappingRules(component_common.ConfigComponentBase):
 
     def disable_save_button(self):
         self.save_button.setEnabled(False)
-        self.save_button.setStyleSheet(None)
+        self.save_button.setStyleSheet("")
 
     def preview_all_button_pressed(self):
         logger.debug('preview_all_button_pressed')
@@ -319,6 +319,7 @@ class PresetMappingRulesDialog(aqt.qt.QDialog):
         super(aqt.qt.QDialog, self).__init__()
         # Cho phép dialog Preset Mapping Rules thu nhỏ/phóng to
         self.setWindowFlag(aqt.qt.Qt.WindowType.WindowMinMaxButtonsHint, True)
+        self.setSizeGripEnabled(True)  # Cho phép kéo thay đổi kích thước
         self.setStyleSheet(constants.STYLESHEET_DIALOG)
         self.setupUi()
         self.mapping_rules = ComponentPresetMappingRules(hypertts, 
@@ -331,6 +332,7 @@ class PresetMappingRulesDialog(aqt.qt.QDialog):
         # lưu ý: trong lite version này, chỉ cần đọc ngôn ngữ từ Preferences qua hypertts trong mapping_rules
         # nhưng setupUi được gọi trước khi mapping_rules được tạo, nên tạm để constants
         self.setWindowTitle(constants.GUI_PRESET_MAPPING_RULES_DIALOG_TITLE)
+        self.setSizePolicy(aqt.qt.QSizePolicy.Policy.Expanding, aqt.qt.QSizePolicy.Policy.Expanding)
         self.main_layout = aqt.qt.QVBoxLayout(self)
 
     def verify_rules_saved(self):

@@ -8,7 +8,7 @@ from . import i18n
 from .constants_events import Event, EventMode
 from . import stats
 
-logger = logging_utils.get_test_child_logger(__name__)
+logger = logging_utils.get_child_logger(__name__)
 
 sc = stats.StatsContext(constants_events.EventContext.choose_easy_advanced)
 
@@ -48,6 +48,7 @@ class ChooseEasyAdvancedDialog(aqt.qt.QDialog):
     def setupUi(self):
         self.setWindowTitle(constants.TITLE_PREFIX + 'Choose Mode')
         self.setMinimumWidth(420)
+        self.setSizePolicy(aqt.qt.QSizePolicy.Policy.Expanding, aqt.qt.QSizePolicy.Policy.Expanding)
         root = aqt.qt.QVBoxLayout()
         root.setSpacing(16)
         root.setContentsMargins(24, 24, 24, 20)

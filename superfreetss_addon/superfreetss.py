@@ -151,7 +151,6 @@ class SuperFreeTTS():
                 full_filename, audio_filename = self.generate_audio_write_file(processed_text, 
                     voice_with_options.voice_id, voice_with_options.options, audio_request_context)
                 logger.debug(f'finished generating audio file and write to file for {processed_text}')
-                self.config_register_added_audio()
                 return full_filename, audio_filename
             except errors.AudioNotFoundError as exc:
                 # try the next voice, as long as one is available
@@ -793,10 +792,6 @@ class SuperFreeTTS():
     def get_configuration(self) -> config_models.Configuration:
         return self.deserialize_configuration(self.config.get(constants.CONFIG_CONFIGURATION, {}))
 
-    def save_superfreetss_pro_api_key(self, api_key: str):
-        """Super Free TTS: Pro mode disabled, no-op."""
-        pass
-
     def reconfigure_service_manager(self):
         """reconfigures the service manager with the current configuration"""
         configuration = self.get_configuration()
@@ -807,19 +802,6 @@ class SuperFreeTTS():
         if services_enabled:
             # at least one service was enabled
             self.anki_utils.broadcast_services_configured()
-
-    def config_register_added_audio(self):
-        """registers that the user has added audio, so we can show the welcome screen"""
-        configuration = self.get_configuration()
-        if configuration.trial_registration_step == config_models.TrialRegistrationStep.pending_add_audio:
-            configuration.trial_registration_step = config_models.TrialRegistrationStep.finished
-            configuration.display_introduction_message = False
-            self.save_configuration(configuration)
-            self.anki_utils.run_on_main(self.anki_utils.broadcast_audio_added)
-
-    def superfreetss_pro_enabled(self):
-        # Super Free TTS: Pro always disabled
-        return False
 
     def set_editor_use_selection(self, use_selection):
         self.config[constants.CONFIG_USE_SELECTION] = use_selection

@@ -32,12 +32,12 @@ else:
 
     from . import logging_utils
 
-    if os.environ.get('HYPER_TTS_DEBUG_LOGGING', '') == 'enable':
+    if os.environ.get('SUPER_FREE_TTS_DEBUG_LOGGING', '') == 'enable':
         # log everything to stdout
         logging_utils.configure_console_logging()
-    elif os.environ.get('HYPER_TTS_DEBUG_LOGGING', '') == 'file':
+    elif os.environ.get('SUPER_FREE_TTS_DEBUG_LOGGING', '') == 'file':
         # log everything to file
-        logging_utils.configure_file_logging(os.environ['HYPER_TTS_DEBUG_LOGFILE'])
+        logging_utils.configure_file_logging(os.environ['SUPER_FREE_TTS_DEBUG_LOGFILE'])
     else:
         # log at info level, but with null handler, so that sentry picks up breadcrumbs and errors
         logging_utils.configure_silent()
@@ -109,7 +109,7 @@ else:
         from . import version
         from . import sentry_utils
 
-        production_sample_rate = 0.025 if configuration.hypertts_pro_api_key_set() else 0.01
+        production_sample_rate = 0.01
         traces_sample_rate_map = {
             'development': 1.0,
             'production': production_sample_rate
@@ -166,8 +166,6 @@ else:
                                                         configuration.user_uuid,
                                                         {
                                                             'superfreetss_days_since_install': configuration.days_since_install(),
-                                                            'superfreetss_trial_registration_step': configuration.trial_registration_step.name,
-                                                            'superfreetss_pro': False
                                                         },
                                                         first_install,
                                                         False

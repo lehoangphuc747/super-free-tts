@@ -56,10 +56,6 @@ class Configuration(component_common.ConfigComponentBase):
     def load_model(self, model):
         self.model = model
 
-    def hyperttspro_account_config_change(self, account_config: config_models.HyperTTSProAccountConfig):
-        # Super Free TTS: Pro mode disabled, keep method for API compat
-        pass
-
     def model_change(self):
         if self.enable_model_change:
             self.save_button.setEnabled(True)
@@ -108,14 +104,6 @@ class Configuration(component_common.ConfigComponentBase):
             self.model.set_service_configuration_key(service.name, key, value)
             self.model_change()
         return bool_change
-
-    def cloud_language_tools_enabled(self):
-        # Super Free TTS: CLT/Pro always disabled
-        return False
-
-    def set_cloud_language_tools_enabled(self):
-        # Super Free TTS: Always show Lite header, no CLT logic needed
-        pass
 
     def manage_service_stack(self, service, service_stack, clt_stack):
         # Super Free TTS: Always show the free service stack
@@ -408,7 +396,7 @@ class Configuration(component_common.ConfigComponentBase):
         # logo header (always Lite/Free)
         # ===============================
         header_widget = aqt.qt.QWidget()
-        header_widget.setLayout(gui_utils.get_superfreetss_label_header(False))
+        header_widget.setLayout(gui_utils.get_superfreetss_label_header())
         self.global_vlayout.addWidget(header_widget)
 
         # superfreetss pro is removed in Lite version

@@ -15,9 +15,6 @@ CLIENT_NAME='anki-super-free-tts'
 RequestTimeout = 20 # 20 seconds max
 RequestTimeoutShort = 3
 
-CLOUDLANGUAGETOOLS_API_BASE_URL = 'https://cloudlanguagetools-api.vocab.ai'
-VOCABAI_API_BASE_URL = 'https://app.vocab.ai/languagetools-api/v4'
-
 class ServiceType(enum.Enum):
     dictionary = ("Dictionary, contains recordings of words.")
     tts = ("Text To Speech, can generate audio for full sentences.")
@@ -135,8 +132,6 @@ DIALOG_ID_BATCH = 'batch'
 DIALOG_ID_PRESET_MAPPING_RULES = 'preset_mapping_rules'
 DIALOG_ID_EASY = 'easy'
 DIALOG_ID_CHDOOSE_EASY_ADVANCED = 'choose_easy_advanced'
-DIALOG_ID_SERVICES_CONFIGURATION = 'services_configuration'
-DIALOG_ID_TRIAL_SIGNUP = 'trial_signup'
 
 TTS_TAG_VOICE = 'SuperFreeTTS'
 TTS_TAG_HYPERTTS_PRESET = 'superfreetss_preset'
@@ -152,6 +147,8 @@ UNDO_ENTRY_ADD_TTS_TAG = ADDON_NAME + ': Configure Realtime TTS Tag'
 
 GREEN_COLOR_REGULAR = '#69F0AE'
 RED_COLOR_REGULAR = '#FFCDD2'
+GREEN_COLOR_NIGHTMODE = '#81C784'
+RED_COLOR_NIGHTMODE = '#EF9A9A'
 
 # ── Primary palette (Elegant Monochrome) ──
 # ── Modern Swiss/Slate Design System ──
@@ -332,44 +329,6 @@ GUI_TEXT_BATCH_COMPLETED = """<b>Finished adding Audio to notes</b>. You can und
 Undo Super Free TTS: Add Audio to Notes. You may close this dialog.
 """
 
-GUI_TEXT_SUPERFREETSS_PRO = """Super Free TTS is a powerful, free TTS tool for Anki. Premium AI voices (OpenAI, Google Cloud, Azure) are also available via a Pro trial."""
-
-GUI_TEXT_BUTTON_TRIAL = """"""
-GUI_TEXT_BUTTON_API_KEY = """"""
-GUI_TEXT_BUTTON_BUY = """"""
-
-BUY_PLAN_URL = """"""
-
-GUI_TEXT_SUPERFREETSS_PRO_TRIAL = """"""
-GUI_TEXT_SUPERFREETSS_PRO_BUY_PLAN = """"""
-GUI_TEXT_SUPERFREETSS_PRO_ENTER_API_KEY = """"""
-
-GUI_TEXT_SUPERFREETSS_PRO_ENABLED = """"""
-GUI_TEXT_SUPERFREETSS_PRO_TRIAL_ENTER_EMAIL = """<i>Enter your email and choose a password to get instant access to premium TTS services such as Azure, Google, ElevenLabs, OpenAI, Amazon, Forvo. 7 day trial limited to 50k characters.</i>"""
-
-GUI_TEXT_SUPERFREETSS_PRO_TRIAL_VERIFY_EMAIL = """<i>You have to verify your email before proceeding</i>"""
-
-GUI_TEXT_SUPERFREETSS_PRO_TRIAL_CONFIRM_EMAIL = """<b>IMPORTANT</b>: You must confirm your email address before you can use the service. """\
-"""The email subject should be <b>Please Confirm Your Email Address</b> and sender: <b>Vocab.Ai</b>."""
-
-GUI_TEXT_SUPERFREETSS_PRO_TRIAL_VERIFICATION_DESCRIPTION = """Please check your email (subject: <b>Please Confirm Your Email Address</b>"""\
-""" sender: <b>Vocab.Ai</b>) and click the verification link. You must verify your email before you can use Super Free TTS Pro services. Once you've clicked the link, press the <b>Check Status</b> button below to continue."""
-
-GUI_TEXT_SUPERFREETSS_PRO_TRIAL_VERIFICATION_INITIAL_STATUS = """If you don't see the email, please check your spam folder. Once you've clicked the verify link, press the <b>Check Status</b> button below."""
-
-GUI_TEXT_SUPERFREETSS_PRO_TRIAL_VERIFIED_TITLE = """Email Verified Successfully!"""
-GUI_TEXT_SUPERFREETSS_PRO_TRIAL_VERIFIED_DESCRIPTION = """<b>Congratulations!</b> Your email has been verified and you can now use Super Free TTS Pro services. You can close this dialog and start adding audio to your notes. Check out the tutorial below to learn how to add audio."""
-
-# Trial signup screen variant constants
-GUI_TEXT_SUPERFREETSS_PRO_TRIAL_ALTERNATE_TITLE = """Add realistic audio to your cards in 30 seconds"""
-GUI_TEXT_SUPERFREETSS_PRO_TRIAL_ALTERNATE_BENEFITS = """<p style="margin-top: 10px; margin-bottom: 15px;">
-✓ 1200+ lifelike voices in 60+ languages<br/>
-✓ Works inside Anki with one click<br/>
-✓ Keep everything you create, even after the trial
-</p>"""
-GUI_TEXT_SUPERFREETSS_PRO_TRIAL_ALTERNATE_BUTTON = """Start Adding Audio"""
-GUI_TEXT_SUPERFREETSS_PRO_TRIAL_ALTERNATE_PRIVACY = """<p style="text-align: center; color: palette(dark); font-size: small; margin-top: 10px;">Free 7-day trial, limited to 50k characters. No obligation to subscribe. Your info is private.</p>"""
-
 GUI_TEXT_REALTIME_SINGLE_NOTE = """Please select a single note to add Realtime Audio"""
 GUI_TEXT_REALTIME_CHOOSE_TEMPLATE = """Choose card template"""
 GUI_TEXT_REALTIME_REMOVED_TAG = """Removed TTS Tag. Realtime audio will not play anymore."""
@@ -380,16 +339,6 @@ GUI_TEXT_SHORTCUTS_EDITOR_ADD_AUDIO = """Add Audio to note using the selected pr
 GUI_TEXT_SHORTCUTS_EDITOR_PREVIEW_AUDIO = """Preview Audio for a note using the selected preset"""
 
 GUI_TEXT_ERROR_HANDLING_REALTIME_TTS = """How to display errors during Realtime TTS"""
-
-# Enhanced variants for trial incentive experiment
-GUI_TEXT_SERVICES_CONFIG_ENHANCED_TITLE = """Get Started with Super Free TTS - Choose Your Path"""
-GUI_TEXT_SERVICES_CONFIG_ENHANCED_DESCRIPTION = """Ready to add amazing audio to your flashcards? Pick the option that works best for you."""
-GUI_TEXT_SERVICES_CONFIG_ENHANCED_TRIAL_TITLE = """Start Free Trial (Recommended & Simplest)"""
-GUI_TEXT_SERVICES_CONFIG_ENHANCED_TRIAL_RECOMMENDED = """Most popular choice - Get the best quality audio for free!"""
-GUI_TEXT_SERVICES_CONFIG_ENHANCED_TRIAL_DESCRIPTION = """<p><strong>Get instant access to premium voices in just 2 clicks:</strong></p><ul><li><strong>Premium AI voices:</strong> Azure, ElevenLabs, OpenAI, Google, Amazon</li><li><strong>Studio-quality audio</strong> - sounds natural and professional</li><li><strong>50,000 characters included</strong> (enough for ~1,250 flashcards)</li><li><strong>No setup required</strong> - works immediately after signup (7-day trial)</li></ul>"""
-GUI_TEXT_SERVICES_CONFIG_ENHANCED_MANUAL_TITLE = """Manual Setup (For Advanced Users)"""
-GUI_TEXT_SERVICES_CONFIG_ENHANCED_MANUAL_RECOMMENDED = """Choose this if you prefer to configure everything yourself."""
-GUI_TEXT_SERVICES_CONFIG_ENHANCED_MANUAL_DESCRIPTION = """<ul><li>Free services (Google Translate, Windows SAPI, MacOS)</li><li>Use your own API keys with cloud services</li><li>Full control over configuration</li><li><em>Note: Requires technical setup and may have limited voice options</em></li></ul>"""
 
 GRAPHICS_PRO_BANNER = 'superfreetss_banner.svg'
 GRAPHICS_LITE_BANNER = 'superfreetss_banner.svg'

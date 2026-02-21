@@ -99,7 +99,8 @@ class ChoosePresetDialog(aqt.qt.QDialog):
         self.choose_preset.draw(self.main_layout)
     
     def setupUi(self):
-        self.setWindowTitle(constants.GUI_CHOOSE_PRESET_DIALOG_TITLE)        
+        self.setWindowTitle(constants.GUI_CHOOSE_PRESET_DIALOG_TITLE)
+        self.setSizePolicy(aqt.qt.QSizePolicy.Policy.Expanding, aqt.qt.QSizePolicy.Policy.Expanding)
         self.main_layout = aqt.qt.QVBoxLayout(self)
 
     def close(self):

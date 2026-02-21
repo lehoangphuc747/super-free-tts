@@ -3,7 +3,7 @@ import requests
 import threading
 import json
 import aqt
-from aqt.qt import QDialog, QVBoxLayout, QHBoxLayout, QLabel, QListWidget, QListWidgetItem, QProgressBar, QPushButton, pyqtSignal, QObject, Qt, QComboBox
+from aqt.qt import QDialog, QVBoxLayout, QHBoxLayout, QLabel, QListWidget, QListWidgetItem, QProgressBar, QPushButton, pyqtSignal, QObject, Qt, QComboBox, QSizePolicy
 from dataclasses import dataclass
 from typing import List, Optional, Dict
 
@@ -121,6 +121,8 @@ class PiperManagerDialog(QDialog):
         self.setWindowTitle("Piper Model Manager")
         self.setMinimumWidth(600)
         self.setMinimumHeight(500)
+        self.setSizeGripEnabled(True)  # Cho phép kéo thay đổi kích thước
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         

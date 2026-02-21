@@ -211,12 +211,9 @@ def get_status_badge(text, bg_color=None, text_color=None):
     label.setFixedHeight(22)
     return label
 
-def get_superfreetss_label_header(superfreetss_pro_enabled, variant='adaptive'):
+def get_superfreetss_label_header(variant='adaptive'):
     hlayout = aqt.qt.QHBoxLayout()
 
-    # Determine text color based on variant
-    if variant == 'white':
-        text_color = 'white'
     # Use the new SVG logo instead of text
     logo_widget = get_graphic(constants.GRAPHICS_LITE_BANNER)
 

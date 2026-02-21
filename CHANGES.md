@@ -12,8 +12,8 @@ File này ghi lại **các thay đổi theo phiên bản / theo thời gian**: �
 
 ### Cho người dùng
 
-- **Menu Tools: một mục duy nhất, bấm là mở**  
-  Trong menu **Tools** chỉ còn **một mục**: **Super Free TTS**. Bấm vào là mở cửa sổ cấu hình luôn (không còn submenu hay nhiều mục con).
+- **Menu AnkiVN trong Tools**  
+  Trong menu **Tools** giờ có menu **AnkiVN**, và **Super Free TTS** nằm bên trong menu AnkiVN này (dạng submenu). Bấm vào **AnkiVN → Super Free TTS** để mở cửa sổ cấu hình.
 
 - **Một cửa sổ cấu hình duy nhất (Super Free TTS)**  
   Thay vì hai cửa sổ riêng (Cấu hình dịch vụ, Tùy chọn), giờ chỉ có **một cửa sổ** tên **Super Free TTS** với **hai tab lớn**:  
@@ -23,9 +23,9 @@ File này ghi lại **các thay đổi theo phiên bản / theo thời gian**: �
 
 ### Cho AI / kỹ thuật
 
-- **Menu: single action, no submenu.** Tools menu has one QAction "Super Free TTS" (objectName `sf_action_main`); click opens `launch_superfreetss_dialog(hypertts)` directly. On init, removes any old submenu (`sf_tools_menu`) or old actions (`sf_action_services`, `sf_action_preferences`). Text from i18n `dialog_main_title`. File: `superfreetss_addon/gui.py`.
+- **Menu: AnkiVN menu with Super Free TTS submenu.** Tools menu contains QMenu "AnkiVN" (objectName `ankivn_menu`). Inside this menu is QAction "Super Free TTS" (objectName `sf_action_main`) which opens `launch_superfreetss_dialog(hypertts)`. On init, removes old actions (`sf_action_services`, `sf_action_preferences`) if exist. Creates AnkiVN menu if not found, then adds Super Free TTS action as submenu item. Text from i18n `dialog_main_title`. File: `superfreetss_addon/gui.py`. Commit: `feat: Add AnkiVN menu with Super Free TTS as submenu item` (76f0b97).
 
-- **Single config dialog (SuperFreeTTSMainDialog / SuperFreeTTSDialog):** One dialog replaces ConfigurationDialog and PreferencesDialog. Contains QTabWidget with two tabs: (0) Services — `component_configuration.Configuration`; (1) Preferences — `component_preferences.ComponentPreferences`. Opened via `launch_superfreetss_dialog(hypertts, initial_tab=0|1)`. Dialog opens **centered** on screen (`primaryScreen().availableGeometry()`, then `move()` to center); no `showMaximized()` so title bar is draggable and window is resizable. Alias: `SuperFreeTTSDialog = SuperFreeTTSMainDialog`. Files: `superfreetss_addon/gui.py`, `superfreetss_addon/i18n.py` (added `dialog_main_title`, `tab_services`, `tab_preferences`; en: "Services", "Preferences"; vi: "Nguồn âm thanh", "Cấu hình").
+- **Single config dialog (SuperFreeTTSMainDialog / SuperFreeTTSDialog):** One dialog replaces ConfigurationDialog and PreferencesDialog. Contains QTabWidget with two tabs: (0) Services — `component_configuration.Configuration`; (1) Preferences — `component_preferences.ComponentPreferences`. Opened via `launch_superfreetss_dialog(hypertts, initial_tab=0|1)`. Dialog opens **centered** on screen (`primaryScreen().availableGeometry()`, then `move()` to center); no `showMaximized()` so title bar is draggable and window is resizable. Alias: `SuperFreeTTSDialog = SuperFreeTTSMainDialog`. Files: `superfreetss_addon/gui.py`, `superfreetss_addon/i18n.py` (added `dialog_main_title`, `tab_services`, `tab_preferences`; en: "Services", "Preferences"; vi: "Nguồn âm thanh", "Cấu hình"). Commits: `feat: single Super Free TTS dialog (2 tabs), Tools menu submenu, open maximized; update CHANGES.md` (c03210e), `fix: single Tools menu item (no submenu), dialog centered and resizable; update CHANGES` (62a4fac).
 
 ---
 

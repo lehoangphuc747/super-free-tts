@@ -389,21 +389,9 @@ def get_easy_mode_source_default_text_processing() -> TextProcessing:
 
 # service configuration
 # =====================
-@dataclass
-class HyperTTSProAccountConfig:
-    api_key: str = None
-    api_key_valid: bool = False
-    use_vocabai_api:bool = False
-    api_key_error: Optional[str] = None
-    account_info: Optional[Mapping[str, Any]] = None
-
-    def clear_api_key(self):
-        self.api_key = None
-        self.api_key_valid = False
-        self.api_key_error = None
-        self.account_info = None
 
 class TrialRegistrationStep(enum.Enum):
+    """Kept for backward compatibility with existing user configs during deserialization."""
     new_install = 1
     pending_add_audio = 2
     finished = 3
@@ -412,11 +400,6 @@ class TrialRegistrationStep(enum.Enum):
 class Configuration:
     service_enabled: Mapping[str, bool] = field(default_factory=dict)
     service_config: Mapping[str, Mapping[str, Any]] = field(default_factory=dict)
-    hypertts_pro_api_key: Optional[str] = None
-    # use vocabai API url and conventions
-    use_vocabai_api: Optional[bool] = False
-    # allow overriding vocab.ai api url during testing
-    vocabai_api_url_override: Optional[str] = None
     # anonymous identifier
     user_uuid: Optional[str] = None
     # whether the user has chosen easy/advanced mode. 
@@ -425,34 +408,10 @@ class Configuration:
     # whether to display the introduction message
     # default to false so that we don't display it for existing users
     display_introduction_message: bool = False
-    # trial registration step
-    # default to finished so that it doesn't kick off for existing users
+    # trial registration step (kept for config backward compat)
     trial_registration_step: TrialRegistrationStep = TrialRegistrationStep.finished
     # installation timestamp (stored as epoch timestamp)
     install_time: float = field(default_factory=lambda: datetime.datetime.now().timestamp())
-
-    # pro api key
-    # ===========
-
-    def update_hypertts_pro_config(self, config: HyperTTSProAccountConfig):
-        self.hypertts_pro_api_key = config.api_key
-        self.use_vocabai_api = config.use_vocabai_api
-
-    def get_hypertts_pro_config(self) -> HyperTTSProAccountConfig:
-        return HyperTTSProAccountConfig(
-            api_key=self.hypertts_pro_api_key,
-            use_vocabai_api=self.use_vocabai_api
-        )
-
-    def get_hypertts_pro_api_key(self):
-        return self.hypertts_pro_api_key
-
-    def set_hypertts_pro_api_key(self, api_key):
-        self.hypertts_pro_api_key = api_key
-
-    def hypertts_pro_api_key_set(self):
-        # HyperTTS Lite: Pro API key is never set
-        return False
 
     def check_service_config_key(self, service_name):
         if service_name not in self.service_config:
@@ -463,7 +422,6 @@ class Configuration:
 
     def new_install_settings(self):
         self.display_introduction_message = True
-        self.trial_registration_step = TrialRegistrationStep.new_install
     
     def days_since_install(self) -> int:
         """
@@ -762,16 +720,6 @@ def deserialize_preset_mapping_rules(preset_mapping_rules_config):
 class EasyAdvancedMode(enum.Enum):
     EASY = 1
     ADVANCED = 2
-
-class ServicesConfigurationMode(enum.Enum):
-    TRIAL = 1
-    MANUAL_CONFIGURATION = 2
-
-@dataclass
-class TrialRequestReponse:
-    success: bool
-    api_key: Optional[str] = None
-    error: Optional[str] = None
 
 
 def migrate_configuration(anki_utils, config):

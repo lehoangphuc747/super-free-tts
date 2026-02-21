@@ -396,24 +396,10 @@ class Configuration(component_common.ConfigComponentBase):
         # layout gốc cho phần nội dung bên phải (Content Panel)
         self.global_vlayout = aqt.qt.QVBoxLayout()
 
-        # logo header (always Lite/Free)
-        # ===============================
-        header_widget = aqt.qt.QWidget()
-        header_widget.setLayout(gui_utils.get_superfreetss_label_header())
-        self.global_vlayout.addWidget(header_widget)
-
         # superfreetss pro is removed in Lite version
 
         # services
         # ========
-
-        def get_separator():
-            separator = aqt.qt.QFrame()
-            separator.setFrameShape(aqt.qt.QFrame.Shape.HLine)
-            separator.setSizePolicy(aqt.qt.QSizePolicy.Policy.Minimum, aqt.qt.QSizePolicy.Policy.Expanding)
-            separator.setStyleSheet('color: #cccccc;')
-            separator.setLineWidth(2)
-            return separator
 
         # lấy danh sách services một lần để dùng cho cả content và TOC
         service_list = self.get_service_list()
@@ -439,11 +425,10 @@ class Configuration(component_common.ConfigComponentBase):
         # scroll area cho danh sách services
         services_scroll_area = ScrollAreaCustom()
         services_scroll_area.setWidgetResizable(True)
-        # services_scroll_area.setHorizontalScrollBarPolicy(aqt.qt.Qt.ScrollBarPolicy.ScrollBarAlwaysOff) # Allow horizontal scroll if needed
-        services_scroll_area.setAlignment(aqt.qt.Qt.AlignmentFlag.AlignTop) # Align top
+        services_scroll_area.setAlignment(aqt.qt.Qt.AlignmentFlag.AlignTop)
         services_widget = aqt.qt.QWidget()
         self.services_vlayout = aqt.qt.QVBoxLayout(services_widget)
-        self.services_vlayout.setSpacing(20) # Spacing between categories
+        self.services_vlayout.setSpacing(12)
 
         # Split services
         tts_services = [s for s in service_list if s.service_type == constants.ServiceType.tts]
@@ -452,7 +437,7 @@ class Configuration(component_common.ConfigComponentBase):
         # Helper to draw category
         def draw_category(title, services, parent_layout, default_expanded=True):
             if not services:
-                return
+                return None
 
             group_box = aqt.qt.QGroupBox(title)
             group_box.setCheckable(False)
@@ -522,15 +507,36 @@ class Configuration(component_common.ConfigComponentBase):
 
             group_box.setLayout(group_layout)
             parent_layout.addWidget(group_box)
-            return toggle_all_cb
+            return toggle_all_cb, group_box
 
-        # Draw Categories — clean text, no emoji
-        self.tts_group_toggle = draw_category(
-            i18n.get_text("config_category_tts", lang), tts_services, self.services_vlayout)
-        self.dict_group_toggle = draw_category(
-            i18n.get_text("config_category_dictionary", lang), dict_services, self.services_vlayout)
+        # Draw Categories — create separate tab containers
+        tts_tab_container = aqt.qt.QWidget()
+        tts_tab_layout = aqt.qt.QVBoxLayout(tts_tab_container)
+        tts_tab_layout.setContentsMargins(0, 0, 0, 0)
+        tts_tab_layout.setSpacing(12)
+        tts_result = draw_category(i18n.get_text("config_category_tts", lang), tts_services, tts_tab_layout)
+        self.tts_group_toggle = tts_result[0] if tts_result else None
+        self.tts_group_box = tts_result[1] if tts_result else None
+        tts_tab_layout.addStretch()
+        
+        dict_tab_container = aqt.qt.QWidget()
+        dict_tab_layout = aqt.qt.QVBoxLayout(dict_tab_container)
+        dict_tab_layout.setContentsMargins(0, 0, 0, 0)
+        dict_tab_layout.setSpacing(12)
+        dict_result = draw_category(i18n.get_text("config_category_dictionary", lang), dict_services, dict_tab_layout)
+        self.dict_group_toggle = dict_result[0] if dict_result else None
+        self.dict_group_box = dict_result[1] if dict_result else None
+        dict_tab_layout.addStretch()
 
-        self.services_vlayout.addStretch()
+        # Add containers to main services layout and hide initially
+        self.services_vlayout.addWidget(tts_tab_container)
+        self.services_vlayout.addWidget(dict_tab_container)
+        tts_tab_container.setVisible(False)  # Will be shown when TTS tab is active
+        dict_tab_container.setVisible(False)  # Will be shown when Dict tab is active
+        
+        # Store references for tab switching
+        self.tts_tab_container = tts_tab_container
+        self.dict_tab_container = dict_tab_container
 
         services_scroll_area.setWidget(services_widget)
         self.global_vlayout.addWidget(services_scroll_area, 1)
@@ -604,77 +610,99 @@ class Configuration(component_common.ConfigComponentBase):
         # === Swiss Style main layout: TOC bên trái, content bên phải ===
         main_hlayout = aqt.qt.QHBoxLayout()
 
-        # TOC panel (sidebar trái) - đóng vai trò mục lục / filter
+        # TOC panel (sidebar trái) - Logo + Tab buttons + About
         toc_widget = aqt.qt.QWidget()
         toc_widget.setObjectName('toc_sidebar')
         toc_layout = aqt.qt.QVBoxLayout(toc_widget)
         toc_layout.setContentsMargins(8, 8, 8, 8)
         toc_layout.setSpacing(12)
 
-        toc_title_label = aqt.qt.QLabel(i18n.get_text("config_toc_title", lang))
-        toc_title_font = toc_title_label.font()
-        toc_title_font.setBold(True)
-        toc_title_label.setFont(toc_title_font)
-        toc_layout.addWidget(toc_title_label)
+        # Logo at top of sidebar
+        header_widget = aqt.qt.QWidget()
+        header_widget.setLayout(gui_utils.get_superfreetss_label_header())
+        toc_layout.addWidget(header_widget)
 
-        # TOC theo nhóm + từng service (Dictionary / TTS)
+        toc_layout.addSpacing(12)
 
-        def make_scroll_fn(target_widget):
-            def _scroll():
-                if self._services_scroll_area is not None and target_widget is not None:
-                    self._services_scroll_area.ensureWidgetVisible(target_widget)
-            return _scroll
+        # Tab buttons for Services view
+        # Track current active tab
+        active_tab_state = {"tab": "tts"}  # Default to TTS tab
 
-        # nút: Tất cả dịch vụ (scroll về đầu danh sách)
-        btn_all = aqt.qt.QPushButton(i18n.get_text("config_toc_services", lang))
-        btn_all.setFlat(True)
-        btn_all.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
-        btn_all.setStyleSheet("""
-            QPushButton { text-align: left; padding: 6px 10px; border: none; font-weight: bold; }
-            QPushButton:hover { background-color: palette(alternate-base); border-radius: 4px; }
-        """)
-        btn_all.pressed.connect(make_scroll_fn(self._services_container_widget))
-        toc_layout.addWidget(btn_all)
+        def get_tab_button_style(is_active):
+            """Return stylesheet for tab button (active or inactive)"""
+            if is_active:
+                return f"""
+                    QPushButton {{
+                        text-align: left;
+                        padding: 8px 12px;
+                        border: none;
+                        border-bottom: 3px solid {constants.COLOR_ACCENT};
+                        font-weight: bold;
+                        background-color: palette(alternate-base);
+                        border-radius: 0px;
+                    }}
+                    QPushButton:hover {{ background-color: palette(alternate-base); }}
+                """
+            else:
+                return """
+                    QPushButton {
+                        text-align: left;
+                        padding: 8px 12px;
+                        border: none;
+                        font-weight: bold;
+                        background-color: transparent;
+                        border-radius: 0px;
+                    }
+                    QPushButton:hover { background-color: palette(alternate-base); }
+                """
 
-        # nhóm \"Từ điển\" với từng service con
-        dictionary_services = [s for s in service_list if s.service_type == constants.ServiceType.dictionary]
-        tts_services = [s for s in service_list if s.service_type == constants.ServiceType.tts]
+        # TTS Tab Button
+        btn_tts = aqt.qt.QPushButton(i18n.get_text("config_category_tts", lang))
+        btn_tts.setFlat(True)
+        btn_tts.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
+        btn_tts.setStyleSheet(get_tab_button_style(True))  # Start as active
+        
+        # Dictionary Tab Button
+        btn_dict = aqt.qt.QPushButton(i18n.get_text("config_category_dictionary", lang))
+        btn_dict.setFlat(True)
+        btn_dict.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
+        btn_dict.setStyleSheet(get_tab_button_style(False))  # Start as inactive
 
-        if dictionary_services:
-            dict_header = aqt.qt.QLabel(i18n.get_text("config_category_dictionary", lang))
-            dict_font = dict_header.font()
-            dict_font.setBold(True)
-            dict_header.setFont(dict_font)
-            toc_layout.addWidget(dict_header)
-            for s in dictionary_services:
-                card_widget = self.service_card_map.get(s.name)
-                btn = aqt.qt.QPushButton(s.name)
-                btn.setFlat(True)
-                btn.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
-                btn.setStyleSheet("""
-                    QPushButton { text-align: left; padding: 4px 16px; border: none; font-size: 11px; }
-                    QPushButton:hover { background-color: palette(alternate-base); border-radius: 6px; }
-                """)
-                btn.pressed.connect(make_scroll_fn(card_widget))
-                toc_layout.addWidget(btn)
+        def switch_to_tts_tab():
+            if active_tab_state["tab"] == "tts":
+                return
+            active_tab_state["tab"] = "tts"
+            # Update tab button styles
+            btn_tts.setStyleSheet(get_tab_button_style(True))
+            btn_dict.setStyleSheet(get_tab_button_style(False))
+            # Show/hide containers
+            self.tts_tab_container.setVisible(True)
+            self.dict_tab_container.setVisible(False)
 
-        if tts_services:
-            tts_header = aqt.qt.QLabel(i18n.get_text("config_category_tts", lang))
-            tts_font = tts_header.font()
-            tts_font.setBold(True)
-            tts_header.setFont(tts_font)
-            toc_layout.addWidget(tts_header)
-            for s in tts_services:
-                card_widget = self.service_card_map.get(s.name)
-                btn = aqt.qt.QPushButton(s.name)
-                btn.setFlat(True)
-                btn.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
-                btn.setStyleSheet("""
-                    QPushButton { text-align: left; padding: 4px 16px; border: none; font-size: 11px; }
-                    QPushButton:hover { background-color: palette(alternate-base); border-radius: 6px; }
-                """)
-                btn.pressed.connect(make_scroll_fn(card_widget))
-                toc_layout.addWidget(btn)
+        def switch_to_dict_tab():
+            if active_tab_state["tab"] == "dict":
+                return
+            active_tab_state["tab"] = "dict"
+            # Update tab button styles
+            btn_tts.setStyleSheet(get_tab_button_style(False))
+            btn_dict.setStyleSheet(get_tab_button_style(True))
+            # Show/hide containers
+            self.tts_tab_container.setVisible(False)
+            self.dict_tab_container.setVisible(True)
+
+        btn_tts.pressed.connect(switch_to_tts_tab)
+        btn_dict.pressed.connect(switch_to_dict_tab)
+
+        # Add tab buttons to a horizontal layout for compact display
+        tabs_hlayout = aqt.qt.QHBoxLayout()
+        tabs_hlayout.setSpacing(0)
+        tabs_hlayout.addWidget(btn_tts)
+        tabs_hlayout.addWidget(btn_dict)
+        toc_layout.addLayout(tabs_hlayout)
+
+        # Show TTS tab by default
+        self.tts_tab_container.setVisible(True)
+        self.dict_tab_container.setVisible(False)
 
         toc_layout.addSpacing(20)
         
@@ -690,21 +718,20 @@ class Configuration(component_common.ConfigComponentBase):
         def show_about():
             self._services_scroll_area.setVisible(False)
             self.about_container.setVisible(True)
-            # Hide search bar when in About tab
+            # Hide search bar and headers when in About tab
             self.search_input.setVisible(False)
             header_label.setVisible(False)
             services_description_label.setVisible(False)
 
-        def show_services():
+        def show_services_tab():
             self._services_scroll_area.setVisible(True)
             self.about_container.setVisible(False)
-            # Show search bar
+            # Show search bar and headers
             self.search_input.setVisible(True)
             header_label.setVisible(True)
             services_description_label.setVisible(True)
 
         btn_about.pressed.connect(show_about)
-        btn_all.pressed.connect(show_services)
         
         toc_layout.addWidget(btn_about)
         toc_layout.addStretch()

@@ -141,55 +141,20 @@ class SuperFreeTTSMainDialog(aqt.qt.QDialog):
                 QPushButton:hover { background-color: palette(alternate-base); }
             """
 
-        btn_services = aqt.qt.QPushButton(i18n.get_text("tab_services", lang))
-        btn_services.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
-        btn_services.setStyleSheet(get_sidebar_button_style(True))
-        sidebar_layout.addWidget(btn_services)
+        btn_tts = aqt.qt.QPushButton("Text to Speech")
+        btn_tts.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
+        btn_tts.setStyleSheet(get_sidebar_button_style(True))
+        sidebar_layout.addWidget(btn_tts)
 
-        # Services sub-tabs
-        services_sub_container = aqt.qt.QWidget()
-        services_sub_layout = aqt.qt.QVBoxLayout(services_sub_container)
-        services_sub_layout.setContentsMargins(12, 0, 0, 0)
-        services_sub_layout.setSpacing(4)
+        btn_dict = aqt.qt.QPushButton(i18n.get_text("config_category_dictionary", lang))
+        btn_dict.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
+        btn_dict.setStyleSheet(get_sidebar_button_style(False))
+        sidebar_layout.addWidget(btn_dict)
 
-        def get_sub_button_style(is_active):
-            if is_active:
-                return f"""
-                    QPushButton {{
-                        text-align: left;
-                        padding: 6px 10px;
-                        border: none;
-                        border-left: 3px solid {constants.COLOR_ACCENT};
-                        background-color: palette(alternate-base);
-                    }}
-                    QPushButton:hover {{ background-color: palette(alternate-base); }}
-                """
-            return """
-                QPushButton {
-                    text-align: left;
-                    padding: 6px 10px;
-                    border: none;
-                    background-color: transparent;
-                }
-                QPushButton:hover { background-color: palette(alternate-base); }
-            """
-
-        btn_services_tts = aqt.qt.QPushButton(i18n.get_text("config_category_tts", lang))
-        btn_services_tts.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
-        btn_services_tts.setStyleSheet(get_sub_button_style(True))
-        services_sub_layout.addWidget(btn_services_tts)
-
-        btn_services_dict = aqt.qt.QPushButton(i18n.get_text("config_category_dictionary", lang))
-        btn_services_dict.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
-        btn_services_dict.setStyleSheet(get_sub_button_style(False))
-        services_sub_layout.addWidget(btn_services_dict)
-
-        btn_services_about = aqt.qt.QPushButton(i18n.get_text("config_toc_about", lang))
-        btn_services_about.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
-        btn_services_about.setStyleSheet(get_sub_button_style(False))
-        services_sub_layout.addWidget(btn_services_about)
-
-        sidebar_layout.addWidget(services_sub_container)
+        btn_info = aqt.qt.QPushButton(i18n.get_text("config_toc_about", lang))
+        btn_info.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
+        btn_info.setStyleSheet(get_sidebar_button_style(False))
+        sidebar_layout.addWidget(btn_info)
 
         btn_preferences = aqt.qt.QPushButton(i18n.get_text("tab_preferences", lang))
         btn_preferences.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
@@ -224,42 +189,48 @@ class SuperFreeTTSMainDialog(aqt.qt.QDialog):
         self.preferences.draw(tab_preferences_layout)
         self.pages.addWidget(tab_preferences_widget)
 
-        def set_services_sub_active(tts=False, dictionary=False, about=False):
-            btn_services_tts.setStyleSheet(get_sub_button_style(tts))
-            btn_services_dict.setStyleSheet(get_sub_button_style(dictionary))
-            btn_services_about.setStyleSheet(get_sub_button_style(about))
+        def set_active_main(tts=False, dictionary=False, info=False, preferences=False):
+            btn_tts.setStyleSheet(get_sidebar_button_style(tts))
+            btn_dict.setStyleSheet(get_sidebar_button_style(dictionary))
+            btn_info.setStyleSheet(get_sidebar_button_style(info))
+            btn_preferences.setStyleSheet(get_sidebar_button_style(preferences))
 
         def show_page(index):
             self.pages.setCurrentIndex(index)
-            btn_services.setStyleSheet(get_sidebar_button_style(index == 0))
-            btn_preferences.setStyleSheet(get_sidebar_button_style(index == 1))
-            services_sub_container.setVisible(index == 0)
+            set_active_main(tts=(index == 0), preferences=(index == 1))
 
-        def show_services_tts():
+        def show_tts():
             show_page(0)
             self.configuration.show_tts_tab()
-            set_services_sub_active(tts=True)
+            set_active_main(tts=True)
 
-        def show_services_dict():
+        def show_dict():
             show_page(0)
             self.configuration.show_dict_tab()
-            set_services_sub_active(dictionary=True)
+            set_active_main(dictionary=True)
 
-        def show_services_about():
+        def show_info():
             show_page(0)
             self.configuration.show_about_section()
-            set_services_sub_active(about=True)
+            set_active_main(info=True)
 
-        btn_services.pressed.connect(show_services_tts)
-        btn_preferences.pressed.connect(lambda: show_page(1))
-        btn_services_tts.pressed.connect(show_services_tts)
-        btn_services_dict.pressed.connect(show_services_dict)
-        btn_services_about.pressed.connect(show_services_about)
+        def show_preferences():
+            show_page(1)
+            set_active_main(preferences=True)
+
+        btn_tts.pressed.connect(show_tts)
+        btn_dict.pressed.connect(show_dict)
+        btn_info.pressed.connect(show_info)
+        btn_preferences.pressed.connect(show_preferences)
 
         if self.initial_tab == 1:
-            show_page(1)
+            show_dict()
+        elif self.initial_tab == 2:
+            show_info()
+        elif self.initial_tab == 3:
+            show_preferences()
         else:
-            show_services_tts()
+            show_tts()
 
         self.main_layout.addWidget(sidebar)
         self.main_layout.addWidget(self.pages, 1)

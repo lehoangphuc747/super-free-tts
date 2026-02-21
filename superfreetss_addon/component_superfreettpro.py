@@ -13,7 +13,7 @@ from . import stats
 from . import version
 logger = logging_utils.get_child_logger(__name__)
 
-sc = stats.StatsContext(constants_events.EventContext.hyperttspro)
+sc = stats.StatsContext(constants_events.EventContext.superfreettspro)
 
 class HyperTTSPro(component_common.ConfigComponentBase):
     """Simplified About panel — replaces the old Pro/Trial/API Key UI."""

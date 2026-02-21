@@ -4,7 +4,7 @@ import enum
 # ================
 
 PREFIX = 'anki_addon_v2'
-ADDON = 'hypertts'
+ADDON = 'superfreetss'
 
 GENERATE_MAX_EVENTS = 5
 
@@ -17,7 +17,7 @@ STATS_DAYS_CUTOFF=14  # days after install to enable stats
 class EventContext(enum.Enum):
     addon = enum.auto()
     services = enum.auto()
-    hyperttspro = enum.auto()
+    superfreettspro = enum.auto()
     trial_signup = enum.auto()
     generate = enum.auto()
     voice_selection = enum.auto()

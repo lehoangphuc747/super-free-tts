@@ -284,6 +284,34 @@ STRINGS: Dict[str, Dict[str, str]] = {
         "editor_tooltip_add_audio": "Super Free TTS: Add Audio to your note (based on your preset rules)",
         "editor_tooltip_preview_audio": "Super Free TTS: Preview Audio (Hear the audio before adding it)",
         "editor_tooltip_configure_presets": "Super Free TTS: Configure Preset Rules for this Note (do this before being able to add audio)",
+
+        # Piper Manager
+        "piper_title": "Piper Model Manager",
+        "piper_label_language": "Language:",
+        "piper_all_languages": "All Languages",
+        "piper_status_loading": "Loading voice list from Hugging Face...",
+        "piper_button_download": "Download Selected",
+        "piper_status_loaded": "Loaded {0} voices.",
+        "piper_status_load_error": "Failed to load voices: {0}",
+        "piper_warning_load_error": "Error loading Piper voices list: {0}",
+        "piper_label_installed": "[Installed]",
+        "piper_status_download_complete": "Download complete!",
+        "piper_info_download_success": "Model downloaded successfully!",
+        "piper_status_error": "Error: {0}",
+        "piper_warning_download_failed": "Download failed: {0}",
+        "piper_button_download_models": "Download Models...",
+        "piper_info_select_dir": "Please select a models directory first.",
+
+        # Welcome message
+        "welcome_important": "Important",
+        "welcome_configure_desc": "you have to configure services before adding audio.",
+        "welcome_configure_title": "Configure Services",
+        "welcome_configure_subtitle": "Click here before adding audio",
+        "welcome_no_audio_yet": "It looks like you haven't added audio yet.",
+        "welcome_add_audio_title": "Adding Audio",
+        "welcome_add_audio_subtitle": "Click to learn how to add audio",
+        "welcome_heading": "Super Free TTS - Add Audio to your Flashcards",
+        "welcome_close": "× Close",
     },
     "vi": {
         # Menus / dialog titles
@@ -557,6 +585,34 @@ STRINGS: Dict[str, Dict[str, str]] = {
         "editor_tooltip_add_audio": "Super Free TTS: Thêm âm thanh vào thẻ (dựa trên quy tắc preset)",
         "editor_tooltip_preview_audio": "Super Free TTS: Nghe thử (Nghe âm thanh trước khi thêm)",
         "editor_tooltip_configure_presets": "Super Free TTS: Cấu hình quy tắc Preset cho thẻ này (cần làm trước khi thêm âm thanh)",
+
+        # Piper Manager
+        "piper_title": "Quản lý mô hình Piper",
+        "piper_label_language": "Ngôn ngữ:",
+        "piper_all_languages": "Tất cả ngôn ngữ",
+        "piper_status_loading": "Đang tải danh sách giọng đọc từ Hugging Face...",
+        "piper_button_download": "Tải về giọng đã chọn",
+        "piper_status_loaded": "Đã tải {0} giọng đọc.",
+        "piper_status_load_error": "Không tải được danh sách giọng: {0}",
+        "piper_warning_load_error": "Lỗi khi tải danh sách giọng Piper: {0}",
+        "piper_label_installed": "[Đã cài]",
+        "piper_status_download_complete": "Tải xong!",
+        "piper_info_download_success": "Tải mô hình thành công!",
+        "piper_status_error": "Lỗi: {0}",
+        "piper_warning_download_failed": "Tải thất bại: {0}",
+        "piper_button_download_models": "Tải mô hình...",
+        "piper_info_select_dir": "Vui lòng chọn thư mục mô hình trước.",
+
+        # Welcome message
+        "welcome_important": "Quan trọng",
+        "welcome_configure_desc": "bạn cần cấu hình dịch vụ trước khi thêm âm thanh.",
+        "welcome_configure_title": "Cấu hình dịch vụ",
+        "welcome_configure_subtitle": "Nhấp vào đây trước khi thêm âm thanh",
+        "welcome_no_audio_yet": "Có vẻ như bạn chưa thêm âm thanh nào.",
+        "welcome_add_audio_title": "Thêm âm thanh",
+        "welcome_add_audio_subtitle": "Nhấp để tìm hiểu cách thêm âm thanh",
+        "welcome_heading": "Super Free TTS - Thêm âm thanh vào thẻ ghi nhớ",
+        "welcome_close": "× Đóng",
     },
 }
 

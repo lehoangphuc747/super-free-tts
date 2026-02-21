@@ -1,4 +1,3 @@
-import sys
 import aqt.qt
 
 from . import component_common
@@ -32,7 +31,7 @@ class RealtimeSource(component_common.ConfigComponentBase):
         self.source_type_combobox.setCurrentText(source_type.name)
         if source_type == constants.RealtimeSourceType.AnkiTTSTag:
             self.source_field_combobox.setCurrentText(model.field_name)
-            self.source_type_combobox.setCurrentText(model.field_type.name)
+            self.source_field_type_combobox.setCurrentText(model.field_type.name)
         else:
             raise Exception(f'unsupported source_type: {source_type}')
 

@@ -424,6 +424,7 @@ def init(hypertts):
 
         if should_show_welcome_message(hypertts):
             configuration = hypertts.get_configuration()
+            lang = hypertts.get_ui_language()
             
             # Check if night mode is enabled
             night_mode = hypertts.anki_utils.night_mode_enabled()
@@ -435,25 +436,25 @@ def init(hypertts):
             
             # Generate button content
             configure_services_content = f"""
-                <p id="superfreetss-important-text"><b class="important-gradient-text">Important</b>: you have to configure services before adding audio.</p>
+                <p id="superfreetss-important-text"><b class="important-gradient-text">{i18n.get_text("welcome_important", lang)}</b>: {i18n.get_text("welcome_configure_desc", lang)}</p>
                 <button class="superfreetss-welcome-button">
-                    <div><b style="font-size: 1.2em;">Configure Services</b></div>
-                    <div style="font-size: 0.8em;">Click here before adding audio</div>
+                    <div><b style="font-size: 1.2em;">{i18n.get_text("welcome_configure_title", lang)}</b></div>
+                    <div style="font-size: 0.8em;">{i18n.get_text("welcome_configure_subtitle", lang)}</div>
                 </button>
             """
             add_audio_content = f"""
-                <p>It looks like you haven't added audio yet.</p>
+                <p>{i18n.get_text("welcome_no_audio_yet", lang)}</p>
                 <button class="superfreetss-welcome-button">
-                    <div><b style="font-size: 1.2em;">Adding Audio</b></div>
-                    <div style="font-size: 0.8em;">Click to learn how to add audio</div>
+                    <div><b style="font-size: 1.2em;">{i18n.get_text("welcome_add_audio_title", lang)}</b></div>
+                    <div style="font-size: 0.8em;">{i18n.get_text("welcome_add_audio_subtitle", lang)}</div>
                 </button>
             """
             
             welcome_html = f"""
             <div id="superfreetss-welcome-message" style="margin: 1em 2em; padding: 1em; background-color: {bg_color}; border: 1px solid {border_color}; border-radius: 15px; color: {text_color};">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 style="margin: 0; text-align: center; flex-grow: 1;">Super Free TTS - Add Audio to your Flashcards</h3>
-                    <button id="superfreetss-welcome-close" style="background: none; border: none; cursor: pointer; font-size: 1.2em; color: {text_color};">× Close</button>
+                    <h3 style="margin: 0; text-align: center; flex-grow: 1;">{i18n.get_text("welcome_heading", lang)}</h3>
+                    <button id="superfreetss-welcome-close" style="background: none; border: none; cursor: pointer; font-size: 1.2em; color: {text_color};">{i18n.get_text("welcome_close", lang)}</button>
                 </div>
                 <div style="text-align: center; margin-top: 10px;">
                     <div id="superfreetss-configure-services">

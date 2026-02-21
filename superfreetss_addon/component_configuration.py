@@ -215,13 +215,14 @@ class Configuration(component_common.ConfigComponentBase):
                 
                 # Special logic for PiperTTS Models Path: Add "Download Models" button
                 if service.name == "PiperTTS" and key == "models_path":
-                     dl_btn = aqt.qt.QPushButton("Download Models...")
+                     lang = self.hypertts.get_ui_language()
+                     dl_btn = aqt.qt.QPushButton(i18n.get_text("piper_button_download_models", lang))
                      def open_downloader(le=lineedit):
                          dest_dir = le.text()
                          if not dest_dir:
-                             aqt.utils.showInfo("Please select a models directory first.")
+                             aqt.utils.showInfo(i18n.get_text("piper_info_select_dir", lang))
                              return
-                         dlg = component_piper_manager.PiperManagerDialog(self.dialog, dest_dir)
+                         dlg = component_piper_manager.PiperManagerDialog(self.dialog, dest_dir, lang)
                          dlg.exec()
                      dl_btn.clicked.connect(lambda checked=False, le=lineedit: open_downloader(le))
                      gui_utils.configure_primary_button(dl_btn)

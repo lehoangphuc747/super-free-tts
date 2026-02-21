@@ -172,7 +172,7 @@ def get_vocab_ai_url(url_path, utm_campaign, distinct_id=None):
     """Generate a vocab.ai URL with UTM parameters
     
     Args:
-        url_path: Path after the domain (e.g., 'tips/hypertts-adding-audio')
+        url_path: Path after the domain (e.g., 'tips/superfreetss-adding-audio')
         utm_campaign: Campaign name for UTM tracking
         distinct_id: Optional distinct ID for tracking
     

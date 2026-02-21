@@ -15,7 +15,7 @@ from . import logging_utils
 logger = logging_utils.get_child_logger(__name__)
 
 """
-the various objects here dictate how HyperTTS is configured and these objects will serialize to/from the anki config
+the various objects here dictate how SuperFreeTTS is configured and these objects will serialize to/from the anki config
 """
 
 class ConfigModelBase(abc.ABC):
@@ -434,7 +434,7 @@ class Configuration:
         return days
 
     def enable_stats(self) -> bool:
-        # HyperTTS Lite: Minimal stats, no Pro reporting
+        # SuperFreeTTS Lite: Minimal stats, no Pro reporting
         if self.days_since_install() < constants_events.STATS_DAYS_CUTOFF:
             return True
         return False

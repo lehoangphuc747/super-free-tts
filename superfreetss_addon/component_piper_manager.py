@@ -9,6 +9,7 @@ from typing import List, Optional, Dict
 
 from . import logging_utils
 from . import gui_utils
+from . import i18n
 
 logger = logging_utils.get_child_logger(__name__)
 
@@ -113,12 +114,13 @@ class PiperDownloadWorker(QObject):
                     self.signals.progress.emit(percent, f"Downloading {filename} ({int(wrote/1024/1024)}MB / {int(total_size/1024/1024)}MB)")
 
 class PiperManagerDialog(QDialog):
-    def __init__(self, parent, dest_dir):
+    def __init__(self, parent, dest_dir, lang="en"):
         super().__init__(parent)
         self.dest_dir = dest_dir
+        self.lang = lang
         self.all_models: List[PiperModelInfo] = []
         
-        self.setWindowTitle("Piper Model Manager")
+        self.setWindowTitle(i18n.get_text("piper_title", self.lang))
         self.setMinimumWidth(600)
         self.setMinimumHeight(500)
         self.setSizeGripEnabled(True)  # Cho phép kéo thay đổi kích thước
@@ -128,9 +130,9 @@ class PiperManagerDialog(QDialog):
         
         # Filter Row
         filter_layout = QHBoxLayout()
-        filter_layout.addWidget(QLabel("Language:"))
+        filter_layout.addWidget(QLabel(i18n.get_text("piper_label_language", self.lang)))
         self.lang_combo = QComboBox()
-        self.lang_combo.addItem("All Languages", "all")
+        self.lang_combo.addItem(i18n.get_text("piper_all_languages", self.lang), "all")
         self.lang_combo.currentIndexChanged.connect(self.filter_models)
         filter_layout.addWidget(self.lang_combo, 1)
         self.layout.addLayout(filter_layout)
@@ -142,16 +144,16 @@ class PiperManagerDialog(QDialog):
         self.progress_bar.setVisible(False)
         self.layout.addWidget(self.progress_bar)
         
-        self.status_label = QLabel("Loading voice list from Hugging Face...")
+        self.status_label = QLabel(i18n.get_text("piper_status_loading", self.lang))
         self.layout.addWidget(self.status_label)
         
         btn_layout = QHBoxLayout()
-        self.download_btn = QPushButton("Download Selected")
+        self.download_btn = QPushButton(i18n.get_text("piper_button_download", self.lang))
         self.download_btn.setEnabled(False)
         self.download_btn.clicked.connect(self.download_selected)
         gui_utils.configure_primary_button(self.download_btn)
         
-        self.close_btn = QPushButton("Close")
+        self.close_btn = QPushButton(i18n.get_text("button_close", self.lang))
         self.close_btn.clicked.connect(self.reject)
         
         btn_layout.addStretch()
@@ -184,13 +186,13 @@ class PiperManagerDialog(QDialog):
         
         self.lang_combo.blockSignals(False)
         
-        self.status_label.setText(f"Loaded {len(models)} voices.")
+        self.status_label.setText(i18n.get_text("piper_status_loaded", self.lang).format(len(models)))
         self.download_btn.setEnabled(True)
         self.filter_models()
 
     def on_load_error(self, err):
-        self.status_label.setText(f"Failed to load voices: {err}")
-        aqt.utils.showWarning(f"Error loading Piper voices list: {err}")
+        self.status_label.setText(i18n.get_text("piper_status_load_error", self.lang).format(err))
+        aqt.utils.showWarning(i18n.get_text("piper_warning_load_error", self.lang).format(err))
 
     def filter_models(self):
         self.model_list.clear()
@@ -200,7 +202,7 @@ class PiperManagerDialog(QDialog):
             if selected_lang == "all" or model.language_code == selected_lang:
                 item = QListWidgetItem(f"{model.name} [{model.quality}] ({model.language_code})")
                 if model_exists(self.dest_dir, model):
-                    item.setText(item.text() + " [Installed]")
+                    item.setText(item.text() + " " + i18n.get_text("piper_label_installed", self.lang))
                     item.setForeground(Qt.GlobalColor.gray)
                 
                 item.setData(Qt.ItemDataRole.UserRole, model)
@@ -230,20 +232,20 @@ class PiperManagerDialog(QDialog):
         self.status_label.setText(msg)
 
     def download_finished(self):
-        self.status_label.setText("Download complete!")
+        self.status_label.setText(i18n.get_text("piper_status_download_complete", self.lang))
         self.progress_bar.setValue(100)
         self.download_btn.setEnabled(True)
         self.lang_combo.setEnabled(True)
         self.model_list.setEnabled(True)
-        aqt.utils.showInfo("Model downloaded successfully!")
+        aqt.utils.showInfo(i18n.get_text("piper_info_download_success", self.lang))
         self.filter_models()
 
     def download_error(self, err):
-        self.status_label.setText(f"Error: {err}")
+        self.status_label.setText(i18n.get_text("piper_status_error", self.lang).format(err))
         self.download_btn.setEnabled(True)
         self.lang_combo.setEnabled(True)
         self.model_list.setEnabled(True)
-        aqt.utils.showWarning(f"Download failed: {err}")
+        aqt.utils.showWarning(i18n.get_text("piper_warning_download_failed", self.lang).format(err))
 
 def model_exists(dest_dir, model):
     onnx_path = os.path.join(dest_dir, model.key + ".onnx")

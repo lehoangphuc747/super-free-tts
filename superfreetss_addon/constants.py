@@ -79,7 +79,9 @@ class MappingRuleType(enum.Enum):
     NoteType = enum.auto()
     DeckNoteType = enum.auto()
 
-DIR_HYPERTTS_ADDON = 'superfreetss_addon'
+DIR_SUPERFREETSS_ADDON = 'superfreetss_addon'
+# backward compat alias
+DIR_HYPERTTS_ADDON = DIR_SUPERFREETSS_ADDON
 DIR_SERVICES = 'services'
 
 ANKIWEB_ADDON_ID = '111623432'
@@ -134,7 +136,9 @@ DIALOG_ID_EASY = 'easy'
 DIALOG_ID_CHDOOSE_EASY_ADVANCED = 'choose_easy_advanced'
 
 TTS_TAG_VOICE = 'SuperFreeTTS'
-TTS_TAG_HYPERTTS_PRESET = 'superfreetss_preset'
+TTS_TAG_SUPERFREETSS_PRESET = 'superfreetss_preset'
+# backward compat alias
+TTS_TAG_HYPERTTS_PRESET = TTS_TAG_SUPERFREETSS_PRESET
 
 PYCMD_ADD_AUDIO = 'addaudio'
 PYCMD_PREVIEW_AUDIO = 'previewaudio'

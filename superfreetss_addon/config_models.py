@@ -479,6 +479,12 @@ def serialize_configuration(service_config):
     return databind.json.dump(service_config, Configuration)
 
 def deserialize_configuration(service_config) -> Configuration:
+    # Remove legacy keys that no longer exist in Configuration to avoid
+    # databind raising ConversionError for extra keys.
+    _LEGACY_KEYS = {'hypertts_pro_api_key', 'vocabai_api_url_override', 'use_vocabai_api'}
+    if isinstance(service_config, dict):
+        for key in _LEGACY_KEYS:
+            service_config.pop(key, None)
     return databind.json.load(service_config, Configuration)
 
 # realtime config models

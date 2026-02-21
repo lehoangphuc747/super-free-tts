@@ -45,7 +45,7 @@ class AboutComponent(component_common.ConfigComponentBase):
         # Title
         title_label = aqt.qt.QLabel(i18n.get_text("about_header_title", lang))
         title_font = title_label.font()
-        title_font.setPointSize(16)
+        title_font.setPointSize(constants.FONT_SIZE_TITLE)
         title_font.setBold(True)
         title_label.setFont(title_font)
         info_layout.addWidget(title_label)

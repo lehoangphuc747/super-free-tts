@@ -195,9 +195,9 @@ class ComponentEasy(component_common.ComponentBase):
         else:
             self.add_audio_button.setToolTip('Add the audio to your note')
             
-        self.add_audio_button.setStyleSheet(self.hypertts.anki_utils.get_green_stylesheet())
+        gui_utils.configure_primary_button(self.add_audio_button)
         self.cancel_button = aqt.qt.QPushButton(i18n.get_text("button_cancel", lang))
-        self.cancel_button.setStyleSheet(self.hypertts.anki_utils.get_red_stylesheet())
+        gui_utils.configure_secondary_button(self.cancel_button)
 
         button_layout.addWidget(self.toggle_settings_button)
         button_layout.addWidget(self.preview_sound_button)

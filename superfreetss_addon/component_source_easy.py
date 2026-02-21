@@ -82,7 +82,7 @@ class ComponentEasySource(component_common.ConfigComponentBase):
         # they want in there.
         self.source_text_edit.setMinimumHeight(50)
         font = self.source_text_edit.font()
-        font.setPointSize(20)
+        font.setPointSize(constants.FONT_SIZE_TITLE)
         self.source_text_edit.setFont(font)
         
         source_group_layout.addWidget(self.source_text_edit, 3, 0, 1, 2)

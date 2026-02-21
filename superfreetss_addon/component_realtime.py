@@ -115,7 +115,7 @@ class ComponentRealtime(component_common.ConfigComponentBase):
         hlayout.addWidget(self.apply_button)
         # cancel button
         self.cancel_button.setText(i18n.get_text("button_cancel", lang))
-        self.cancel_button.setStyleSheet(self.hypertts.anki_utils.get_red_stylesheet())
+        gui_utils.configure_secondary_button(self.cancel_button)
         hlayout.addWidget(self.cancel_button)
         self.vlayout.addLayout(hlayout)
 
@@ -136,7 +136,7 @@ class ComponentRealtime(component_common.ConfigComponentBase):
     def enable_apply_button(self):
         logger.info('enable_apply_button')
         self.apply_button.setEnabled(True)
-        self.apply_button.setStyleSheet(self.hypertts.anki_utils.get_green_stylesheet())
+        gui_utils.configure_primary_button(self.apply_button)
 
     def apply_button_pressed(self):
         with self.hypertts.error_manager.get_single_action_context('Applying Realtime Audio to Card'):

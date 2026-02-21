@@ -31,7 +31,7 @@ def get_header_label(text):
     font = aqt.qt.QFont()
     font.setBold(True)
     font.setWeight(75)  
-    font.setPointSize(20)
+    font.setPointSize(constants.FONT_SIZE_TITLE)
     header.setFont(font)
     return header
 
@@ -51,7 +51,7 @@ def get_service_header_label(text):
     font = aqt.qt.QFont()
     font.setBold(True)
     font.setWeight(70)
-    font.setPointSize(12)
+    font.setPointSize(constants.FONT_SIZE_SUBTITLE)
     header.setFont(font)
     return header
 
@@ -67,22 +67,22 @@ def get_small_cta_label(text):
 
 def get_large_button_font():
     font2 = aqt.qt.QFont()
-    font2.setPointSize(14)
+    font2.setPointSize(constants.FONT_SIZE_SUBTITLE + 1)
     return font2        
 
 def get_large_checkbox_font():
     font2 = aqt.qt.QFont()
-    font2.setPointSize(12)
+    font2.setPointSize(constants.FONT_SIZE_SUBTITLE)
     return font2
 
 def get_large_combobox_font():
     font2 = aqt.qt.QFont()
-    font2.setPointSize(10)
+    font2.setPointSize(constants.FONT_SIZE_BODY - 1)
     return font2
 
 def get_version_font():
     font2 = aqt.qt.QFont()
-    font2.setPointSize(10)
+    font2.setPointSize(constants.FONT_SIZE_BODY - 1)
     font2.setItalic(True)
     return font2        
 
@@ -142,9 +142,6 @@ def configure_primary_button(button, min_height=32, min_width=100, font_size=9):
     font_large.setBold(True)
     font_large.setPointSize(font_size)
     button.setFont(font_large)
-
-# Backward compat alias
-configure_purple_button = configure_primary_button
 
 def configure_secondary_button(button, min_height=30, min_width=80, font_size=9):
     """Configure a secondary outlined button for less prominent actions - Compact version"""

@@ -164,7 +164,7 @@ class ComponentPresetMappingRules(component_common.ConfigComponentBase):
         hlayout.addStretch()
         self.save_button = aqt.qt.QPushButton(i18n.get_text("preset_rules_button_save_and_close", lang))
         self.cancel_button = aqt.qt.QPushButton(i18n.get_text("button_cancel", lang))
-        self.cancel_button.setStyleSheet(self.hypertts.anki_utils.get_red_stylesheet())
+        gui_utils.configure_secondary_button(self.cancel_button)
         hlayout.addWidget(self.save_button)
         hlayout.addWidget(self.cancel_button)
         self.vlayout.addStretch()
@@ -292,12 +292,12 @@ class ComponentPresetMappingRules(component_common.ConfigComponentBase):
         if at_least_one_rule:
             self.add_rule_button.setStyleSheet("")
         else:
-            self.add_rule_button.setStyleSheet(self.hypertts.anki_utils.get_green_stylesheet())
+            gui_utils.configure_primary_button(self.add_rule_button)
         
 
     def enable_save_button(self):
         self.save_button.setEnabled(True)
-        self.save_button.setStyleSheet(self.hypertts.anki_utils.get_green_stylesheet())
+        gui_utils.configure_primary_button(self.save_button)
 
     def disable_save_button(self):
         self.save_button.setEnabled(False)

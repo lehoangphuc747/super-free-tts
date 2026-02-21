@@ -164,6 +164,16 @@ COLOR_ACCENT_TEAL = '#10B981'          # Consistent with Emerald
 COLOR_SECONDARY = '#64748B'            # Slate 500 (Muted Text)
 COLOR_SURFACE_LIGHT = '#F8FAFC'        # Slate 50 (Paper)
 
+# Night mode color variants
+COLOR_PRIMARY_DARK = '#1E293B'         # Slate 800
+COLOR_SURFACE_DARK = '#0F172A'         # Slate 900
+
+# Font size tokens (standardized across UI)
+FONT_SIZE_TITLE = 16
+FONT_SIZE_SUBTITLE = 13
+FONT_SIZE_BODY = 11
+FONT_SIZE_SMALL = 9
+
 # Backwards compat aliases
 COLOR_GRADIENT_PURPLE_START = COLOR_PRIMARY
 COLOR_GRADIENT_PURPLE_HOVER_END = COLOR_PRIMARY_HOVER

@@ -54,7 +54,7 @@ class ComponentPreferences(component_common.ConfigComponentBase):
 
     def model_part_updated_common(self):
         self.save_button.setEnabled(True)
-        self.save_button.setStyleSheet(self.hypertts.anki_utils.get_green_stylesheet())        
+        gui_utils.configure_primary_button(self.save_button)        
 
     def draw(self, layout):
         lang = self.hypertts.get_ui_language()

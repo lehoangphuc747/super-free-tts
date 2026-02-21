@@ -59,7 +59,7 @@ class Configuration(component_common.ConfigComponentBase):
     def model_change(self):
         if self.enable_model_change:
             self.save_button.setEnabled(True)
-            self.save_button.setStyleSheet(self.hypertts.anki_utils.get_green_stylesheet())
+            gui_utils.configure_primary_button(self.save_button)
 
     def get_service_enable_change_fn(self, service):
         def enable_change(value):
@@ -462,7 +462,7 @@ class Configuration(component_common.ConfigComponentBase):
             toggle_all_cb.setCursor(aqt.qt.Qt.CursorShape.PointingHandCursor)
             toggle_all_cb.setTristate(False)
             toggle_all_font = toggle_all_cb.font()
-            toggle_all_font.setPointSize(10)
+            toggle_all_font.setPointSize(constants.FONT_SIZE_BODY - 1)
             toggle_all_cb.setFont(toggle_all_font)
 
             # Guard flag to prevent infinite signal loops between toggle_all ↔ individual

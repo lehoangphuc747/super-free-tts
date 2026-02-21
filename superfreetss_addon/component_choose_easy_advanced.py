@@ -56,7 +56,7 @@ class ChooseEasyAdvancedDialog(aqt.qt.QDialog):
         # ── Title ──
         title = aqt.qt.QLabel(i18n.get_text("choose_mode_title", self.lang))
         title_font = title.font()
-        title_font.setPointSize(15)
+        title_font.setPointSize(constants.FONT_SIZE_TITLE)
         title_font.setBold(True)
         title.setFont(title_font)
         title.setAlignment(aqt.qt.Qt.AlignmentFlag.AlignCenter)
@@ -127,7 +127,7 @@ class ChooseEasyAdvancedDialog(aqt.qt.QDialog):
         # Radio
         radio = aqt.qt.QRadioButton(radio_text)
         radio_font = radio.font()
-        radio_font.setPointSize(12)
+        radio_font.setPointSize(constants.FONT_SIZE_SUBTITLE)
         radio_font.setBold(True)
         radio.setFont(radio_font)
         radio.setChecked(checked)
